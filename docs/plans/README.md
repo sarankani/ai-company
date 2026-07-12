@@ -4,4 +4,5 @@ Numbered plans for significant changes to how Evalyn operates. Convention: `NNN-
 
 | # | Plan | Status |
 |---|---|---|
-| 001 | [Control Panel & Distributed Human Approval Model](001-control-panel-and-human-approval-model.md) | Draft v2 — awaiting review |
+| 001 | [Control Panel & Distributed Human Approval Model](001-control-panel-and-human-approval-model.md) | Direction approved (2026-07-12) — mechanism ADRs awaiting acceptance |
+| 002 | [Execution Plan: Approval Loop & Control Panel](002-execution-plan.md) | Active — Phase 0 in progress |

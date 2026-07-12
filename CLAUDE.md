@@ -22,7 +22,7 @@ Auto-loaded by Claude Code. This is **Evalyn's** operating brain: it tells every
   - Hiring/comp/people decisions: Saran
   - Anything sent to a customer / published: Saran
 
-> Tip: keep durable context (people, project codenames, acronyms, decisions) in this file or via the `productivity:*` plugin's memory system so every employee "remembers" the company across sessions.
+> Durable context lives in **`/memory`** (see §3b) — read it at session start, write to it before ending a session that decided or learned something durable.
 
 ---
 
@@ -37,6 +37,14 @@ Evalyn is a full AI company: **23 employee personas** (`.claude/agents/`), their
 ## 3. The system of record — READ AND WRITE IT
 
 State lives in `company/` (or the connected CRM/ERP via MCP). Entities: `accounts, contacts, leads, opportunities, estimates, quotes, proposals, pos, projects, sows, milestones, invoices, tickets, vendors, purchase-orders-out, assets`, indexed by `company/registry.md`. **Every employee reads the relevant record before acting and writes the next one** — do not re-derive context that already exists in a record. Each record carries: id, stage/status, owner, links to related records, history, and approval stamps. Full schema in `company/` conventions (`guides/company-os.md`).
+
+## 3b. Documentation & memory — READ AND MAINTAIN IT
+
+- **`docs/plans/`** — numbered plans for significant changes (Draft → Approved → Done); nothing significant starts without one.
+- **`docs/specs/`** — PRDs and tech specs; approved by a human before implementation.
+- **`docs/adrs/`** — Architecture Decision Records for hard-to-reverse decisions; AI proposes, a human accepts; supersede, never rewrite.
+- **`/memory`** — cross-session memory. **At session start:** read `memory/company-context.md`, skim recent `memory/decisions-log.md`. **Before ending a session** that decided something, changed direction, or learned a durable fact: update `company-context.md` (snapshot, edit in place) and/or append to `decisions-log.md`; add new terms to `glossary.md`.
+- Active execution board: `docs/plans/002-execution-plan.md` — update task states as work moves.
 
 ## 4. The value chain (who owns what)
 
