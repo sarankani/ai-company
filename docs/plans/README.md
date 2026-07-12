@@ -4,4 +4,4 @@ Numbered plans for significant changes to how Evalyn operates. Convention: `NNN-
 
 | # | Plan | Status |
 |---|---|---|
-| 001 | [Control Panel & Distributed Human Approval Model](001-control-panel-and-human-approval-model.md) | Draft — awaiting review |
+| 001 | [Control Panel & Distributed Human Approval Model](001-control-panel-and-human-approval-model.md) | Draft v2 — awaiting review |

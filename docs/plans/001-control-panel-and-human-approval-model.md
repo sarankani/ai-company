@@ -1,8 +1,9 @@
 # Plan 001 — Evalyn Control Panel & Distributed Human Approval Model
 
-- **Status:** Draft — for review by Saran
-- **Author:** AI (product-manager lens), 2026-07-12
-- **Decision needed:** approve the approval model (Part A) and the MVP scope (Part D, Phase 1–2)
+- **Status:** Draft v2 — for review by Saran
+- **Author:** AI (product-manager lens), 2026-07-12 · v2 same day: execution approach folded in, meta-tooling assessment added (Part G)
+- **Decision needed:** approve the approval model (Part A) and the execution plan (Part D, Weeks 1–3 to start)
+- **Feasibility verdict:** Doable with no invention required — approval routing with SLA escalation is proven workflow-engine territory, and the Control Panel is a UI over records the Company OS already defines. The two places the real work lives: the **resume loop** (AI stops at a gate → human approves later in a panel → AI picks the work back up exactly once) and making the panel usable by **non-technical humans**. The residual risk that stays human forever: approval *quality* — the system guarantees someone decides in time, not that they decide well.
 
 ---
 
@@ -171,17 +172,29 @@ Auth for the web app (SSO/email magic-link), role-based screens (only authorized
 
 ---
 
-## Part D — Phased roadmap
+## Part D — Execution plan: use the company to build the company
 
-| Phase | Scope | Exit criteria |
-|---|---|---|
-| **0. Define the org (docs only)** | Fill `company/org/` (departments, humans, routing, SLAs — humans can be "Saran ×7" on day one). Update `CLAUDE.md` §0 + §5 to the distributed model. Write the approval/question record schema. | A gate fires and the record names the correct department + approver on paper. |
-| **1. File-based approval loop** | AI employees write `approvals/`/`questions/` records; humans decide by editing the record (or via a tiny CLI/skill); scheduled job checks SLAs + sends email notifications/escalations. | One real deliverable flows draft → approval record → human stamp → execution, with an escalation exercised at least once. |
-| **2. Control Panel MVP (Option 1)** | Web app: Company Dashboard, Approval Inbox with approve/reject/delegate, Department Board, availability toggle. Reads repo, writes decisions as commits. | A non-technical human approves an AI delivery end-to-end without touching git or Claude Code. |
-| **3. Routing automation & Slack** | Auto-reassign on unavailability, full escalation chain, delegation UI, Slack notifications with deep links, audit log screen. | Zero approvals breach final SLA in a 2-week trial; every hop visible in the audit log. |
-| **4. Scale-up (Option 2 as needed)** | Dedicated backend, real-time updates, analytics (approval latency, throughput per department, AI rework rate), calendar-based availability. | Panel supports the full human team with sub-second UX. |
+This project is **Evalyn's own first internal project**, run through Evalyn's own value chain with Saran as the customer. Every step below is owned by a named AI employee and stops at the normal gates. That both delivers the panel and stress-tests the operating model on a real project — if the chain can't build its own control panel, we learn it here, cheaply.
 
-Suggested immediate next step: **Phase 0 is a documentation task Evalyn's own AI employees can draft this week**, with Saran approving the org design.
+### D1. Execution principles (hold these throughout)
+
+1. **Prove the loop before the UI.** The file-based approval loop (Week 2–3) must work end to end before a single screen is designed. If the loop works with plain files, everything after is presentation; if it doesn't, no panel will save it.
+2. **Git stays the single source of truth** until scale genuinely hurts — only then does Option 2 get built, and the repo remains authoritative.
+3. **SLA expiry escalates, never auto-approves.** Silence is never consent, at any phase.
+4. **Instrument from day one** — time-to-decision, escalation count, rejection rate — so we *know* the model works rather than hope.
+5. **Migrate humans seat-by-seat, never big-bang.** Saran starts in all seats (the model must work at n=1); each hire takes one department's seats off his plate.
+
+### D2. Week-by-week roadmap (phases mapped to owners and gates)
+
+| Phase / weeks | What happens | AI owner(s) | Human (Saran) does | Exit criteria |
+|---|---|---|---|---|
+| **0 — Week 1: Decide, don't build** | Saran approves/amends this plan. `product-manager` turns Part B into a spec with acceptance criteria; `solutions-architect` pins Part C down (exact record schemas, the resume-loop trigger mechanism); `tech-writer` updates `CLAUDE.md` §0/§5 and creates `company/org/` (departments, routing, SLAs — Saran in every seat). | product-manager, solutions-architect, tech-writer | Review + approve only (~2–3 h total) | A gate fires and the record names the correct department + approver on paper. Spec and tech design approved. |
+| **1 — Weeks 2–3: Prove the loop, zero UI** | `developer` implements the file-based flow: agent hits a gate → writes `approvals/<id>.md` → stops; scheduled job watches SLAs → emails; Saran approves via a one-line edit (or tiny skill); AI resumes and executes the exact approved action. Then run **one real deliverable through it end to end**, deliberately ignoring one request to watch escalation fire. | developer, tester, devops (scheduler) | Approve one real item; ignore one on purpose (escalation drill) | Draft → approval record → human stamp → execution, exactly once, with one escalation exercised. Metrics captured. |
+| **2 — Weeks 4–6: Control Panel MVP (Option 1)** | A normal software project through the chain: `designer` (inbox + dashboard flows) → `developer` (web app reading the repo, decisions as commits) → `code-reviewer` + `security` + `tester` (gates) → `devops` (deploy). Every merge stops at **the new approval system itself** — the product gates its own construction. | designer, developer, code-reviewer, security, tester, devops | Approve merges/deploy via the Phase-1 loop | A non-technical human approves an AI delivery end-to-end without touching git or Claude Code. |
+| **3 — Weeks 7+: Automation & staffing (parallel tracks)** | *Track A:* auto-reassign on unavailability, full escalation chain, delegation UI, Slack notifications with deep links, audit log screen. *Track B:* `hr` runs `/hiring-plan` for the first real Department Approvers — hire in order of gate volume (likely Engineering and Finance first); each hire takes over one department's seats. | developer, devops (A); hr (B) | Interview + hire decisions; hand over seats one department at a time | Zero terminal-SLA breaches in a 2-week trial; ≥1 department approver who isn't Saran. |
+| **4 — Scale-up (when it hurts, not before)** | Option 2: dedicated backend, real-time updates, analytics (approval latency, throughput per department, AI rework rate), calendar-based availability sync. | eng pod | Approve the build once Option 1 latency/concurrency measurably hurts | Panel supports the full human team with sub-second UX. |
+
+**The clock starts with one human decision: approve or amend this plan (Week 1, day 1).**
 
 ## Part E — Risks & open questions
 
@@ -202,3 +215,36 @@ Suggested immediate next step: **Phase 0 is a documentation task Evalyn's own AI
 - **Visibility:** CEO can answer "what is the company doing right now?" from one screen.
 - **Audit:** 100 % of gated actions traceable to a named human decision.
 - **Quality:** rejection/rework rate per department trends down without approval scrutiny dropping (rejection rate never pinned at 0).
+
+## Part G — Do we need dynamic agent / skill / workflow creators?
+
+**For this project: no. For Evalyn's growth: yes, as gated authoring skills — not as runtime "dynamic" creation.** The distinction matters:
+
+### G1. Why this project doesn't need them
+
+- The Control Panel is a normal software project. The existing roster (designer, developer, code-reviewer, security, tester, devops, product-manager, solutions-architect) covers every step of Part D. No new persona is required to *build* it.
+- What Phase 0–1 does require is **modifying existing agents and skills** — every gate-hitting agent/skill changes from "present the artifact and ask in-chat" to "write the approval record and stop." That is editing markdown files in `.claude/`, which any agent (or the `tech-writer`/`developer` employees) can already do. No creator tooling needed; Claude Code's agent/skill format *is* plain files.
+- Building creator tooling first would violate execution principle D1.1 — it's UI before the loop, one level up.
+
+### G2. Why Evalyn will want them later (and in what form)
+
+As the company takes on real clients, three recurring needs appear:
+
+| Need | Example | Right tool |
+|---|---|---|
+| New role | A client engagement needs a `mobile-developer` or `ml-engineer` persona | `/create-agent` authoring skill |
+| New repeatable capability | A dozen projects all need `/api-audit` | `/create-skill` authoring skill |
+| New multi-step process | A client's bespoke delivery process (their UAT → their invoicing) | `/create-workflow` authoring skill |
+
+The recommended form is **authoring skills**: a skill that interviews for the charter (lane, skills, gates, escalation rules), generates the `.claude/agents|commands|workflows/` file *consistent with `CLAUDE.md` §5–6* (gates and operating principles baked in by construction), and stops at a gate. Not a runtime system that spawns novel agents on the fly — Evalyn's employees are its org chart, and the org chart changing should be deliberate and reviewed, not emergent.
+
+### G3. The one non-negotiable: changing the machinery is itself a gate
+
+An AI writing a new AI employee is the company **modifying its own operating machinery** — the highest-leverage and highest-risk write in the whole system (a badly written agent could omit its gates). So:
+
+- New/modified agents, skills, and workflows are a **People-gate + Engineering-gate**: the relevant Department Head approves the charter, Engineering approves the merge (same rule as risk #5 for routing config).
+- Every generated persona must pass a checklist: gates present, lane defined, escalation rules present, operating principles referenced.
+
+### G4. Scheduling
+
+Add as **Phase 5 (post-panel)**, pulled forward only if a real client engagement demands a new persona before then — in which case write that one agent by hand through the normal gates, and let the manual experience inform the creator skill's design.
