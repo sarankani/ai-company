@@ -2,6 +2,10 @@
 
 Append-only, newest first. Format: `## YYYY-MM-DD — decision` + who + why in 1–3 lines. Architectural decisions go to `docs/adrs/` instead.
 
+## 2026-07-13 — Backlog created: Spec 002, Plan 003, 5 epics + 26 issues on GitHub
+
+**Who:** Founder (requested) / product-manager+solutions-architect lens (executed). One consolidated all-phases spec (spec-002), detailed task document (plan 003, 10-section format), epics #2–#6 and tasks #7–#32 with native sub-issue links and blocked-by/blocks relationships. Issue format standard set: user story, use cases, acceptance criteria, out of scope, technical notes, related documents.
+
 ## 2026-07-12 — Documentation & memory structure adopted
 
 **Who:** Saran (requested) / tech-writer (executed). Plans in `docs/plans/`, specs in `docs/specs/`, ADRs in `docs/adrs/`, durable memory in `/memory`. Wired into CLAUDE.md §3.
