@@ -17,7 +17,7 @@
 
 - **Active project:** Approval Loop & Control Panel — Evalyn's first internal project, run through its own value chain. Board: `docs/plans/002-execution-plan.md` (Phase 0 in progress).
 - **Done:** PR #1 merged 2026-07-13 (specs+ADRs accepted). EX-006/007/008 executed on the branch — awaiting the E0 review to close #7–#9 and unblock EX-101 (#10).
-- **Branch:** work happens on `claude/evalyn-ai-setup-oocv7m`; no PR opened yet (Saran hasn't asked for one).
+- **Branch:** `claude/evalyn-ai-setup-oocv7m`, restarted from merged main; E0 work (EX-006/007/008) is pushed and awaiting review.
 
 ## Still TBD in company identity (CLAUDE.md §0)
 
