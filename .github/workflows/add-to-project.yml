@@ -1,0 +1,32 @@
+name: Add issues & PRs to the Evalyn project board
+
+# Auto-adds every new/reopened issue and PR to the GitHub Project board,
+# so the board is always complete without manual triage.
+#
+# One-time setup (see docs/runbooks/project-board-setup.md):
+#   1. Create the Project (user project) in the GitHub UI.
+#   2. Repo Settings → Secrets and variables → Actions:
+#      - variable  EVALYN_PROJECT_URL   e.g. https://github.com/users/sarankani/projects/1
+#      - secret    EVALYN_PROJECTS_TOKEN  a fine-grained PAT with "Projects: read/write"
+#   3. In the Project's built-in workflows, enable:
+#      - "Item added to project"  -> Status: Backlog
+#      - "Item closed"            -> Status: Done
+#      - "Pull request merged"    -> Status: Done
+
+on:
+  issues:
+    types: [opened, reopened, transferred]
+  pull_request:
+    types: [opened, reopened]
+
+jobs:
+  add-to-project:
+    runs-on: ubuntu-latest
+    # Skip silently until the project URL variable is configured
+    if: ${{ vars.EVALYN_PROJECT_URL != '' }}
+    steps:
+      - name: Add item to project
+        uses: actions/add-to-project@v1.0.2
+        with:
+          project-url: ${{ vars.EVALYN_PROJECT_URL }}
+          github-token: ${{ secrets.EVALYN_PROJECTS_TOKEN }}
