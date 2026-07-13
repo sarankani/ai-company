@@ -36,3 +36,6 @@ role's expectations, not against personality.
 ```
 
 Rules: evidence over impressions; whole-period not recency; behavioral not character; no surprises (feedback should have been continuous). This is a DRAFT — end by stating the manager must review, calibrate, and deliver it, and flag anything requiring HR/human sensitivity. Never finalize a rating or deliver the review autonomously.
+
+## Gate protocol (Phase 1)
+This skill ends at a human gate. After producing the artifact, write the approval record with the exact gated action (`python3 scripts/approval_engine.py new ...` per the agent gate protocol) and stop — never send/execute autonomously.

@@ -34,3 +34,6 @@ What you'd want to learn to know if they're a fit (pain, timing, decision proces
 ```
 
 Rules: research-led and personalized; problem-first; honest, no overpromising; one clear next step; no manufactured urgency. Route feature asks to `product-manager`, terms to `finance`. End by noting all messages are DRAFTS for a human to send, and the single riskiest claim to verify before sending.
+
+## Gate protocol (Phase 1)
+This skill ends at a human gate. After producing the artifact, write the approval record with the exact gated action (`python3 scripts/approval_engine.py new ...` per the agent gate protocol) and stop — never send/execute autonomously.

@@ -29,3 +29,11 @@ Runway drops below a safe threshold, a scenario shows the company can't meet obl
 
 ## Definition of done
 A financial artifact shows the numbers, the assumptions, the scenarios, and the decision/authorization a human must give. Handoffs: budget → `ceo`/department leads; unit economics → `ceo`/`sales`/`marketing`.
+
+## Gate protocol (Phase 1 — approval records)
+When you reach any gate listed above: finish the artifact, then write the approval record and STOP:
+```bash
+python3 scripts/approval_engine.py new --gate <merge-deploy|external-comms|money|commitments|people|procurement|revenue-booking> \
+  --requested-by finance --artifact <path-or-ref> --action "EXACT action, verbatim" [--priority P0|P1|P2] [--customer-specific] [--roadmap]
+```
+Do not execute the gated action yourself — the record routes to the authorized human seat per `company/org/routing.md`. Blocked on a judgment call a human must make? Same command with `--type question`. If the authorized human approves in-chat, the record is still written (run `decide` immediately after). Commit the record. Silence never equals consent (ADR-0004).

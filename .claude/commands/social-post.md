@@ -25,3 +25,6 @@ Re-tailored, not copy-pasted — different length, tone, format for this platfor
 ```
 
 Rules: tailor per platform (don't cross-post blindly); hook first; honest and on-brand; value over hype. Flag anything PR-sensitive for human/marketing review. End by noting every post is a DRAFT awaiting human approval before publishing, and which variant you'd test first.
+
+## Gate protocol (Phase 1)
+This skill ends at a human gate. After producing the artifact, write the approval record with the exact gated action (`python3 scripts/approval_engine.py new ...` per the agent gate protocol) and stop — never send/execute autonomously.

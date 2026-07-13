@@ -37,3 +37,6 @@ The clear path to yes.
 ```
 
 Rules: reflect the real conversation; honest, deliverable scope with explicit out-of-scope; pricing/terms/signature human-gated. Route delivery feasibility to `product-manager`/`eng-manager`, terms to `finance`. End by noting the proposal is a DRAFT requiring human approval before sending/signing, and the scope item most likely to cause a delivery dispute.
+
+## Gate protocol (Phase 1)
+This skill ends at a human gate. After producing the artifact, write the approval record with the exact gated action (`python3 scripts/approval_engine.py new ...` per the agent gate protocol) and stop — never send/execute autonomously.

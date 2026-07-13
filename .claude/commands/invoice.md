@@ -33,3 +33,6 @@ actions are human-gated.
 System of record: write `company/invoices/<id>.md` (stage: draft→sent→paid/overdue), linked to the PO/project/milestone; update the milestone to `invoiced`. In production, create it in the finance system (QuickBooks/NetSuite) via MCP.
 
 Rules: bill only accepted work; reconcile to the PO/SOW; correct tax; reference the PO number. This is a DRAFT — end by noting sending and any collections action are human-gated, and flag any amount that doesn't reconcile to the PO.
+
+## Gate protocol (Phase 1)
+This skill ends at a human gate. After producing the artifact, write the approval record with the exact gated action (`python3 scripts/approval_engine.py new ...` per the agent gate protocol) and stop — never send/execute autonomously.

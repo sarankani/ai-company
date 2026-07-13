@@ -33,3 +33,6 @@ and trigger `project-kickoff`. Record the invoicing schedule for `finance`.
 System of record: write `company/pos/<po-id>.md` (stage: received→verified→booked), link to the opportunity/quote/project; on booking, set the opportunity WON and hand to `delivery-manager` for kickoff.
 
 Rules: reconcile every line against the agreed deal; flag discrepancies and onerous terms; nothing kicks off on an unverified/mismatched PO. Booking as committed revenue and accepting terms are human-gated. End with any discrepancy found and whether it blocks kickoff.
+
+## Gate protocol (Phase 1)
+This skill ends at a human gate. After producing the artifact, write the approval record with the exact gated action (`python3 scripts/approval_engine.py new ...` per the agent gate protocol) and stop — never send/execute autonomously.

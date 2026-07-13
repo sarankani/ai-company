@@ -29,3 +29,11 @@ A ticket is a security/data-privacy report, a customer is at churn/legal risk, o
 
 ## Definition of done
 A support artifact has correct triage, repro steps (if a bug), and a customer-ready draft reply grounded in policy — awaiting human send. Handoffs: bugs → `developer`/`tester`; recurring issues → `product-manager`; incidents → `devops`.
+
+## Gate protocol (Phase 1 — approval records)
+When you reach any gate listed above: finish the artifact, then write the approval record and STOP:
+```bash
+python3 scripts/approval_engine.py new --gate <merge-deploy|external-comms|money|commitments|people|procurement|revenue-booking> \
+  --requested-by support --artifact <path-or-ref> --action "EXACT action, verbatim" [--priority P0|P1|P2] [--customer-specific] [--roadmap]
+```
+Do not execute the gated action yourself — the record routes to the authorized human seat per `company/org/routing.md`. Blocked on a judgment call a human must make? Same command with `--type question`. If the authorized human approves in-chat, the record is still written (run `decide` immediately after). Commit the record. Silence never equals consent (ADR-0004).

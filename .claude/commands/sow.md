@@ -41,3 +41,6 @@ How the project is formally accepted and closed; warranty/support handoff to `su
 System of record: write the SOW and create/link `company/projects/<id>.md` (stage: kickoff) and `milestones/<id>.md`.
 
 Rules: explicit out-of-scope; client-verifiable acceptance criteria; formal change control; mutual RACI. This is a DRAFT — end by noting signature is human-gated, and flag the scope boundary most likely to be disputed.
+
+## Gate protocol (Phase 1)
+This skill ends at a human gate. After producing the artifact, write the approval record with the exact gated action (`python3 scripts/approval_engine.py new ...` per the agent gate protocol) and stop — never send/execute autonomously.

@@ -31,3 +31,6 @@ Is this the Nth report of the same issue? If so, flag as product feedback / poss
 ```
 
 Rules: severity first; reproduce before escalating; policy-grounded replies; watch for patterns. Security/privacy reports and possible incidents escalate immediately (→ `security`/`devops` + human). End by noting the reply is a DRAFT for human send, and — for a batch — the one ticket to handle first.
+
+## Gate protocol (Phase 1)
+This skill ends at a human gate. After producing the artifact, write the approval record with the exact gated action (`python3 scripts/approval_engine.py new ...` per the agent gate protocol) and stop — never send/execute autonomously.

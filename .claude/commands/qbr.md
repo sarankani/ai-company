@@ -35,3 +35,6 @@ Any expansion becomes an opportunity handed to `sales`.
 System of record: update `company/accounts/<id>.md` (health, renewal date, sentiment); create renewal/upsell `opportunities/` and hand to `sales`.
 
 Rules: value-first and honest; grounded in real data; expansion only where it genuinely helps. The deck and any commitment are human-gated. End with the renewal recommendation, the top expansion opportunity, and any churn risk to address now.
+
+## Gate protocol (Phase 1)
+This skill ends at a human gate. After producing the artifact, write the approval record with the exact gated action (`python3 scripts/approval_engine.py new ...` per the agent gate protocol) and stop — never send/execute autonomously.

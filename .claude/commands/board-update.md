@@ -34,3 +34,6 @@ Specific help you need — intros, hiring, advice, decisions. An update with no 
 ```
 
 Rules: lead with honesty; runway and burn are non-negotiable line items; every metric traces to a source or is TBD. This is a DRAFT — end by noting a human must review and send it, and flag the single most sensitive number to double-check first.
+
+## Gate protocol (Phase 1)
+This skill ends at a human gate. After producing the artifact, write the approval record with the exact gated action (`python3 scripts/approval_engine.py new ...` per the agent gate protocol) and stop — never send/execute autonomously.
