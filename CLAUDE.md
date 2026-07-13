@@ -8,19 +8,16 @@ Auto-loaded by Claude Code. This is **Evalyn's** operating brain: it tells every
 
 - **Company:** Evalyn
 - **What we do:** An AI-run IT services company — custom software development and delivery, operated end to end (lead → proposal → delivery → invoice → renewal) by AI digital employees with **minimum human resources**.
-- **Operating model:** 23 AI employees do the work; **one human founder-operator holds every approval gate**. The company's design goal is maximum autonomous throughput between the gates, zero autonomous action at them.
+- **Operating model:** 23 AI employees do the work; **humans hold the approval gates via per-department seats** (Approver / Deputy / Head, CEO as terminal backstop — see the seat table below). The company's design goal is maximum autonomous throughput between the gates, zero autonomous action at them.
 - **Mission / priorities this quarter:** TBD — set via `/okrs` with the `ceo` agent.
 - **Ideal Customer Profile (ICP):** TBD — define before running `/lead-gen` (industry, size, geo, trigger, disqualifiers).
 - **Brand voice:** Direct, warm, technically credible, no hype. Every external claim must be backable (operating principle 4).
 - **Delivery stack / capabilities:** Custom software & AI/automation engineering. Specific stack: TBD — record here as the first projects define it.
 - **Rate card / loaded cost / margin floor:** TBD — required before `/estimate` and `/valuation` can price anything; until set, those skills output ranges with pricing marked `TBD`.
 - **Regions & compliance:** TBD (tax/GST, data residency, contract norms).
-- **The human at the gates (minimum-human design — one approver for everything):**
-  - Merges/deploys: Saran (Founder / Human Operator — saranpkani@gmail.com)
-  - Pricing/discounts/contracts: Saran
-  - Spend/procurement/invoices: Saran
-  - Hiring/comp/people decisions: Saran
-  - Anything sent to a customer / published: Saran
+- **The humans at the gates (distributed-approver model — ADR-0003):** every department has three human seats — **Approver**, **Deputy**, **Head** — and the **CEO/Founder is the terminal backstop** of every escalation chain. Gates route to the owning department's Approver; unavailable humans are skipped immediately; an expired SLA escalates one hop (`approver → deputy → head → ceo`) and **never auto-approves** (ADR-0004). The authoritative config is **`company/org/`** (`departments.md`, `humans/`, `routing.md`) — read it to resolve any gate; seat and routing changes are themselves gated (Head proposes, CEO approves).
+  - Gate → owning department: merge/deploy/migrations → **Engineering** · external comms → **Marketing & Support** (customer-specific → Sales & Delivery) · money/invoices → **People & Finance** · price/date/SLA commitments → **Sales & Delivery** (roadmap → Product & Design) · people decisions → **People & Finance + CEO (dual)** · procurement → **Operations** · revenue booking → **People & Finance**.
+  - Current seat-holders: **all seats held by Saran (Founder-Operator — saranpkani@gmail.com)** — the n=1 starting state; hiring hands seats over one department at a time (Plan 001 D1.5).
 
 > Durable context lives in **`/memory`** (see §3b) — read it at session start, write to it before ending a session that decided or learned something durable.
 
@@ -28,7 +25,7 @@ Auto-loaded by Claude Code. This is **Evalyn's** operating brain: it tells every
 
 ## 1. What this is
 
-Evalyn is a full AI company: **23 employee personas** (`.claude/agents/`), their **26 skills** (`.claude/commands/`), **7 lifecycle workflows** (`.claude/workflows/`), and a **Company OS** — a persistent system of record — that together run an IT business from lead to cash to renewal with one human at the gates. Guides in `guides/`: `operating-model.md`, `company-os.md`, `value-chain.md`, `getting-started.md`, `integrations.md`.
+Evalyn is a full AI company: **23 employee personas** (`.claude/agents/`), their **26 skills** (`.claude/commands/`), **7 lifecycle workflows** (`.claude/workflows/`), and a **Company OS** — a persistent system of record — that together run an IT business from lead to cash to renewal with humans at the gates. Guides in `guides/`: `operating-model.md`, `company-os.md`, `value-chain.md`, `getting-started.md`, `integrations.md`.
 
 ## 2. The roster (invoke with *"use the <name> agent…"*)
 
@@ -43,6 +40,7 @@ State lives in `company/` (or the connected CRM/ERP via MCP). Entities: `account
 - **`docs/plans/`** — numbered plans for significant changes (Draft → Approved → Done); nothing significant starts without one.
 - **`docs/specs/`** — PRDs and tech specs; approved by a human before implementation.
 - **`docs/adrs/`** — Architecture Decision Records for hard-to-reverse decisions; AI proposes, a human accepts; supersede, never rewrite.
+- **`company/org/`** — the routing source of truth: departments & their gates, the humans registry with seats and availability, `routing.md` (gate→department map, SLA table, escalation chain). Resolve every gate from these files; never hardcode an approver.
 - **`/memory`** — cross-session memory. **At session start:** read `memory/company-context.md`, skim recent `memory/decisions-log.md`. **Before ending a session** that decided something, changed direction, or learned a durable fact: update `company-context.md` (snapshot, edit in place) and/or append to `decisions-log.md`; add new terms to `glossary.md`.
 - Active execution board: `docs/plans/002-execution-plan.md` — update task states as work moves.
 
@@ -58,7 +56,7 @@ procurement-cycle + /asset-register supply and track resources throughout.
 
 ## 5. Human-in-the-loop gates — ABSOLUTE
 
-Every employee **drafts, doesn't send; prepares, doesn't execute; recommends, doesn't decide** at these points. Reach the finished artifact, then present "approve to proceed?" with the exact action:
+Every employee **drafts, doesn't send; prepares, doesn't execute; recommends, doesn't decide** at these points. Reach the finished artifact, then request approval with the **exact action** (verbatim — "send proposal v3 to jane@acme.com", never a vague ask). **Routing:** each gate type maps to an owning department (see §0); the request goes to that department's Approver seat per `company/org/routing.md`, with SLA-based escalation `approver → deputy → head → ceo`. Escalation reassigns — it never approves; silence never equals consent (ADR-0004). Once the Phase-1 approval loop is live, gate requests are written as `company/approvals/APR-*.md` records (questions as `QST-*`); until then, ask the authorized seat-holder directly — the gate itself is identical either way:
 
 | Gate | Never do autonomously |
 |---|---|
