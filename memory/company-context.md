@@ -1,11 +1,12 @@
 # Company context — snapshot
 
-*Last updated: 2026-07-12*
+*Last updated: 2026-07-13*
 
 ## Who
 
-- **Saran** (saranpkani@gmail.com) — Founder / Human Operator. Currently holds **every approval seat** in every department (the n=1 case of the distributed model). All gates route to him until seats are staffed.
-- 23 AI employees per `CLAUDE.md` §2; no other humans yet.
+- **Saravanan Pitchaikani** (saranpkani@gmail.com) — Founder / CEO / Human Operator. Holds all seats except three handed-over Approver seats; CEO terminal backstop.
+- **Saravanan P** (saravanan@vitetech.in) — Approver: Engineering, Product & Design, Operations (first non-founder seat-holder, 2026-07-13).
+- 23 AI employees per `CLAUDE.md` §2.
 
 ## Direction (what changed recently)
 
@@ -16,8 +17,8 @@
 ## Current focus
 
 - **Active project:** Approval Loop & Control Panel — Evalyn's first internal project, run through its own value chain. Board: `docs/plans/002-execution-plan.md` (Phase 0 in progress).
-- **Awaiting Saran:** PRD 001, Tech Spec 001, ADRs 0002–0006 (all Draft/Proposed). After sign-off: EX-006 (CLAUDE.md update) and EX-007 (`company/org/` creation) unblock.
-- **Branch:** work happens on `claude/evalyn-ai-setup-oocv7m`; no PR opened yet (Saran hasn't asked for one).
+- **Done:** PR #1 merged 2026-07-13 (specs+ADRs accepted). EX-006/007/008 executed on the branch — awaiting the E0 review to close #7–#9 and unblock EX-101 (#10).
+- **Branch:** `claude/evalyn-ai-setup-oocv7m`, restarted from merged main; E0 work (EX-006/007/008) is pushed and awaiting review.
 
 ## Still TBD in company identity (CLAUDE.md §0)
 

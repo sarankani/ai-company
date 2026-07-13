@@ -22,9 +22,9 @@ States: `todo` · `in-progress` · `blocked` · `in-review` · `done`. IDs are s
 | EX-003 | Write tech spec: approval loop + panel (`docs/specs/tech-spec-001-…`) | solutions-architect | Saran approves | in-review |
 | EX-004 | Record foundational ADRs (0001–0006) | tech-writer | Saran approves | in-review |
 | EX-005 | Establish `/memory` convention and seed files | tech-writer | — | done |
-| EX-006 | Update `CLAUDE.md` §0/§5 to distributed-approver model | tech-writer | Saran approves | todo — do after EX-002/003 sign-off |
-| EX-007 | Create `company/org/` (departments, humans, routing, SLAs — Saran in all seats) | hr + tech-writer | Saran approves | todo |
-| EX-008 | Dry-run on paper: fire one sample gate, verify routing resolves correct department/approver | tester | — | todo (needs EX-007) |
+| EX-006 | Update `CLAUDE.md` §0/§5 to distributed-approver model | tech-writer | Saran approves | in-review (#7) |
+| EX-007 | Create `company/org/` (departments, humans, routing, SLAs — Saran in all seats) | hr + tech-writer | Saran approves | in-review (#8) |
+| EX-008 | Dry-run on paper: fire one sample gate, verify routing resolves correct department/approver | tester | — | done — 9/9 pass (#9) |
 
 **Phase 0 definition of done:** specs + ADRs approved; `company/org/` exists; a sample gate routes correctly on paper.
 
