@@ -6,3 +6,4 @@ Conventions: `prd-NNN-<title>.md` for product requirements, `tech-spec-NNN-<titl
 |---|---|---|
 | [prd-001-control-panel.md](prd-001-control-panel.md) | Control Panel product requirements | Draft — awaiting Saran (EX-002) |
 | [tech-spec-001-approval-loop-and-panel.md](tech-spec-001-approval-loop-and-panel.md) | Approval loop + panel technical design | Draft — awaiting Saran (EX-003) |
+| [evalyn-operating-handbook.pdf](evalyn-operating-handbook.pdf) | Visual operating handbook (40 pp): org, value chain, approval loop, architectures, 7 workflows, 23 employee dossiers | Presentation companion to the specs — regenerate from [evalyn-operating-handbook-source.html](evalyn-operating-handbook-source.html) via headless Chromium `--print-to-pdf` |
