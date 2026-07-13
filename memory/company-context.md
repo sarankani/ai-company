@@ -4,8 +4,9 @@
 
 ## Who
 
-- **Saran** (saranpkani@gmail.com) — Founder / Human Operator. Currently holds **every approval seat** in every department (the n=1 case of the distributed model). All gates route to him until seats are staffed.
-- 23 AI employees per `CLAUDE.md` §2; no other humans yet.
+- **Saravanan Pitchaikani** (saranpkani@gmail.com) — Founder / CEO / Human Operator. Holds all seats except three handed-over Approver seats; CEO terminal backstop.
+- **Saravanan P** (saravanan@vitetech.in) — Approver: Engineering, Product & Design, Operations (first non-founder seat-holder, 2026-07-13).
+- 23 AI employees per `CLAUDE.md` §2.
 
 ## Direction (what changed recently)
 

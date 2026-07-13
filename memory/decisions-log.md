@@ -2,6 +2,10 @@
 
 Append-only, newest first. Format: `## YYYY-MM-DD — decision` + who + why in 1–3 lines. Architectural decisions go to `docs/adrs/` instead.
 
+## 2026-07-13 — First seat handover: Saravanan P becomes Approver for 3 departments
+
+**Who:** Founder (directed = people-gate approval). New human `saravanan-p` (Saravanan P — saravanan@vitetech.in) holds the **Approver** seat for `engineering`, `product-design`, `operations`. Founder record renamed to full name (Saravanan Pitchaikani), remains Deputy + Head in those departments, all other seats, and CEO backstop. Note: saranpkani@gmail.com was given as "saravanan Pitchaikani" — same email as the founder record, so treated as the founder's full name, not a new human (1:1 email↔human required by panel auth).
+
 ## 2026-07-13 — EX-008 paper dry-run PASSED (9/9) — Phase 0 exit criteria met pending Founder sign-off
 
 **Who:** tester (executed) / Founder (directed via issue #2). Every case resolved using only `company/org/` files (departments.md + humans/saran.md + routing.md):

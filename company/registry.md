@@ -7,7 +7,8 @@ Index of all records in `company/`. Every employee updates this file when creati
 | Record | What | Status |
 |---|---|---|
 | [org/departments.md](org/departments.md) | 7 departments, employees, gates owned | active |
-| [org/humans/saran.md](org/humans/saran.md) | Founder-Operator — holds all seats (n=1) | active |
+| [org/humans/saran.md](org/humans/saran.md) | Saravanan Pitchaikani — Founder/CEO; all seats except 3 handed-over Approver seats | active |
+| [org/humans/saravanan-p.md](org/humans/saravanan-p.md) | Saravanan P — Approver: engineering, product-design, operations | active |
 | [org/routing.md](org/routing.md) | Gate→department map · SLAs · escalation chain · authorization | active |
 
 ## Approvals & questions (open items)
