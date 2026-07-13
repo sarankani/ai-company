@@ -150,6 +150,21 @@ def dump_val(v):
     return s
 
 
+def strip_comment(v):
+    """Drop a trailing ' # comment' only when outside quotes and braces."""
+    depth, quoted = 0, False
+    for i, ch in enumerate(v):
+        if ch == '"':
+            quoted = not quoted
+        elif ch == "{" and not quoted:
+            depth += 1
+        elif ch == "}" and not quoted:
+            depth -= 1
+        elif ch == "#" and not quoted and depth == 0 and i > 0 and v[i - 1] == " ":
+            return v[:i]
+    return v
+
+
 def parse_record(text):
     m = re.match(r"^---\n(.*?)\n---\n?(.*)$", text, re.S)
     if not m:
@@ -165,7 +180,7 @@ def parse_record(text):
             data[cur_list].append(parse_inline_dict(line[4:]))
         else:
             k, _, v = line.partition(":")
-            k, v = k.strip(), v.split(" #")[0].strip()
+            k, v = k.strip(), strip_comment(v).strip()
             if v == "":
                 data[k] = []
                 cur_list = k

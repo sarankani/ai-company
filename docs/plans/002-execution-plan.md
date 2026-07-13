@@ -32,15 +32,15 @@ States: `todo` · `in-progress` · `blocked` · `in-review` · `done`. IDs are s
 
 | ID | Task | Owner (AI) | Gate / approver | State |
 |---|---|---|---|---|
-| EX-101 | Implement approval/question record templates + `registry.md` indexing | developer | code-reviewer → Saran merge | in-review (#10) |
-| EX-102 | Gate-integration pass: update gate-hitting agents/skills to write approval records and stop | developer + tech-writer | code-reviewer → Saran merge | in-review (#11) |
-| EX-103 | SLA/escalation job (scheduled): scan pending records, reassign per chain, append hops | developer | code-reviewer → Saran merge | in-review (#12) |
-| EX-104 | Email notifications on assign / SLA-50 % / escalation | developer + devops | Saran merge | in-review (#13 — needs SMTP secrets to go live) |
-| EX-105 | `/approve` helper skill (decide + stamp a record from CLI in one step) | developer | Saran merge | in-review (#14) |
-| EX-106 | Execution/resume mechanism per tech spec §6 (approved → executed exactly once) | developer | code-reviewer + security → Saran merge | in-review (#15) |
-| EX-107 | **Live drill:** run one real deliverable end to end through the loop | delivery-manager | Saran approves the item | in-progress — drill record = the E1 PR merge itself (#16) |
-| EX-108 | **Escalation drill:** Saran deliberately ignores one request; verify hop chain + notifications fire | tester | — | todo |
-| EX-109 | Capture baseline metrics (time-to-decision, hops) in `memory/decisions-log.md` | data-analyst | — | todo |
+| EX-101 | Implement approval/question record templates + `registry.md` indexing | developer | code-reviewer → Saran merge | done (PR #34) |
+| EX-102 | Gate-integration pass: update gate-hitting agents/skills to write approval records and stop | developer + tech-writer | code-reviewer → Saran merge | done (PR #34) |
+| EX-103 | SLA/escalation job (scheduled): scan pending records, reassign per chain, append hops | developer | code-reviewer → Saran merge | done (PR #34) |
+| EX-104 | Email notifications on assign / SLA-50 % / escalation | developer + devops | Saran merge | done (PR #34 — SMTP secrets pending for real sends) |
+| EX-105 | `/approve` helper skill (decide + stamp a record from CLI in one step) | developer | Saran merge | done (PR #34) |
+| EX-106 | Execution/resume mechanism per tech spec §6 (approved → executed exactly once) | developer | code-reviewer + security → Saran merge | done (PR #34) |
+| EX-107 | **Live drill:** run one real deliverable end to end through the loop | delivery-manager | Saran approves the item | done — APR-20260713-001 executed exactly once; 2 bugs found+fixed (#16) |
+| EX-108 | **Escalation drill:** Saran deliberately ignores one request; verify hop chain + notifications fire | tester | — | in-progress — APR-20260713-002 armed, P0 breach 17:31Z (#17) |
+| EX-109 | Capture baseline metrics (time-to-decision, hops) in `memory/decisions-log.md` | data-analyst | — | in-progress — EX-107 baseline logged; final after EX-108 (#18) |
 
 **Phase 1 definition of done:** one real artifact went draft → approval record → human stamp → executed exactly once; one escalation exercised; metrics recorded.
 
