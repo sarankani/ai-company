@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Evalyn — Operating Handbook</title>
+<style>
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  :root {
+    --ink: #16211F; --muted: #5D6E6B; --faint: #8CA09C; --line: #D9E2DF;
+    --teal: #157A6E; --teal-soft: #E4F1EE; --teal-line: #B9DAD4;
+    --amber: #A26E12; --amber-ink: #8A5D0D; --amber-soft: #FBF1DA; --amber-line: #E4C98B;
+    --panel: #F5F8F7;
+    --display: "Avenir Next", Futura, "Century Gothic", "Segoe UI", system-ui, sans-serif;
+    --body: system-ui, "Segoe UI", Roboto, sans-serif;
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+  }
+  body { margin: 0; font-family: var(--body); color: var(--ink); font-size: 10.5pt; line-height: 1.5; background: #fff; }
+  .page {
+    width: 210mm; height: 296.5mm; padding: 14mm 14mm 12mm;
+    page-break-after: always; position: relative; overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+  .page:last-child { page-break-after: auto; }
+  .folio {
+    display: flex; justify-content: space-between; font-family: var(--mono);
+    font-size: 7.5pt; letter-spacing: .16em; text-transform: uppercase; color: var(--faint);
+    border-bottom: 1px solid var(--line); padding-bottom: 3mm; margin-bottom: 6mm;
+  }
+  .folio b { color: var(--teal); font-weight: 600; }
+  h2 { font-family: var(--display); font-weight: 700; font-size: 19pt; letter-spacing: -0.01em; margin: 0 0 2mm; }
+  h3.sub { font-family: var(--display); font-weight: 600; font-size: 12pt; margin: 6mm 0 2.5mm; }
+  .lede { color: var(--muted); font-size: 10pt; margin: 0 0 5mm; max-width: 165mm; }
+  .lede b { color: var(--ink); }
+  .mono { font-family: var(--mono); }
+
+  .chip {
+    display: inline-block; padding: .6mm 2.6mm; border-radius: 999px;
+    font-family: var(--mono); font-size: 8pt; background: var(--teal-soft);
+    color: var(--teal); border: .3mm solid var(--teal-line); margin: 0 1mm 1mm 0;
+  }
+  .gate-pill {
+    display: inline-flex; align-items: center; gap: 1.6mm; padding: 1.2mm 3mm; border-radius: 1.6mm;
+    background: var(--amber-soft); border: .35mm solid var(--amber-line); color: var(--amber-ink);
+    font-family: var(--mono); font-size: 7.5pt; letter-spacing: .08em; text-transform: uppercase; font-weight: 600;
+    white-space: nowrap;
+  }
+  .gate-pill::before { content: "◆"; font-size: 6.5pt; color: var(--amber); }
+  .record-box {
+    border: .35mm dashed var(--faint); border-radius: 1.6mm; padding: 1mm 2.6mm;
+    font-family: var(--mono); font-size: 8pt; background: var(--panel); white-space: nowrap;
+  }
+  .card { background: var(--panel); border: .3mm solid var(--line); border-radius: 2.2mm; }
+  .foot {
+    margin-top: auto; padding-top: 3mm; border-top: .3mm solid var(--line);
+    font-family: var(--mono); font-size: 7pt; color: var(--faint); letter-spacing: .06em;
+    display: flex; justify-content: space-between;
+  }
+
+  /* ============ cover ============ */
+  .cover { background: #0E1817; color: #E9F2EF; justify-content: center; }
+  .cover .wm { font-family: var(--display); font-weight: 700; letter-spacing: .34em; font-size: 13pt; color: #E9F2EF; margin-bottom: 26mm; }
+  .cover .wm i { font-style: normal; color: #45C7B8; }
+  .cover .eyebrow { font-family: var(--mono); font-size: 9pt; letter-spacing: .24em; text-transform: uppercase; color: #45C7B8; margin-bottom: 8mm; }
+  .cover h1 { font-family: var(--display); font-weight: 700; font-size: 37pt; line-height: 1.06; letter-spacing: -0.015em; margin: 0 0 8mm; max-width: 165mm; }
+  .cover h1 .t { color: #45C7B8; } .cover h1 .a { color: #E4AF56; }
+  .cover .sub { color: #8CA09C; font-size: 12pt; max-width: 150mm; margin-bottom: 16mm; }
+  .cover .stats { display: flex; gap: 0; border: .3mm solid #23413C; border-radius: 2.5mm; overflow: hidden; width: fit-content; }
+  .cover .stat { padding: 5mm 8mm; border-right: .3mm solid #23413C; background: #131F1E; }
+  .cover .stat:last-child { border-right: 0; }
+  .cover .stat .n { font-family: var(--display); font-weight: 700; font-size: 21pt; color: #45C7B8; }
+  .cover .stat .n.a { color: #E4AF56; }
+  .cover .stat .l { font-family: var(--mono); font-size: 6.5pt; letter-spacing: .14em; text-transform: uppercase; color: #8CA09C; margin-top: 1.5mm; }
+  .cover .meta { position: absolute; bottom: 16mm; left: 14mm; right: 14mm; display: flex; justify-content: space-between; font-family: var(--mono); font-size: 8pt; color: #5E756F; letter-spacing: .1em; }
+
+  /* ============ toc ============ */
+  .toc-list { list-style: none; margin: 4mm 0 0; padding: 0; column-count: 1; max-width: 120mm; }
+  .toc-list li { display: flex; align-items: baseline; gap: 3mm; padding: 1.6mm 0; border-bottom: .25mm dotted var(--line); font-size: 10.5pt; }
+  .toc-list .n { font-family: var(--mono); color: var(--teal); font-size: 8.5pt; width: 9mm; flex: none; }
+  .toc-list .sect { font-family: var(--display); font-weight: 600; }
+
+  /* ============ org ============ */
+  .ceo-band { padding: 4mm 5mm; margin-bottom: 4mm; border: .35mm solid var(--amber-line); background: var(--amber-soft); border-radius: 2.2mm; display: flex; align-items: center; gap: 5mm; flex-wrap: wrap; }
+  .ceo-band .who { font-family: var(--display); font-weight: 600; font-size: 12pt; }
+  .ceo-band .note { color: var(--muted); font-size: 9pt; flex-basis: 100%; }
+  .dept-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3.4mm; }
+  .dept { padding: 3.5mm 4mm; display: flex; flex-direction: column; gap: 2mm; }
+  .dept h4 { margin: 0; font-family: var(--display); font-size: 10pt; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; display: flex; align-items: center; gap: 2mm; }
+  .dept h4::before { content: ""; width: 2.4mm; height: 2.4mm; border-radius: .6mm; background: var(--teal); }
+  .dept .gates-line { font-family: var(--mono); font-size: 7.5pt; color: var(--amber-ink); }
+  .dept .seats-line { font-size: 8pt; color: var(--muted); border-top: .25mm dashed var(--line); padding-top: 1.6mm; margin-top: .6mm; }
+  .dept .seats-line b { color: var(--amber-ink); }
+
+  /* ============ value chain ============ */
+  .chain-row { display: flex; flex-wrap: wrap; align-items: stretch; gap: 2mm; }
+  .stage { background: #fff; border: .3mm solid var(--line); border-top: .8mm solid var(--teal); border-radius: 1.8mm; padding: 2.2mm 3mm; flex: 1 1 30mm; min-width: 27mm; }
+  .stage .s-name { font-family: var(--display); font-weight: 600; font-size: 9.5pt; }
+  .stage .s-own { font-family: var(--mono); font-size: 7.5pt; color: var(--teal); margin-top: .6mm; }
+  .arrow-sep { align-self: center; color: var(--faint); font-family: var(--mono); font-size: 10pt; flex: none; }
+  .row-link { color: var(--faint); font-family: var(--mono); font-size: 7.5pt; letter-spacing: .06em; padding: 2mm 1mm 3mm; }
+  .loopback { color: #2E7D46; }
+
+  /* fan-out */
+  .lead-card { padding: 3mm 4mm; border-left: 1mm solid var(--teal); flex: 1 1 80mm; }
+  .lead-card .l-tag { font-family: var(--mono); font-size: 6.5pt; letter-spacing: .14em; text-transform: uppercase; color: var(--teal); }
+  .lead-card .l-role { font-family: var(--display); font-weight: 600; font-size: 10.5pt; }
+  .lead-card .l-note { color: var(--muted); font-size: 8.5pt; }
+  .contrib-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.4mm; margin: 2.5mm 0; }
+  .contrib { padding: 2.2mm 3mm; border-top: .7mm solid var(--teal-line); }
+  .contrib .c-role { font-family: var(--mono); font-size: 8.5pt; color: var(--teal); font-weight: 600; }
+  .contrib .c-dept { font-size: 6.5pt; color: var(--faint); text-transform: uppercase; letter-spacing: .08em; margin-left: 1.6mm; }
+  .contrib .c-gives { font-size: 8.5pt; margin-top: .8mm; }
+  .fan-label { font-family: var(--mono); font-size: 7.5pt; color: var(--muted); letter-spacing: .1em; text-transform: uppercase; padding: 2mm 0; }
+  .rules { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2.4mm; margin-top: 3mm; }
+  .rule { padding: 2.6mm 3mm; border-top: .7mm solid var(--teal-line); }
+  .rule b { display: block; font-family: var(--display); font-size: 8.5pt; font-weight: 600; margin-bottom: .8mm; }
+  .rule span { font-size: 7.8pt; color: var(--muted); }
+
+  /* ============ approval loop ============ */
+  .loop-step { display: grid; grid-template-columns: 11mm 1fr; gap: 3.4mm; margin-bottom: 3.2mm; }
+  .loop-dot {
+    width: 10mm; height: 10mm; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-family: var(--display); font-weight: 700; font-size: 11pt; color: var(--teal);
+    border: .5mm solid var(--teal); margin-top: 1.5mm; background: #fff;
+  }
+  .loop-step.is-human .loop-dot { color: var(--amber-ink); border-color: var(--amber); }
+  .loop-body { padding: 3mm 4mm; }
+  .loop-body h4 { margin: 0 0 1mm; font-family: var(--display); font-size: 10.5pt; font-weight: 600; }
+  .loop-body p { margin: 0; color: var(--muted); font-size: 9pt; }
+  .loop-body p b { color: var(--ink); }
+  .bits { display: flex; flex-wrap: wrap; gap: 1.6mm; margin-top: 2mm; align-items: center; }
+  .esc-node { padding: 1.4mm 3.4mm; border-radius: 1.8mm; background: var(--amber-soft); border: .35mm solid var(--amber-line); color: var(--amber-ink); font-family: var(--display); font-weight: 600; font-size: 8.5pt; white-space: nowrap; }
+  .esc-node.terminal { border-width: .7mm; border-color: var(--amber); }
+  .esc-why { font-family: var(--mono); font-size: 6.5pt; color: var(--faint); text-align: center; line-height: 1.3; }
+  .sla { font-family: var(--mono); font-size: 7.5pt; border: .3mm solid var(--line); border-radius: 1.4mm; padding: 1mm 2.4mm; color: var(--muted); background: var(--panel); }
+  .sla b { color: var(--teal); }
+  .invariant {
+    margin-top: 3.5mm; padding: 3.4mm 4.5mm; border-radius: 2.2mm;
+    background: var(--amber-soft); border: .4mm solid var(--amber-line); color: var(--amber-ink);
+    font-family: var(--display); font-weight: 600; font-size: 10pt;
+  }
+
+  /* ============ architecture ============ */
+  .arch { display: grid; grid-template-columns: 1fr 1.15fr 1fr; gap: 3mm; align-items: stretch; }
+  .arch-col { display: flex; flex-direction: column; gap: 3mm; }
+  .arch-box { padding: 3mm 3.6mm; flex: 1; }
+  .arch-box h4 { margin: 0 0 1mm; font-family: var(--display); font-size: 9.5pt; font-weight: 600; }
+  .tag { font-family: var(--mono); font-size: 6.5pt; letter-spacing: .1em; text-transform: uppercase; color: var(--teal); border: .3mm solid var(--teal-line); background: var(--teal-soft); padding: .3mm 1.6mm; border-radius: 1mm; margin-left: 1.6mm; }
+  .tag.h { color: var(--amber-ink); border-color: var(--amber-line); background: var(--amber-soft); }
+  .arch-box p { margin: 0; font-size: 8.2pt; color: var(--muted); }
+  .arch-box .io { margin-top: 1.6mm; font-family: var(--mono); font-size: 7.5pt; color: var(--teal); }
+  .arch-box .io.h { color: var(--amber-ink); }
+  .repo { border: .5mm solid var(--teal); padding: 3.5mm 4mm; }
+  .repo h4 { margin: 0; font-family: var(--display); font-size: 11pt; font-weight: 600; }
+  .repo .sub { color: var(--teal); font-family: var(--mono); font-size: 7pt; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 1.6mm; }
+  .tree { font-family: var(--mono); font-size: 8pt; line-height: 1.8; }
+  .tree em { font-style: normal; color: var(--faint); }
+
+  /* ============ control panel architecture ============ */
+  .cp-row { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; }
+  .cp-row3 { display: grid; grid-template-columns: 1fr 1.25fr 1fr; gap: 3mm; align-items: stretch; }
+  .cp-link { display: flex; justify-content: center; gap: 18mm; padding: 1.6mm 0; font-family: var(--mono); font-size: 7pt; color: var(--faint); letter-spacing: .08em; }
+  .cp-box { padding: 3mm 3.6mm; }
+  .cp-box h4 { margin: 0 0 .8mm; font-family: var(--display); font-size: 9.5pt; font-weight: 600; }
+  .cp-box p { margin: 0; font-size: 8pt; color: var(--muted); }
+  .cp-box p b { color: var(--ink); }
+  .cp-box.hu { border: .4mm solid var(--amber-line); background: var(--amber-soft); }
+  .cp-box.hu h4 { color: var(--amber-ink); }
+  .cp-box.repo-hl { border: .5mm solid var(--teal); }
+  .cp-panel { border: .5mm solid var(--teal); border-radius: 3mm; background: var(--panel); padding: 3.5mm 4.5mm; }
+  .cp-panel > h4 { margin: 0; font-family: var(--display); font-size: 11.5pt; font-weight: 600; }
+  .cp-panel > .sub { font-family: var(--mono); font-size: 6.5pt; letter-spacing: .12em; text-transform: uppercase; color: var(--teal); margin-bottom: 2.6mm; }
+  .cp-strip { border: .3mm solid var(--line); border-radius: 1.8mm; background: #fff; padding: 2mm 3mm; font-size: 8pt; color: var(--muted); margin-bottom: 2mm; }
+  .cp-strip b { color: var(--ink); }
+  .cp-strip .lbl { font-family: var(--mono); font-size: 6pt; letter-spacing: .14em; text-transform: uppercase; color: var(--teal); display: block; margin-bottom: .6mm; font-weight: 600; }
+  .cp-screens { display: flex; flex-wrap: wrap; gap: 1.4mm; margin-bottom: 2mm; }
+  .cp-screen { padding: 1mm 2.8mm; border-radius: 1.6mm; border: .3mm solid var(--line); font-family: var(--display); font-weight: 600; font-size: 8pt; background: #fff; }
+  .cp-screen.star { border-color: var(--teal-line); color: var(--teal); background: var(--teal-soft); }
+  .cp-io { display: grid; grid-template-columns: 1fr 1fr; gap: 2mm; }
+  .cp-steps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2.2mm; margin-top: 3.5mm; }
+  .cp-step { padding: 2.4mm 2.8mm; border-top: .7mm solid var(--teal-line); }
+  .cp-step.h { border-top-color: var(--amber); }
+  .cp-step .n { font-family: var(--display); font-weight: 700; font-size: 11pt; color: var(--teal); display: block; margin-bottom: .6mm; }
+  .cp-step.h .n { color: var(--amber-ink); }
+  .cp-step p { margin: 0; font-size: 7.6pt; color: var(--muted); }
+  .cp-step p b { color: var(--ink); }
+
+  /* ============ roadmap ============ */
+  .phase { display: grid; grid-template-columns: 26mm 1fr; gap: 4mm; padding: 3.2mm 4mm; margin-bottom: 2.6mm; align-items: baseline; }
+  .phase .p-when { font-family: var(--mono); font-size: 7.5pt; color: var(--faint); }
+  .phase h4 { margin: 0 0 .8mm; font-family: var(--display); font-size: 10.5pt; font-weight: 600; }
+  .phase p { margin: 0; font-size: 8.8pt; color: var(--muted); }
+  .status { font-family: var(--mono); font-size: 6.5pt; letter-spacing: .12em; text-transform: uppercase; padding: .6mm 2mm; border-radius: 1mm; font-weight: 600; margin-left: 2mm; }
+  .status.now { background: var(--teal-soft); color: var(--teal); border: .3mm solid var(--teal-line); }
+  .status.next { border: .3mm solid var(--line); color: var(--faint); }
+  .phase.active { border-left: 1mm solid var(--teal); }
+
+  /* ============ workflows ============ */
+  .wf-flow { display: flex; flex-wrap: wrap; align-items: stretch; gap: 2.4mm; margin: 4mm 0; }
+  .wf-phase { background: #fff; border: .35mm solid var(--line); border-top: 1mm solid var(--teal); border-radius: 2mm; padding: 3mm 3.6mm; flex: 1 1 34mm; min-width: 32mm; }
+  .wf-phase .w-t { font-family: var(--display); font-weight: 600; font-size: 10pt; }
+  .wf-phase .w-d { font-size: 8.2pt; color: var(--muted); margin-top: .8mm; }
+  .wf-phase .w-par { font-family: var(--mono); font-size: 6.5pt; color: var(--teal); letter-spacing: .1em; text-transform: uppercase; margin-top: 1.4mm; }
+  .wf-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; margin-top: 2mm; }
+  .wf-box { padding: 3mm 3.6mm; }
+  .wf-box h4 { margin: 0 0 1.4mm; font-family: var(--mono); font-size: 7pt; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  .wf-box.gates-box { border-left: 1mm solid var(--amber); background: var(--amber-soft); border-color: var(--amber-line); }
+  .wf-box.gates-box p { color: var(--amber-ink); font-weight: 600; font-size: 9pt; margin: 0; font-family: var(--display); }
+  .wf-box p { margin: 0; font-size: 8.8pt; color: var(--ink); }
+  .use-when { font-size: 9pt; color: var(--muted); background: var(--panel); border: .3mm solid var(--line); border-radius: 2mm; padding: 2.6mm 3.6mm; }
+  .use-when b { color: var(--ink); }
+
+  /* ============ employee pages ============ */
+  .e-head { display: flex; align-items: baseline; gap: 4mm; flex-wrap: wrap; }
+  .e-head h2 { font-family: var(--mono); font-size: 20pt; font-weight: 700; color: var(--teal); letter-spacing: -0.01em; }
+  .e-title { font-family: var(--display); font-size: 12pt; font-weight: 600; }
+  .e-desc { color: var(--muted); font-size: 9.5pt; margin: 1.5mm 0 5mm; max-width: 170mm; }
+  .e-flow { display: grid; grid-template-columns: 1fr 7mm 1.25fr 7mm 1fr; gap: 0; align-items: stretch; margin-bottom: 4mm; }
+  .e-col { padding: 3.4mm 4mm; }
+  .e-col h4 { margin: 0 0 1.6mm; font-family: var(--mono); font-size: 7pt; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  .e-col.do { border-top: 1mm solid var(--teal); }
+  .e-col.do h4 { color: var(--teal); }
+  .e-col ul { margin: 0; padding-left: 4mm; font-size: 8.8pt; }
+  .e-col li { margin-bottom: 1.2mm; }
+  .e-col li b { font-family: var(--mono); font-weight: 600; color: var(--teal); font-size: 8.2pt; }
+  .e-arrow { display: flex; align-items: center; justify-content: center; color: var(--faint); font-family: var(--mono); font-size: 11pt; }
+  .e-skills { margin-bottom: 4mm; }
+  .e-skills h4, .e-band h4 { margin: 0 0 1.4mm; font-family: var(--mono); font-size: 7pt; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  .e-band { padding: 3mm 4mm; border-radius: 2.2mm; margin-bottom: 3mm; }
+  .e-band p { margin: 0; font-size: 9pt; }
+  .e-band.gate { background: var(--amber-soft); border: .4mm solid var(--amber-line); }
+  .e-band.gate h4 { color: var(--amber-ink); }
+  .e-band.gate p { color: var(--amber-ink); font-family: var(--display); font-weight: 600; }
+  .e-band.esc { background: var(--panel); border: .3mm solid var(--line); }
+  .e-band.esc p { color: var(--muted); }
+  .roster-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.6mm; margin-top: 4mm; }
+  .roster-cell { padding: 2.8mm 3.4mm; }
+  .roster-cell .r-n { font-family: var(--mono); font-size: 9.5pt; color: var(--teal); font-weight: 600; }
+  .roster-cell .r-t { font-size: 8pt; color: var(--muted); }
+  .roster-cell .r-p { font-family: var(--mono); font-size: 6.5pt; color: var(--faint); float: right; }
+</style>
+</head>
+<body>
+
+<!-- ================= COVER ================= -->
+<div class="page cover">
+  <div class="wm">EVALYN<i>·</i>OS</div>
+  <div class="eyebrow">Operating Handbook · 2026-07-12</div>
+  <h1><span class="t">AI runs the work.</span><br>A <span class="a">human</span> holds every gate.</h1>
+  <p class="sub">How Evalyn — an AI-operated IT services company — works: the organization, the value chain, the approval loop, the architecture, the 7 lifecycle workflows, and a one-page dossier for each of the 23 AI employees.</p>
+  <div class="stats">
+    <div class="stat"><div class="n">23</div><div class="l">AI employees</div></div>
+    <div class="stat"><div class="n">7</div><div class="l">Departments</div></div>
+    <div class="stat"><div class="n">26</div><div class="l">Role skills</div></div>
+    <div class="stat"><div class="n">7</div><div class="l">Workflows</div></div>
+    <div class="stat"><div class="n a">100%</div><div class="l">Gates human-held</div></div>
+  </div>
+  <div class="meta"><span>sources: docs/plans · docs/specs · docs/adrs · .claude/</span><span>confidential — internal</span></div>
+</div>
+
+<!-- ================= TOC ================= -->
+<div class="page">
+  <div class="folio"><span><b>EVALYN·OS</b> · handbook</span><span>contents</span></div>
+  <h2>Contents</h2>
+  <ul class="toc-list">
+    <li><span class="n">01</span><span class="sect">The organization</span></li>
+    <li><span class="n">02</span><span class="sect">The value chain — lead to cash to renewal</span></li>
+    <li><span class="n">03</span><span class="sect">Cross-team work — inside one stage</span></li>
+    <li><span class="n">04</span><span class="sect">The approval loop</span></li>
+    <li><span class="n">05</span><span class="sect">The architecture</span></li>
+    <li><span class="n">06</span><span class="sect">The roadmap</span></li>
+    <li><span class="n">07</span><span class="sect">The 7 lifecycle workflows</span> <span style="color:var(--faint);font-size:8.5pt">— one page each</span></li>
+    <li><span class="n">08</span><span class="sect">The 23 AI employees</span> <span style="color:var(--faint);font-size:8.5pt">— one dossier page each</span></li>
+  </ul>
+  <p class="lede" style="margin-top:8mm">How to read this document: <b>teal</b> marks AI doing work; <b>amber</b> marks a point where a named human decides; <span class="record-box" style="font-size:8pt">dashed boxes</span> are records in the Company OS — the shared system of record every employee reads before acting and writes after.</p>
+  <div class="foot"><span>EVALYN·OS</span><span>02</span></div>
+</div>
+
+<!-- ================= 01 ORG ================= -->
+<div class="page">
+  <div class="folio"><span><b>01</b> · the organization</span><span>7 departments · 23 AI employees</span></div>
+  <h2>The organization</h2>
+  <p class="lede">Every department has three human seats — <b>Approver, Deputy, Head</b> — that AI work escalates to. Today the founder-operator holds every seat (the model works at n=1); hiring hands seats over one department at a time.</p>
+  <div class="ceo-band">
+    <span class="who">Founder / CEO / Human Operator</span>
+    <span class="gate-pill">terminal backstop</span>
+    <span class="note">End of every escalation chain. No approval or question can ever dead-end.</span>
+  </div>
+  <div class="dept-grid">
+    <div class="card dept"><h4>Leadership</h4><div><span class="chip">ceo</span><span class="chip">eng-manager</span></div><div class="gates-line">gates: strategy · escalations</div><div class="seats-line">Seats: <b>Approver · Deputy · Head — Founder-Operator</b></div></div>
+    <div class="card dept"><h4>People &amp; Finance</h4><div><span class="chip">hr</span><span class="chip">finance</span></div><div class="gates-line">gates: money · people (dual) · revenue booking</div><div class="seats-line">Seats: <b>Approver · Deputy · Head — Founder-Operator</b></div></div>
+    <div class="card dept"><h4>Product &amp; Design</h4><div><span class="chip">product-manager</span><span class="chip">project-manager</span><span class="chip">designer</span><span class="chip">tech-writer</span></div><div class="gates-line">gates: roadmap commitments</div><div class="seats-line">Seats: <b>Approver · Deputy · Head — Founder-Operator</b></div></div>
+    <div class="card dept"><h4>Engineering</h4><div><span class="chip">developer</span><span class="chip">code-reviewer</span><span class="chip">tester</span><span class="chip">devops</span><span class="chip">security</span></div><div class="gates-line">gates: merge · deploy · migrations</div><div class="seats-line">Seats: <b>Approver · Deputy · Head — Founder-Operator</b></div></div>
+    <div class="card dept"><h4>Sales &amp; Delivery</h4><div><span class="chip">sdr</span><span class="chip">sales</span><span class="chip">solutions-architect</span><span class="chip">delivery-manager</span><span class="chip">account-manager</span></div><div class="gates-line">gates: price · date · SLA commitments</div><div class="seats-line">Seats: <b>Approver · Deputy · Head — Founder-Operator</b></div></div>
+    <div class="card dept"><h4>Marketing &amp; Support</h4><div><span class="chip">marketing</span><span class="chip">social-media</span><span class="chip">support</span></div><div class="gates-line">gates: external comms · publish</div><div class="seats-line">Seats: <b>Approver · Deputy · Head — Founder-Operator</b></div></div>
+    <div class="card dept"><h4>Operations</h4><div><span class="chip">procurement</span><span class="chip">data-analyst</span></div><div class="gates-line">gates: orders · vendor signing</div><div class="seats-line">Seats: <b>Approver · Deputy · Head — Founder-Operator</b></div></div>
+  </div>
+  <div class="foot"><span>EVALYN·OS · 01 the organization</span><span>03</span></div>
+</div>
+
+<!-- ================= 02 VALUE CHAIN ================= -->
+<div class="page">
+  <div class="folio"><span><b>02</b> · the value chain</span><span>lead → cash → renewal</span></div>
+  <h2>The value chain</h2>
+  <p class="lede">AI employees hand finished artifacts down the chain; every amber pill is a point where the flow <b>stops until a human approves</b>. Reading connected systems is free — anything sent outside the company is gated.</p>
+
+  <div class="chain-row">
+    <div class="stage"><div class="s-name">Lead generation</div><div class="s-own">sdr · /lead-gen</div></div><span class="arrow-sep">→</span>
+    <div class="stage"><div class="s-name">Qualify</div><div class="s-own">sdr · /qualify-lead</div></div><span class="arrow-sep">→</span>
+    <div class="stage"><div class="s-name">Scope &amp; estimate</div><div class="s-own">solutions-architect</div></div><span class="arrow-sep">→</span>
+    <div class="stage"><div class="s-name">Price &amp; proposal</div><div class="s-own">finance · sales</div></div><span class="arrow-sep">→</span>
+    <span class="gate-pill" style="align-self:center">gate · price + send</span>
+  </div>
+  <div class="row-link">↓ customer says yes</div>
+  <div class="chain-row">
+    <div class="stage"><div class="s-name">Purchase order</div><div class="s-own">sales · /purchase-order</div></div><span class="arrow-sep">→</span>
+    <span class="gate-pill" style="align-self:center">gate · book revenue</span><span class="arrow-sep">→</span>
+    <div class="stage"><div class="s-name">Project kickoff</div><div class="s-own">delivery-manager</div></div><span class="arrow-sep">→</span>
+    <span class="gate-pill" style="align-self:center">gate · commit dates</span>
+  </div>
+  <div class="row-link">↓ project starts</div>
+  <div class="chain-row">
+    <div class="stage"><div class="s-name">Build &amp; deliver</div><div class="s-own">eng pod</div></div><span class="arrow-sep">→</span>
+    <span class="gate-pill" style="align-self:center">gate · merge / deploy</span><span class="arrow-sep">→</span>
+    <div class="stage"><div class="s-name">Acceptance &amp; invoice</div><div class="s-own">delivery-manager · finance</div></div><span class="arrow-sep">→</span>
+    <span class="gate-pill" style="align-self:center">gate · accept + invoice</span><span class="arrow-sep">→</span>
+    <div class="stage"><div class="s-name">Collect</div><div class="s-own">finance</div></div>
+  </div>
+  <div class="row-link">↓ customer live</div>
+  <div class="chain-row">
+    <div class="stage"><div class="s-name">Support</div><div class="s-own">support · /ticket-triage</div></div><span class="arrow-sep">→</span>
+    <div class="stage"><div class="s-name">Account health &amp; QBR</div><div class="s-own">account-manager · /qbr</div></div><span class="arrow-sep">→</span>
+    <div class="stage"><div class="s-name">Renewal / upsell</div><div class="s-own">sales</div></div>
+    <span class="arrow-sep loopback">↺ back to pipeline</span>
+  </div>
+  <div class="row-link">procurement-cycle + /asset-register supply and track resources under the whole chain</div>
+
+  <h3 class="sub">The seven human gates (CLAUDE.md §5 — absolute)</h3>
+  <div class="bits">
+    <span class="gate-pill">merge / deploy / migrations</span>
+    <span class="gate-pill">external comms</span>
+    <span class="gate-pill">money</span>
+    <span class="gate-pill">price / date / SLA commitments</span>
+    <span class="gate-pill">people decisions</span>
+    <span class="gate-pill">procurement orders</span>
+    <span class="gate-pill">revenue booking</span>
+  </div>
+  <div class="foot"><span>EVALYN·OS · 02 the value chain</span><span>04</span></div>
+</div>
+
+<!-- ================= 03 CROSS-TEAM ================= -->
+<div class="page">
+  <div class="folio"><span><b>03</b> · cross-team work</span><span>example: project estimation</span></div>
+  <h2>Inside one stage: cross-team work</h2>
+  <p class="lede">A stage is rarely one employee. Each stage has <b>one accountable lead</b> who fans the work out to specialists across departments — in parallel — then reconciles their inputs into the stage's record. The lifecycle workflows are exactly this orchestration, scripted so it runs the same way every time.</p>
+
+  <div class="chain-row" style="align-items:center">
+    <span class="record-box">company/opportunities/opp-0042.md</span><span class="arrow-sep">→</span>
+    <div class="card lead-card"><div class="l-tag">stage lead · single owner</div><div class="l-role">solutions-architect — owns the estimate</div><div class="l-note">Decomposes into work packages, decides who to consult, accountable for the final number.</div></div>
+  </div>
+  <div class="fan-label">↓ fans out in parallel — each contributor answers in their own lane, with a definition of done</div>
+  <div class="contrib-grid">
+    <div class="card contrib"><span class="c-role">developer</span><span class="c-dept">Engineering</span><div class="c-gives">Build effort per work package, technical risks</div></div>
+    <div class="card contrib"><span class="c-role">devops</span><span class="c-dept">Engineering</span><div class="c-gives">Infra, environments, CI/CD, release effort</div></div>
+    <div class="card contrib"><span class="c-role">designer</span><span class="c-dept">Product &amp; Design</span><div class="c-gives">UX scope: flows, states, design effort</div></div>
+    <div class="card contrib"><span class="c-role">tester</span><span class="c-dept">Engineering</span><div class="c-gives">QA strategy, test effort, quality risks</div></div>
+    <div class="card contrib"><span class="c-role">security</span><span class="c-dept">Engineering</span><div class="c-gives">Compliance &amp; security requirements, review effort</div></div>
+    <div class="card contrib"><span class="c-role">delivery-manager</span><span class="c-dept">Sales &amp; Delivery</span><div class="c-gives">Schedule reality-check, resourcing, dependencies</div></div>
+    <div class="card contrib"><span class="c-role">finance</span><span class="c-dept">People &amp; Finance</span><div class="c-gives">Loaded cost, margin floor the price must clear</div></div>
+  </div>
+  <div class="chain-row" style="align-items:center">
+    <div class="card lead-card"><div class="l-tag">synthesis · back to the lead</div><div class="l-role">solutions-architect reconciles</div><div class="l-note">Challenges outliers, resolves overlaps, adds risk buffer — writes the one record the next stage reads.</div></div>
+    <span class="arrow-sep">→</span><span class="record-box">company/estimates/opp-0042.md</span><span class="arrow-sep">→</span>
+    <div class="stage" style="flex:0 1 34mm"><div class="s-name">/valuation</div><div class="s-own">finance · sales</div></div>
+    <span class="arrow-sep">→</span><span class="gate-pill" style="align-self:center">gate · price + send</span>
+  </div>
+  <div class="rules">
+    <div class="card rule"><b>One owner per artifact</b><span>Contributors advise; the lead is accountable. Nothing is co-owned into ambiguity.</span></div>
+    <div class="card rule"><b>Stay in your lane, answer done</b><span>Each contributor returns a finished input in their specialty — not opinions about the whole.</span></div>
+    <div class="card rule"><b>Everything lands in the record</b><span>Inputs go to the shared record, so the next stage never re-asks or re-derives.</span></div>
+    <div class="card rule"><b>Disagreement escalates</b><span>Lead–contributor conflict goes up: eng-manager → ceo → a human. Never silently overridden.</span></div>
+  </div>
+  <div class="foot"><span>EVALYN·OS · 03 cross-team work</span><span>05</span></div>
+</div>
+
+<!-- ================= 04 APPROVAL LOOP ================= -->
+<div class="page">
+  <div class="folio"><span><b>04</b> · the approval loop</span><span>how a gate actually works</span></div>
+  <h2>The approval loop</h2>
+  <p class="lede">The heart of the minimum-human design. An AI employee never waits in a chat for an answer — it <b>writes a record and stops</b>; routing guarantees the record reaches a human who can decide.</p>
+
+  <div class="loop-step">
+    <div class="loop-dot">1</div>
+    <div class="card loop-body">
+      <h4>AI employee hits a gate — writes a record and stops</h4>
+      <p>The artifact is finished. The employee writes an approval request with the <b>exact action</b> — "send proposal v3 to jane@acme.com" — never a vague ask. Questions to humans travel the same way.</p>
+      <div class="bits"><span class="record-box">company/approvals/APR-20260712-001.md</span><span class="record-box">company/questions/QST-….md</span></div>
+    </div>
+  </div>
+  <div class="loop-step is-human">
+    <div class="loop-dot">2</div>
+    <div class="card loop-body">
+      <h4>Routing finds an available human — and escalates if none responds</h4>
+      <p>The gate type maps to a department; the record is assigned to its Approver. Unavailable humans are skipped instantly; an expired SLA escalates one hop. Every hop is logged.</p>
+      <div class="bits">
+        <span class="esc-node">Dept Approver</span><span class="esc-why">unavailable /<br>SLA breach →</span>
+        <span class="esc-node">Deputy</span><span class="esc-why">→</span>
+        <span class="esc-node">Dept Head</span><span class="esc-why">→</span>
+        <span class="esc-node terminal">CEO — always staffed</span>
+      </div>
+      <div class="bits"><span class="sla"><b>P0</b> urgent — 2 h, escalate hourly</span><span class="sla"><b>P1</b> normal — 1 business day</span><span class="sla"><b>P2</b> low — 3 business days</span></div>
+    </div>
+  </div>
+  <div class="loop-step is-human">
+    <div class="loop-dot">3</div>
+    <div class="card loop-body">
+      <h4>A human decides — in the Control Panel inbox</h4>
+      <p>The inbox shows the artifact, the AI's summary and recommendation, and the exact action. Four moves, every one stamped with who / when / why: <b>Approve</b> (optional conditions) · <b>Reject</b> (reason required, feeds rework) · <b>Answer</b> (for questions) · <b>Delegate</b> (to another authorized human).</p>
+    </div>
+  </div>
+  <div class="loop-step">
+    <div class="loop-dot">4</div>
+    <div class="card loop-body">
+      <h4>Approved action executes — exactly once, verbatim</h4>
+      <p>The executor claims the record, performs the action exactly as approved (artifact hash checked — anything changed since approval goes back for re-approval), then stamps it executed. A claim that never completes goes to a human — never a silent retry.</p>
+      <div class="bits"><span class="record-box">execution: {claimed_at → executed_at}</span></div>
+    </div>
+  </div>
+  <div class="invariant">◆ Silence never equals consent. An expired SLA escalates to the next human — nothing is ever auto-approved, auto-rejected, or auto-sent. (ADR-0004)</div>
+  <div class="foot"><span>EVALYN·OS · 04 the approval loop</span><span>06</span></div>
+</div>
+
+<!-- ================= 05 ARCHITECTURE ================= -->
+<div class="page">
+  <div class="folio"><span><b>05</b> · the architecture</span><span>git-native by decision (ADR-0002)</span></div>
+  <h2>The architecture — one git repository is the whole company</h2>
+  <p class="lede">The repo is the <b>single source of truth and the audit log</b>. Everything else — AI sessions, the SLA job, the Control Panel — is a stateless client reading it and writing commits. If the panel is down, the file-based loop still works.</p>
+  <div class="arch">
+    <div class="arch-col">
+      <div class="card arch-box"><h4>AI employees<span class="tag">Claude Code</span></h4><p>23 personas run as agent sessions. They do the work, write Company OS records, and stop at gates.</p><div class="io">writes → records + approval requests</div></div>
+      <div class="card arch-box"><h4>SLA / escalation job<span class="tag">cron</span></h4><p>Every ~15 min: scan pending items, apply routing, escalate breaches, send email notifications. Idempotent — a missed run catches up.</p><div class="io">writes → hops + notifications</div></div>
+    </div>
+    <div class="card repo">
+      <h4>The git repository</h4>
+      <div class="sub">source of truth · audit log · memory</div>
+      <div class="tree">CLAUDE.md <em>— the operating brain</em><br>.claude/ <em>— agents · skills · workflows</em><br>company/ <em>— the business records</em><br>&nbsp;&nbsp;org/ <em>— humans · seats · routing · SLAs</em><br>&nbsp;&nbsp;approvals/ · questions/<br>&nbsp;&nbsp;leads/ … invoices/ … assets/<br>docs/ <em>— plans · specs · ADRs</em><br>memory/ <em>— cross-session memory</em></div>
+    </div>
+    <div class="arch-col">
+      <div class="card arch-box"><h4>Control Panel<span class="tag h">web · humans</span></h4><p>Company dashboard, department boards, and the approval inbox. Decisions become commits with the human's identity stamped.</p><div class="io h">reads state → writes decisions</div></div>
+      <div class="card arch-box"><h4>Humans<span class="tag h">approvers</span></h4><p>Notified by email (Slack later) with deep links. The panel is a window, never the only path.</p><div class="io h">approve · reject · answer · delegate</div></div>
+    </div>
+  </div>
+  <h3 class="sub">Why git-native</h3>
+  <p class="lede" style="font-size:9pt">Git history <b>is</b> the audit trail — attribution, immutability, and diffs for free. Near-zero new infrastructure for the first phases. A dedicated backend comes only when latency measurably hurts (Phase 4), and the repo stays authoritative even then.</p>
+  <div class="foot"><span>EVALYN·OS · 05 the architecture</span><span>07</span></div>
+</div>
+
+<!-- ================= 05b CONTROL PANEL ARCHITECTURE ================= -->
+<div class="page">
+  <div class="folio"><span><b>05</b> · the architecture</span><span>inside the control panel</span></div>
+  <h2>Inside the Control Panel — how one decision physically happens</h2>
+  <p class="lede">The panel is a <b>stateless web app over the repo</b> (Tech Spec 001): it reads records through a short-lived cache and writes every decision back as a commit stamped with the human's identity. No database — git history is the audit log.</p>
+
+  <div class="cp-row">
+    <div class="card cp-box hu"><h4>Humans — Approver · Deputy · Head · CEO</h4><p>Phone or desktop. Identity maps 1:1 to <span class="mono">company/org/humans/</span> — no shared logins; only authorized seats can decide an item.</p></div>
+    <div class="card cp-box"><h4>Email notifications</h4><p>Sent on <b>assigned</b> · <b>50% SLA elapsed</b> · <b>escalated</b> — each with a deep link straight to the item. Slack arrives in Phase 3.</p></div>
+  </div>
+  <div class="cp-link"><span>↑ notifies with deep link</span><span>↓ signs in · decides</span></div>
+
+  <div class="cp-panel">
+    <h4>Control Panel</h4>
+    <div class="sub">stateless web app · server-rendered · no database</div>
+    <div class="cp-strip"><span class="lbl">Auth &amp; authorization</span>Email magic-link → session must match a record in <b>company/org/humans/</b> → every decision write is authorized server-side against <b>routing.md</b> (the right seat, the right department, dual-approval where required).</div>
+    <div class="cp-screens">
+      <span class="cp-screen star">Approval Inbox</span><span class="cp-screen">Item Detail</span><span class="cp-screen">Company Dashboard</span><span class="cp-screen">Department Board</span><span class="cp-screen">People &amp; Routing Admin</span><span class="cp-screen">Availability Toggle</span>
+    </div>
+    <div class="cp-io">
+      <div class="cp-strip"><span class="lbl">Read path</span>GitHub API → server-side cache, TTL ≤ 5 min, revalidated after the panel's own writes. Inbox sorted by SLA urgency, worst first.</div>
+      <div class="cp-strip"><span class="lbl">Write path</span>One decision = <b>one commit</b> on the record: stamp {who · when · outcome · why} + <span class="mono">Decided-by</span> trailer. Optimistic concurrency — a record changed since read reloads instead of clobbering.</div>
+    </div>
+  </div>
+  <div class="cp-link"><span>↓ reads state</span><span>↓ writes decision commits</span></div>
+
+  <div class="cp-row3">
+    <div class="card cp-box"><h4>SLA / escalation job <span class="chip" style="font-size:6.5pt">cron ~15 min</span></h4><p>Scans <span class="mono">state: pending</span> → skips unavailable humans, escalates SLA breaches one hop, appends to the record, sends the emails. Idempotent — a missed run catches up.</p></div>
+    <div class="card cp-box repo-hl"><h4>The git repository</h4><p><span class="mono">company/approvals/ · questions/ · org/</span> — every record carries its state, assignee, hop history, decision stamp, and execution stamp. Git history <b>is</b> the audit trail.</p></div>
+    <div class="card cp-box"><h4>Executor <span class="chip" style="font-size:6.5pt">on approval</span></h4><p>Picks up <span class="mono">approved + unexecuted</span> → <b>claims</b> the record → verifies the artifact hash matches approval time → performs the exact action once → stamps <span class="mono">executed_at</span>.</p></div>
+  </div>
+
+  <div class="cp-steps">
+    <div class="card cp-step"><span class="n">1</span><p><b>AI hits a gate</b> — writes the approval record with the exact action, and stops.</p></div>
+    <div class="card cp-step"><span class="n">2</span><p><b>SLA job routes it</b> — assigns the available approver, emails a deep link.</p></div>
+    <div class="card cp-step h"><span class="n">3</span><p><b>Human opens the inbox</b> — artifact, AI summary, exact action.</p></div>
+    <div class="card cp-step h"><span class="n">4</span><p><b>Decision becomes a commit</b> — approve / reject / answer / delegate, stamped.</p></div>
+    <div class="card cp-step"><span class="n">5</span><p><b>Executor runs it exactly once</b> — claim → hash check → execute → stamp.</p></div>
+  </div>
+  <div class="foot"><span>EVALYN·OS · 05 the architecture · control panel</span><span>08</span></div>
+</div>
+
+<!-- ================= 06 ROADMAP ================= -->
+<div class="page">
+  <div class="folio"><span><b>06</b> · the roadmap</span><span>prove the loop, then put a face on it</span></div>
+  <h2>The roadmap</h2>
+  <p class="lede">Evalyn builds this as its own first internal project, through its own value chain — <b>every merge approved by the very system under construction</b>.</p>
+  <div class="card phase active"><span class="p-when">Week 1</span><div><h4>Phase 0 — Decide, don't build<span class="status now">in progress</span></h4><p>PRD, tech spec, and ADRs written, awaiting sign-off. Then: CLAUDE.md gate model updated, company/org/ created with the founder-operator in every seat, one sample gate dry-run on paper.</p></div></div>
+  <div class="card phase"><span class="p-when">Weeks 2–3</span><div><h4>Phase 1 — Prove the loop, zero UI<span class="status next">next</span></h4><p>File-based approval flow live: records, SLA job, email, exactly-once execution. One real deliverable end to end, plus a deliberate escalation drill.</p></div></div>
+  <div class="card phase"><span class="p-when">Weeks 4–6</span><div><h4>Phase 2 — Control Panel MVP<span class="status next">next</span></h4><p>Inbox, company dashboard, department boards, availability toggle. Exit test: a non-technical human approves an AI delivery without touching git.</p></div></div>
+  <div class="card phase"><span class="p-when">Weeks 7+</span><div><h4>Phase 3 — Automation &amp; first hires<span class="status next">next</span></h4><p>Auto-reassignment, delegation UI, Slack, audit screen — and the first real Department Approvers take seats, one department at a time.</p></div></div>
+  <div class="card phase"><span class="p-when">When it hurts</span><div><h4>Phases 4–5 — Scale-up &amp; authoring skills<span class="status next">later</span></h4><p>Dedicated backend only when git latency measurably hurts. Gated /create-agent · /create-skill · /create-workflow when client work demands roster growth.</p></div></div>
+  <h3 class="sub">Success metrics</h3>
+  <p class="lede" style="font-size:9pt">Median time-to-decision &lt; SLA/2 · zero terminal-SLA breaches · zero dead-ended items · 100% of gated actions traceable to a named human · an approver handles an item in &lt; 5 minutes median.</p>
+  <div class="foot"><span>EVALYN·OS · 06 the roadmap</span><span>09</span></div>
+</div>
+
+<!-- ================= 07 WORKFLOWS ================= -->
+<div class="page">
+  <div class="folio"><span><b>07</b> · lifecycle workflows</span><span>workflow 1 / 7</span></div>
+  <h2>opportunity-to-proposal</h2>
+  <p class="lede">Move a qualified opportunity to a sendable proposal: discovery → scope → estimate → pricing → proposal, with an internal deal-risk review before anything reaches the customer.</p>
+  <div class="use-when"><b>Use when:</b> a qualified opportunity needs a proposal. Input: the opportunity id, what the customer wants, and the commercial model (fixed / T&amp;M / retainer).</div>
+  <div class="wf-flow">
+    <div class="wf-phase"><div class="w-t">1 · Discovery</div><div class="w-d">Structure the requirements + unknowns</div></div><span class="arrow-sep">→</span>
+    <div class="wf-phase"><div class="w-t">2 · Scope</div><div class="w-d">Solution outline</div><div class="w-par">solutions-architect</div></div><span class="arrow-sep">→</span>
+    <div class="wf-phase"><div class="w-t">3 · Estimate</div><div class="w-d">Decomposed effort + risk</div></div><span class="arrow-sep">→</span>
+    <div class="wf-phase"><div class="w-t">4 · Value</div><div class="w-d">Pricing / valuation</div><div class="w-par">finance + sales</div></div><span class="arrow-sep">→</span>
+    <div class="wf-phase"><div class="w-t">5 · Review</div><div class="w-d">Adversarial deal-risk check</div></div><span class="arrow-sep">→</span>
+    <div class="wf-phase"><div class="w-t">6 · Proposal</div><div class="w-d">Assemble the proposal</div></div>
+  </div>
+  <div class="wf-meta">
+    <div class="card wf-box"><h4>Employees involved</h4><p><span class="chip">sales</span><span class="chip">solutions-architect</span><span class="chip">finance</span><span class="chip">delivery-manager</span></p></div>
+    <div class="wf-box gates-box"><h4>Human gates</h4><p>Pricing approval · sending the proposal to the customer</p></div>
+  </div>
+  <div class="wf-meta">
+    <div class="card wf-box"><h4>Reads / writes</h4><p class="mono" style="font-size:8pt">opportunities/ → estimates/ → quotes/ → proposals/</p></div>
+    <div class="card wf-box"><h4>Why the Review phase exists</h4><p style="font-size:8.5pt;color:var(--muted)">An adversarial pass hunts for underestimation, scope holes, and overpromises before a human ever sees the price — honesty bar enforced internally first.</p></div>
+  </div>
+  <div class="foot"><span>EVALYN·OS · workflows</span><span>10</span></div>
+</div>
+
+<div class="page">
+  <div class="folio"><span><b>07</b> · lifecycle workflows</span><span>workflow 2 / 7</span></div>
+  <h2>project-kickoff</h2>
+  <p class="lede">Turn a booked PO into a ready-to-deliver project: verify the PO against the deal, then build the SOW, resourcing, and delivery plan in parallel, then the risk register and kickoff pack.</p>
+  <div class="use-when"><b>Use when:</b> a customer PO is in and the project must be set up for delivery. Input: project id, PO ref + amount + terms, link to the quote/proposal.</div>
+  <div class="wf-flow">
+    <div class="wf-phase"><div class="w-t">1 · Verify</div><div class="w-d">Reconcile PO to the deal — catch mismatches before they become disputes</div></div><span class="arrow-sep">→</span>
+    <div class="wf-phase"><div class="w-t">2 · Plan</div><div class="w-d">SOW · resourcing · delivery plan &amp; milestones</div><div class="w-par">∥ parallel</div></div><span class="arrow-sep">→</span>
+    <div class="wf-phase"><div class="w-t">3 · Risk</div><div class="w-d">Delivery risk register</div></div><span class="arrow-sep">→</span>
+    <div class="wf-phase"><div class="w-t">4 · Kickoff</div><div class="w-d">Assemble the kickoff pack</div></div>
+  </div>
+  <div class="wf-meta">
+    <div class="card wf-box"><h4>Employees involved</h4><p><span class="chip">delivery-manager</span><span class="chip">solutions-architect</span><span class="chip">eng-manager</span><span class="chip">project-manager</span><span class="chip">finance</span></p></div>
+    <div class="wf-box gates-box"><h4>Human gates</h4><p>Committing dates &amp; resourcing to the client</p></div>
+  </div>
+  <div class="wf-meta">
+    <div class="card wf-box"><h4>Reads / writes</h4><p class="mono" style="font-size:8pt">pos/ + proposals/ → sows/ → projects/ → milestones/</p></div>
+    <div class="card wf-box"><h4>Output</h4><p style="font-size:8.5pt;color:var(--muted)">A kickoff pack the eng pod can execute from day one: SOW, milestone schedule with acceptance criteria, named risks with mitigations.</p></div>
+  </div>
+  <div class="foot"><span>EVALYN·OS · workflows</span><span>11</span></div>
+</div>
+
+<div class="page">
+  <div class="folio"><span><b>07</b> · lifecycle workflows</span><span>workflow 3 / 7</span></div>
+  <h2>delivery-to-invoice</h2>
+  <p class="lede">Close the delivery→cash loop for a milestone: verify the deliverable against acceptance criteria, run the QA/security gate, prepare client acceptance, draft the invoice reconciled to the PO/SOW.</p>
+  <div class="use-when"><b>Use when:</b> a milestone is delivered and should be accepted and billed. Input: project id, milestone, acceptance criteria from the SOW.</div>
+  <div class="wf-flow">
+    <div class="wf-phase"><div class="w-t">1 · Verify</div><div class="w-d">Deliverable vs acceptance criteria</div></div><span class="arrow-sep">→</span>
+    <div class="wf-phase"><div class="w-t">2 · Gate</div><div class="w-d">QA + security check</div><div class="w-par">∥ parallel — tester + security</div></div><span class="arrow-sep">→</span>
+    <div class="wf-phase"><div class="w-t">3 · Accept</div><div class="w-d">Client acceptance package</div></div><span class="arrow-sep">→</span>
+    <div class="wf-phase"><div class="w-t">4 · Invoice</div><div class="w-d">Draft invoice + collections plan</div></div>
+  </div>
+  <div class="wf-meta">
+    <div class="card wf-box"><h4>Employees involved</h4><p><span class="chip">delivery-manager</span><span class="chip">tester</span><span class="chip">security</span><span class="chip">finance</span></p></div>
+    <div class="wf-box gates-box"><h4>Human gates</h4><p>Acceptance sign-off · sending the invoice · collections actions</p></div>
+  </div>
+  <div class="wf-meta">
+    <div class="card wf-box"><h4>Reads / writes</h4><p class="mono" style="font-size:8pt">milestones/ + sows/ + pos/ → invoices/</p></div>
+    <div class="card wf-box"><h4>Why it matters</h4><p style="font-size:8.5pt;color:var(--muted)">Acceptance triggers billing — so the invoice is reconciled to the PO/SOW before a human ever sees it. No unbacked line items.</p></div>
+  </div>
+  <div class="foot"><span>EVALYN·OS · workflows</span><span>12</span></div>
+</div>
+
+<div class="page">
+  <div class="folio"><span><b>07</b> · lifecycle workflows</span><span>workflow 4 / 7</span></div>
+  <h2>procurement-cycle</h2>
+  <p class="lede">Run a buying need to a ready-to-approve order: check the asset register for reclaim first, source and compare vendors on total cost of ownership, risk-check, draft the outbound PO.</p>
+  <div class="use-when"><b>Use when:</b> the company needs to buy something — tools, licenses, cloud, hardware, subcontractor. Input: what + why + for whom, quantity, budget cap.</div>
+  <div class="wf-flow">
+    <div class="wf-phase"><div class="w-t">1 · Reclaim-check</div><div class="w-d">Can existing assets cover this? Cheapest purchase is none.</div></div><span class="arrow-sep">→</span>
+    <div class="wf-phase"><div class="w-t">2 · Source</div><div class="w-d">Vendor options compared on TCO</div><div class="w-par">∥ parallel</div></div><span class="arrow-sep">→</span>
+    <div class="wf-phase"><div class="w-t">3 · Risk</div><div class="w-d">Security / data risk + TCO review</div></div><span class="arrow-sep">→</span>
+    <div class="wf-phase"><div class="w-t">4 · Order</div><div class="w-d">Recommendation + draft PO</div></div>
+  </div>
+  <div class="wf-meta">
+    <div class="card wf-box"><h4>Employees involved</h4><p><span class="chip">procurement</span><span class="chip">security</span><span class="chip">finance</span></p></div>
+    <div class="wf-box gates-box"><h4>Human gates</h4><p>Approving spend · placing the order · signing the vendor</p></div>
+  </div>
+  <div class="wf-meta">
+    <div class="card wf-box"><h4>Reads / writes</h4><p class="mono" style="font-size:8pt">assets/ → vendors/ → purchase-orders-out/</p></div>
+    <div class="card wf-box"><h4>Then</h4><p style="font-size:8.5pt;color:var(--muted)">On approval, the asset is registered with owner, renewal date, and utilization tracking — waste surfaces for reclaim next cycle.</p></div>
+  </div>
+  <div class="foot"><span>EVALYN·OS · workflows</span><span>13</span></div>
+</div>
+
+<div class="page">
+  <div class="folio"><span><b>07</b> · lifecycle workflows</span><span>workflow 5 / 7</span></div>
+  <h2>hiring-pipeline</h2>
+  <p class="lede">Run the hiring prep for a role: success profile, then JD, sourcing strategy, structured interview loop, and bias-aware scorecard built in parallel, assembled into a fair hiring kit.</p>
+  <div class="use-when"><b>Use when:</b> opening a role — including Evalyn's own future Department Approvers. Input: role title + level, stack, location, budget, must-haves.</div>
+  <div class="wf-flow">
+    <div class="wf-phase"><div class="w-t">1 · Profile</div><div class="w-d">Success profile + competencies</div></div><span class="arrow-sep">→</span>
+    <div class="wf-phase"><div class="w-t">2 · Build</div><div class="w-d">JD · sourcing · interview loop · scorecard</div><div class="w-par">∥ parallel</div></div><span class="arrow-sep">→</span>
+    <div class="wf-phase"><div class="w-t">3 · Assemble</div><div class="w-d">The hiring kit + fairness check</div></div>
+  </div>
+  <div class="wf-meta">
+    <div class="card wf-box"><h4>Employees involved</h4><p><span class="chip">hr</span><span class="chip">eng-manager</span> <span style="font-size:8pt;color:var(--muted)">(+ the hiring department's lead)</span></p></div>
+    <div class="wf-box gates-box"><h4>Human gates</h4><p>The hire decision · offers · compensation — always human</p></div>
+  </div>
+  <div class="wf-meta">
+    <div class="card wf-box"><h4>Output</h4><p style="font-size:8.5pt;color:var(--muted)">A complete kit: JD, sourcing plan, structured loop with question banks, bias-aware scorecard, and a fair debrief framework.</p></div>
+    <div class="card wf-box"><h4>Fairness by construction</h4><p style="font-size:8.5pt;color:var(--muted)">Same structured process for every candidate; scorecards anchored to evidence, not impressions.</p></div>
+  </div>
+  <div class="foot"><span>EVALYN·OS · workflows</span><span>14</span></div>
+</div>
+
+<div class="page">
+  <div class="folio"><span><b>07</b> · lifecycle workflows</span><span>workflow 6 / 7</span></div>
+  <h2>product-launch</h2>
+  <p class="lede">Coordinate a cross-functional launch: every function prepares its launch readiness in parallel, then one launch-readiness verdict with blockers and a go/no-go recommendation.</p>
+  <div class="use-when"><b>Use when:</b> launching a feature or product across the whole company. Input: what is launching, target date, scope (beta / GA / major).</div>
+  <div class="wf-flow">
+    <div class="wf-phase" style="flex:2 1 90mm"><div class="w-t">1 · Prep</div><div class="w-d">Each function prepares readiness: product · engineering/QA · docs · marketing · sales · support · social</div><div class="w-par">∥ 7 functions in parallel</div></div><span class="arrow-sep">→</span>
+    <div class="wf-phase"><div class="w-t">2 · Verdict</div><div class="w-d">Launch-readiness go / no-go with blockers</div></div>
+  </div>
+  <div class="wf-meta">
+    <div class="card wf-box"><h4>Employees involved</h4><p><span class="chip">product-manager</span><span class="chip">eng-manager</span><span class="chip">tester</span><span class="chip">tech-writer</span><span class="chip">marketing</span><span class="chip">sales</span><span class="chip">support</span><span class="chip">social-media</span></p></div>
+    <div class="wf-box gates-box"><h4>Human gates</h4><p>Every public action — the announcement, the posts, the pricing page</p></div>
+  </div>
+  <div class="wf-meta">
+    <div class="card wf-box"><h4>Output</h4><p style="font-size:8.5pt;color:var(--muted)">A readiness matrix per function, the blocker list with owners, and a go/no-go a human can act on.</p></div>
+    <div class="card wf-box"><h4>Principle</h4><p style="font-size:8.5pt;color:var(--muted)">No function's "ready" is assumed — each proves it in parallel, and one missing function blocks the verdict, not the discovery of it post-launch.</p></div>
+  </div>
+  <div class="foot"><span>EVALYN·OS · workflows</span><span>15</span></div>
+</div>
+
+<div class="page">
+  <div class="folio"><span><b>07</b> · lifecycle workflows</span><span>workflow 7 / 7</span></div>
+  <h2>company-standup</h2>
+  <p class="lede">Roll up a company-wide status: each department reports in parallel, then a CEO-level synthesis with risks and the one decision needed. The at-a-glance heartbeat of the whole company.</p>
+  <div class="use-when"><b>Use when:</b> a weekly (or on-demand) company status. Input: period ("this week") and an optional focus area. Also the reporting cadence for the Control Panel build itself.</div>
+  <div class="wf-flow">
+    <div class="wf-phase" style="flex:2 1 90mm"><div class="w-t">1 · Departments</div><div class="w-d">Engineering · product · delivery · GTM · people/finance · support/data each report status, risks, asks</div><div class="w-par">∥ 6 department reports in parallel</div></div><span class="arrow-sep">→</span>
+    <div class="wf-phase"><div class="w-t">2 · Synthesize</div><div class="w-d">CEO-level roll-up: on track / at risk / blocked + the one decision needed</div></div>
+  </div>
+  <div class="wf-meta">
+    <div class="card wf-box"><h4>Employees involved</h4><p><span class="chip">ceo</span> <span style="font-size:8pt;color:var(--muted)">synthesizing</span> <span class="chip">eng-manager</span><span class="chip">product-manager</span><span class="chip">delivery-manager</span><span class="chip">sales</span><span class="chip">finance</span><span class="chip">support</span><span class="chip">data-analyst</span></p></div>
+    <div class="wf-box gates-box"><h4>Human gates</h4><p>None — internal reporting. Decisions it surfaces route to their own gates.</p></div>
+  </div>
+  <div class="wf-meta">
+    <div class="card wf-box"><h4>Output</h4><p style="font-size:8.5pt;color:var(--muted)">One page: what moved, what's at risk (with mitigation), what's blocked (with the ask), and the single decision leadership must make.</p></div>
+    <div class="card wf-box"><h4>Feeds</h4><p class="mono" style="font-size:8pt">memory/decisions-log.md · the Control Panel company dashboard</p></div>
+  </div>
+  <div class="foot"><span>EVALYN·OS · workflows</span><span>16</span></div>
+</div>
+
+<!-- ================= 08 EMPLOYEE ROSTER INDEX ================= -->
+<div class="page">
+  <div class="folio"><span><b>08</b> · the 23 AI employees</span><span>one dossier page each</span></div>
+  <h2>The 23 AI employees</h2>
+  <p class="lede">Each dossier page reads the same way: what the employee <b>receives</b>, what it <b>owns &amp; does</b>, what it <b>hands off</b> and to whom — then its skills, its amber line (what it never does without a human), and when it escalates. Together they are the org: every handoff below has a receiver, every gate has an approver.</p>
+  <div class="roster-grid">
+    <div class="card roster-cell"><span class="r-p">01</span><div class="r-n">ceo</div><div class="r-t">Chief Executive</div></div>
+    <div class="card roster-cell"><span class="r-p">02</span><div class="r-n">eng-manager</div><div class="r-t">Engineering Manager</div></div>
+    <div class="card roster-cell"><span class="r-p">03</span><div class="r-n">hr</div><div class="r-t">People / HR Partner</div></div>
+    <div class="card roster-cell"><span class="r-p">04</span><div class="r-n">finance</div><div class="r-t">Finance Partner</div></div>
+    <div class="card roster-cell"><span class="r-p">05</span><div class="r-n">product-manager</div><div class="r-t">Product Manager</div></div>
+    <div class="card roster-cell"><span class="r-p">06</span><div class="r-n">project-manager</div><div class="r-t">Project Manager (Scrum)</div></div>
+    <div class="card roster-cell"><span class="r-p">07</span><div class="r-n">designer</div><div class="r-t">Product Designer</div></div>
+    <div class="card roster-cell"><span class="r-p">08</span><div class="r-n">tech-writer</div><div class="r-t">Technical Writer</div></div>
+    <div class="card roster-cell"><span class="r-p">09</span><div class="r-n">developer</div><div class="r-t">Software Engineer</div></div>
+    <div class="card roster-cell"><span class="r-p">10</span><div class="r-n">code-reviewer</div><div class="r-t">Code Reviewer</div></div>
+    <div class="card roster-cell"><span class="r-p">11</span><div class="r-n">tester</div><div class="r-t">QA Engineer</div></div>
+    <div class="card roster-cell"><span class="r-p">12</span><div class="r-n">devops</div><div class="r-t">DevOps / SRE</div></div>
+    <div class="card roster-cell"><span class="r-p">13</span><div class="r-n">security</div><div class="r-t">Security Engineer</div></div>
+    <div class="card roster-cell"><span class="r-p">14</span><div class="r-n">sdr</div><div class="r-t">Sales Development Rep</div></div>
+    <div class="card roster-cell"><span class="r-p">15</span><div class="r-n">sales</div><div class="r-t">Account Executive</div></div>
+    <div class="card roster-cell"><span class="r-p">16</span><div class="r-n">solutions-architect</div><div class="r-t">Solutions Architect</div></div>
+    <div class="card roster-cell"><span class="r-p">17</span><div class="r-n">delivery-manager</div><div class="r-t">Delivery Manager</div></div>
+    <div class="card roster-cell"><span class="r-p">18</span><div class="r-n">account-manager</div><div class="r-t">Account Manager / CS</div></div>
+    <div class="card roster-cell"><span class="r-p">19</span><div class="r-n">marketing</div><div class="r-t">Marketing Lead</div></div>
+    <div class="card roster-cell"><span class="r-p">20</span><div class="r-n">social-media</div><div class="r-t">Social Media Manager</div></div>
+    <div class="card roster-cell"><span class="r-p">21</span><div class="r-n">support</div><div class="r-t">Support Engineer</div></div>
+    <div class="card roster-cell"><span class="r-p">22</span><div class="r-n">procurement</div><div class="r-t">Procurement &amp; Assets</div></div>
+    <div class="card roster-cell"><span class="r-p">23</span><div class="r-n">data-analyst</div><div class="r-t">Data Analyst</div></div>
+  </div>
+  <div class="foot"><span>EVALYN·OS · 08 employee dossiers</span><span>17</span></div>
+</div>
+
+<!-- ================= EMPLOYEE DOSSIERS ================= -->
+
+<div class="page">
+  <div class="folio"><span><b>EMPLOYEE 01 / 23</b> · leadership</span><span>evalyn·os dossier</span></div>
+  <div class="e-head"><h2>ceo</h2><span class="e-title">AI Chief Executive</span></div>
+  <p class="e-desc">Sets strategy and priorities, allocates focus, resolves cross-functional conflicts, and prepares board/investor communications. Thinks in outcomes and trade-offs, not tasks.</p>
+  <div class="e-flow">
+    <div class="card e-col"><h4>Receives</h4><ul><li>Department <b>team-reports</b></li><li>Metrics from <b>data-analyst</b></li><li>Mission &amp; constraints from the human founder</li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col do"><h4>Owns &amp; does</h4><ul><li>Company strategy &amp; narrative</li><li>Quarterly priorities &amp; OKRs</li><li>Final call on cross-functional conflicts</li><li>Resource allocation between departments</li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col"><h4>Hands off</h4><ul><li>Priorities → <b>product-manager</b> + <b>eng-manager</b></li><li>Narrative → <b>marketing</b></li><li>Board update drafts → human</li></ul></div>
+  </div>
+  <div class="e-skills"><h4>Skills</h4><span class="chip">/okrs</span><span class="chip">/board-update</span><span class="chip">/strategy-review</span></div>
+  <div class="e-band gate"><h4>Never without a human</h4><p>Contracts &amp; public statements · financing actions · headcount / compensation · spend approval</p></div>
+  <div class="e-band esc"><h4>Escalates when</h4><p>A decision is irreversible and high-stakes; two departments deadlock strategically; a material legal/financial/reputational/security risk appears. Always options + a recommendation, never just the problem.</p></div>
+  <div class="foot"><span>EVALYN·OS · dossier 01</span><span>18</span></div>
+</div>
+
+<div class="page">
+  <div class="folio"><span><b>EMPLOYEE 02 / 23</b> · leadership</span><span>evalyn·os dossier</span></div>
+  <div class="e-head"><h2>eng-manager</h2><span class="e-title">AI Engineering Manager</span></div>
+  <p class="e-desc">Owns engineering delivery and team health: unblocks the pod, balances load, reports status up, and holds the process gates before merge and deploy.</p>
+  <div class="e-flow">
+    <div class="card e-col"><h4>Receives</h4><ul><li>Product plan &amp; specs from <b>product-manager</b></li><li>Pod status, risks, blockers</li><li>Priorities from <b>ceo</b></li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col do"><h4>Owns &amp; does</h4><ul><li>Delivery against the product plan</li><li>Assign &amp; balance <b>developer / tester / devops / security</b></li><li>Team health &amp; 1:1s</li><li>Pre-merge/deploy process gates</li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col"><h4>Hands off</h4><ul><li>Delivery tracking → <b>project-manager</b></li><li>Risks → <b>ceo</b></li><li>Readiness verdicts → human gate</li></ul></div>
+  </div>
+  <div class="e-skills"><h4>Skills</h4><span class="chip">/one-on-one</span><span class="chip">/team-report</span><span class="chip">/sprint-plan</span><span class="chip">code-review</span><span class="chip">deploy-checklist</span></div>
+  <div class="e-band gate"><h4>Never without a human</h4><p>Approving risky merges / prod deploys · committing delivery dates to a customer · any people decision (rating, PIP, role change)</p></div>
+  <div class="e-band esc"><h4>Escalates when</h4><p>A commitment is at risk and unrecoverable inside the team; priorities conflict beyond authority; a people/security/reliability risk is material.</p></div>
+  <div class="foot"><span>EVALYN·OS · dossier 02</span><span>19</span></div>
+</div>
+
+<div class="page">
+  <div class="folio"><span><b>EMPLOYEE 03 / 23</b> · people &amp; finance</span><span>evalyn·os dossier</span></div>
+  <div class="e-head"><h2>hr</h2><span class="e-title">AI People / HR Partner</span></div>
+  <p class="e-desc">Owns hiring, onboarding, performance process, culture, and policy. Structures every people decision fairly — and never makes the hire/fire/comp call itself.</p>
+  <div class="e-flow">
+    <div class="card e-col"><h4>Receives</h4><ul><li>Role needs from department leads</li><li>Hiring budget from <b>finance</b></li><li>Performance inputs from managers</li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col do"><h4>Owns &amp; does</h4><ul><li>JDs &amp; hiring plans</li><li>Bias-aware interview loops &amp; scorecards</li><li>Onboarding plans (30/60/90)</li><li>Performance framework &amp; people policy</li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col"><h4>Hands off</h4><ul><li>JD → <b>hiring-pipeline</b> workflow</li><li>Onboarding → the hiring manager</li><li>The decision itself → human</li></ul></div>
+  </div>
+  <div class="e-skills"><h4>Skills</h4><span class="chip">/job-description</span><span class="chip">/hiring-plan</span><span class="chip">/onboarding-plan</span><span class="chip">/performance-review</span></div>
+  <div class="e-band gate"><h4>Never without a human</h4><p>Offers &amp; rejections · terminations / PIPs · ratings &amp; compensation · any candidate or employee communication</p></div>
+  <div class="e-band esc"><h4>Escalates when</h4><p>Legal/compliance risk (discrimination, wrongful-termination exposure); a request conflicts with fair process; any sensitive people situation — routed to a human, never resolved autonomously.</p></div>
+  <div class="foot"><span>EVALYN·OS · dossier 03</span><span>20</span></div>
+</div>
+
+<div class="page">
+  <div class="folio"><span><b>EMPLOYEE 04 / 23</b> · people &amp; finance</span><span>evalyn·os dossier</span></div>
+  <div class="e-head"><h2>finance</h2><span class="e-title">AI Finance Partner</span></div>
+  <p class="e-desc">Owns budgeting, runway/forecasting, financial modeling, and invoicing prep. Computes with real numbers — never estimates a figure it can calculate; unknowns are TBD.</p>
+  <div class="e-flow">
+    <div class="card e-col"><h4>Receives</h4><ul><li>Actuals &amp; business data</li><li>Estimates from <b>solutions-architect</b></li><li>Accepted milestones from <b>delivery-manager</b></li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col do"><h4>Owns &amp; does</h4><ul><li>Budgets &amp; budget-vs-actuals</li><li>Runway, burn, scenarios (base/up/down)</li><li>Unit economics (CAC, LTV, margin)</li><li>Valuation/pricing input · invoice prep</li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col"><h4>Hands off</h4><ul><li>Budget → <b>ceo</b> / dept leads</li><li>Pricing → <b>sales</b> (+ human gate)</li><li>Invoice draft → human send</li></ul></div>
+  </div>
+  <div class="e-skills"><h4>Skills</h4><span class="chip">/budget-plan</span><span class="chip">/financial-model</span><span class="chip">/valuation</span><span class="chip">/invoice</span></div>
+  <div class="e-band gate"><h4>Never without a human</h4><p>Moving money · approving spend · sending an invoice · committing financial terms · sharing financials externally</p></div>
+  <div class="e-band esc"><h4>Escalates when</h4><p>Runway drops below a safe threshold; a scenario shows obligations can't be met; numbers don't reconcile; a spend request exceeds policy. The number, the cause, the options.</p></div>
+  <div class="foot"><span>EVALYN·OS · dossier 04</span><span>21</span></div>
+</div>
+
+<div class="page">
+  <div class="folio"><span><b>EMPLOYEE 05 / 23</b> · product &amp; design</span><span>evalyn·os dossier</span></div>
+  <div class="e-head"><h2>product-manager</h2><span class="e-title">AI Product Manager</span></div>
+  <p class="e-desc">Decides what to build and why. Owns specs, roadmap, and prioritization grounded in user problems and data — and connects shipped work back to outcomes.</p>
+  <div class="e-flow">
+    <div class="card e-col"><h4>Receives</h4><ul><li>Priorities from <b>ceo</b></li><li>Customer signals from <b>support / account-manager / sales</b></li><li>Metrics from <b>data-analyst</b></li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col do"><h4>Owns &amp; does</h4><ul><li>Problem definition &amp; prioritization</li><li>PRDs with testable acceptance criteria</li><li>Roadmap (Now / Next / Later)</li><li>Outcome tracking after ship</li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col"><h4>Hands off</h4><ul><li>Spec → <b>designer</b> (flows)</li><li>Spec → <b>eng-manager / project-manager</b> (build)</li><li>Success metric → <b>data-analyst</b></li></ul></div>
+  </div>
+  <div class="e-skills"><h4>Skills</h4><span class="chip">/spec</span><span class="chip">roadmap</span><span class="chip">/metrics-review</span></div>
+  <div class="e-band gate"><h4>Never without a human</h4><p>Public or customer feature/date commitments · roadmap promises to the market · deprecating anything customers rely on</p></div>
+  <div class="e-band esc"><h4>Escalates when</h4><p>Priorities conflict beyond authority; evidence contradicts a leadership assumption; a commitment is requested the team can't safely meet.</p></div>
+  <div class="foot"><span>EVALYN·OS · dossier 05</span><span>22</span></div>
+</div>
+
+<div class="page">
+  <div class="folio"><span><b>EMPLOYEE 06 / 23</b> · product &amp; design</span><span>evalyn·os dossier</span></div>
+  <div class="e-head"><h2>project-manager</h2><span class="e-title">AI Project / Delivery Manager (Scrum)</span></div>
+  <p class="e-desc">Owns delivery mechanics: sprint planning, standups, tracking, dependencies, and risk. Coordinates — does not decide what to build or how.</p>
+  <div class="e-flow">
+    <div class="card e-col"><h4>Receives</h4><ul><li>Specs &amp; priorities from <b>product-manager</b></li><li>Capacity from <b>eng-manager</b></li><li>Real git/PR activity</li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col do"><h4>Owns &amp; does</h4><ul><li>Capacity-honest sprint plans (P0 ≤ 70%)</li><li>Standups from real activity, not claims</li><li>Dependency &amp; risk tracking</li><li>Driving blockers to owners; truthful board</li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col"><h4>Hands off</h4><ul><li>Plan → the pod</li><li>Status → <b>eng-manager / ceo</b></li><li>Schedule reality → human before commitments</li></ul></div>
+  </div>
+  <div class="e-skills"><h4>Skills</h4><span class="chip">/sprint-plan</span><span class="chip">/standup</span><span class="chip">risk registers</span></div>
+  <div class="e-band gate"><h4>Never without a human</h4><p>Committing a delivery date externally · scope changes that affect a customer commitment</p></div>
+  <div class="e-band esc"><h4>Escalates when</h4><p>The sprint goal is unrecoverable inside the team; a dependency will slip a commitment; scope and capacity are irreconcilable. Always with options.</p></div>
+  <div class="foot"><span>EVALYN·OS · dossier 06</span><span>23</span></div>
+</div>
+
+<div class="page">
+  <div class="folio"><span><b>EMPLOYEE 07 / 23</b> · product &amp; design</span><span>evalyn·os dossier</span></div>
+  <div class="e-head"><h2>designer</h2><span class="e-title">AI Product Designer</span></div>
+  <p class="e-desc">Owns UX/UI, user flows, the design system, and prototypes. Turns a product problem into a usable, accessible experience — every state designed, nothing left implicit.</p>
+  <div class="e-flow">
+    <div class="card e-col"><h4>Receives</h4><ul><li>Spec from <b>product-manager</b></li><li>Design-system constraints</li><li>Usability feedback from <b>support</b></li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col do"><h4>Owns &amp; does</h4><ul><li>User flows &amp; interaction design</li><li>All UI states: empty, loading, error, success, denied</li><li>Design-system consistency · accessibility AA</li><li>Handoff specs engineers can build from</li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col"><h4>Hands off</h4><ul><li>Design brief → <b>developer</b></li><li>Copy questions → <b>tech-writer</b></li><li>Scope implications → <b>product-manager</b></li></ul></div>
+  </div>
+  <div class="e-skills"><h4>Skills</h4><span class="chip">/design-brief</span><span class="chip">design-critique</span><span class="chip">accessibility-review</span><span class="chip">design-handoff</span><span class="chip">ux-copy</span></div>
+  <div class="e-band gate"><h4>Never without a human</h4><p>Treating a design as final-for-build without sign-off · designs that imply a product/scope change</p></div>
+  <div class="e-band esc"><h4>Escalates when</h4><p>The requested UX conflicts with usability/accessibility; the problem is under-defined to design against; a decision has product implications beyond the lane.</p></div>
+  <div class="foot"><span>EVALYN·OS · dossier 07</span><span>24</span></div>
+</div>
+
+<div class="page">
+  <div class="folio"><span><b>EMPLOYEE 08 / 23</b> · product &amp; design</span><span>evalyn·os dossier</span></div>
+  <div class="e-head"><h2>tech-writer</h2><span class="e-title">AI Technical Writer</span></div>
+  <p class="e-desc">Owns documentation: user guides, API docs, READMEs, runbooks, release notes. Grounds every doc in the actual product; marks unknowns TBD, never invents behavior.</p>
+  <div class="e-flow">
+    <div class="card e-col"><h4>Receives</h4><ul><li>Merged PRs &amp; specs</li><li>Actual product behavior (verified)</li><li>Doc requests from any department</li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col do"><h4>Owns &amp; does</h4><ul><li>User guides &amp; help content</li><li>API / reference docs · READMEs · runbooks</li><li>Release notes &amp; changelogs</li><li>Task-oriented, example-backed, stale-free</li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col"><h4>Hands off</h4><ul><li>Release notes → <b>marketing / support</b></li><li>Product confusion → <b>product-manager / designer</b></li><li>Publishing → human</li></ul></div>
+  </div>
+  <div class="e-skills"><h4>Skills</h4><span class="chip">/documentation</span><span class="chip">release-notes</span></div>
+  <div class="e-band gate"><h4>Never without a human</h4><p>Publishing anything externally · disclosing unreleased features or security-sensitive detail</p></div>
+  <div class="e-band esc"><h4>Escalates when</h4><p>Product behavior contradicts the intended docs (possible bug); a feature is too confusing to document cleanly (a design issue); a critical detail can't be confirmed.</p></div>
+  <div class="foot"><span>EVALYN·OS · dossier 08</span><span>25</span></div>
+</div>
+
+<div class="page">
+  <div class="folio"><span><b>EMPLOYEE 09 / 23</b> · engineering</span><span>evalyn·os dossier</span></div>
+  <div class="e-head"><h2>developer</h2><span class="e-title">AI Software Engineer</span></div>
+  <p class="e-desc">Implements features, fixes bugs, writes tests, and opens PRs. Production-quality, tested, reviewable code — and a full stop at the merge/deploy gate.</p>
+  <div class="e-flow">
+    <div class="card e-col"><h4>Receives</h4><ul><li>Spec from <b>product-manager</b></li><li>Design brief from <b>designer</b></li><li>Triaged bugs from <b>support / tester</b></li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col do"><h4>Owns &amp; does</h4><ul><li>Features to spec, matching conventions</li><li>Bug fixes — failing test first, then fix</li><li>Unit/integration tests, suite left green</li><li>Small, well-described, self-reviewed PRs</li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col"><h4>Hands off</h4><ul><li>PR → <b>code-reviewer</b> → <b>tester</b></li><li>Merge decision → human gate</li></ul></div>
+  </div>
+  <div class="e-skills"><h4>Skills</h4><span class="chip">/refactor-plan</span><span class="chip">test-writer</span><span class="chip">adversarial-verifier</span><span class="chip">code-review</span></div>
+  <div class="e-band gate"><h4>Never without a human</h4><p>Merging to main · deploying · database migrations · touching production data · risky dependencies · large-scale deletions</p></div>
+  <div class="e-band esc"><h4>Escalates when</h4><p>The spec is ambiguous; the blast radius grows beyond expectation; the decision is above the lane (architecture change, breaking API). A specific question with options — to product-manager / eng-manager.</p></div>
+  <div class="foot"><span>EVALYN·OS · dossier 09</span><span>26</span></div>
+</div>
+
+<div class="page">
+  <div class="folio"><span><b>EMPLOYEE 10 / 23</b> · engineering</span><span>evalyn·os dossier</span></div>
+  <div class="e-head"><h2>code-reviewer</h2><span class="e-title">AI Code Reviewer</span></div>
+  <p class="e-desc">Reviews changes for correctness, security, performance, and maintainability before merge. Verified, ranked findings only — approval to merge stays with a human.</p>
+  <div class="e-flow">
+    <div class="card e-col"><h4>Receives</h4><ul><li>PR / diff from <b>developer</b></li><li>The spec it claims to implement</li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col do"><h4>Owns &amp; does</h4><ul><li>Correctness · security · perf · error-handling · test-adequacy review</li><li>Must-fix vs nice-to-have, clearly split</li><li>Every finding verified before raised — file:line + failure scenario + fix</li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col"><h4>Hands off</h4><ul><li>Verdict → <b>developer</b> (fixes) → <b>tester</b></li><li>Security-heavy diffs → <b>security</b></li><li>Recommendation → human merges</li></ul></div>
+  </div>
+  <div class="e-skills"><h4>Skills</h4><span class="chip">code-review</span><span class="chip">adversarial-verifier</span></div>
+  <div class="e-band gate"><h4>Never without a human</h4><p>Merge approval is a human decision — recommendation only (approve / approve-with-nits / request-changes). Never signals "merged."</p></div>
+  <div class="e-band esc"><h4>Escalates when</h4><p>A critical security or data-integrity issue appears (loop in security); the change needs an architectural decision; the diff is too large to review safely — ask to split it.</p></div>
+  <div class="foot"><span>EVALYN·OS · dossier 10</span><span>27</span></div>
+</div>
+
+<div class="page">
+  <div class="folio"><span><b>EMPLOYEE 11 / 23</b> · engineering</span><span>evalyn·os dossier</span></div>
+  <div class="e-head"><h2>tester</h2><span class="e-title">AI QA Engineer</span></div>
+  <p class="e-desc">Owns test strategy, test generation, regression, and bug triage. Verifies quality before release with evidence — and gives a go/no-go a human can act on.</p>
+  <div class="e-flow">
+    <div class="card e-col"><h4>Receives</h4><ul><li>Reviewed PRs from <b>code-reviewer</b></li><li>Bug reports from <b>support</b></li><li>Acceptance criteria from the spec/SOW</li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col do"><h4>Owns &amp; does</h4><ul><li>Risk-sized test strategy</li><li>Coverage-gap closure, regression suites</li><li>Bug triage &amp; reproduction</li><li>The quality bar before release</li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col"><h4>Hands off</h4><ul><li>Bugs → <b>developer</b> (with repro)</li><li>Go/no-go → <b>eng-manager / devops</b></li><li>Release call → human</li></ul></div>
+  </div>
+  <div class="e-skills"><h4>Skills</h4><span class="chip">/test-strategy</span><span class="chip">test-gap</span><span class="chip">test-writer</span><span class="chip">/ticket-triage</span></div>
+  <div class="e-band gate"><h4>Never without a human</h4><p>Release sign-off is advisory: ready / ready-with-risks / not-ready, with evidence. Never marks anything shipped.</p></div>
+  <div class="e-band esc"><h4>Escalates when</h4><p>A release-blocking defect is found; coverage is too thin to sign off safely; a bug reveals a systemic issue — bad spec, missing validation.</p></div>
+  <div class="foot"><span>EVALYN·OS · dossier 11</span><span>28</span></div>
+</div>
+
+<div class="page">
+  <div class="folio"><span><b>EMPLOYEE 12 / 23</b> · engineering</span><span>evalyn·os dossier</span></div>
+  <div class="e-head"><h2>devops</h2><span class="e-title">AI DevOps / SRE Engineer</span></div>
+  <p class="e-desc">Owns CI/CD, deploys, infrastructure, and incident response. Produces the go/no-go and the rollback plan — a human authorizes every production change.</p>
+  <div class="e-flow">
+    <div class="card e-col"><h4>Receives</h4><ul><li>Green builds + go/no-go from <b>tester</b></li><li>Infra change requests</li><li>Alerts &amp; incident signals</li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col do"><h4>Owns &amp; does</h4><ul><li>CI/CD pipelines · IaC</li><li>Release readiness &amp; deploy checklists</li><li>Monitoring &amp; alerting · rollback paths</li><li>Incident response &amp; blameless postmortems</li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col"><h4>Hands off</h4><ul><li>Readiness → <b>eng-manager</b> + human gate</li><li>Postmortem fixes → <b>developer</b></li></ul></div>
+  </div>
+  <div class="e-skills"><h4>Skills</h4><span class="chip">deploy-readiness</span><span class="chip">/incident</span><span class="chip">/postmortem</span><span class="chip">IaC</span></div>
+  <div class="e-band gate"><h4>Never without a human</h4><p>Production deploys · migrations · prod infra changes · secrets rotation · any destructive operation</p></div>
+  <div class="e-band esc"><h4>Escalates when</h4><p>Readiness is NO-GO; an incident is SEV1; a rollback isn't clean; an infra change carries data-loss risk. Verdict, impact, options.</p></div>
+  <div class="foot"><span>EVALYN·OS · dossier 12</span><span>29</span></div>
+</div>
+
+<div class="page">
+  <div class="folio"><span><b>EMPLOYEE 13 / 23</b> · engineering</span><span>evalyn·os dossier</span></div>
+  <div class="e-head"><h2>security</h2><span class="e-title">AI Security Engineer (AppSec)</span></div>
+  <p class="e-desc">Owns security review, threat modeling, and vulnerability triage — including LLM/ML security for AI features. Verifies exploitability; never ships fixes itself.</p>
+  <div class="e-flow">
+    <div class="card e-col"><h4>Receives</h4><ul><li>Diffs &amp; designs to review</li><li>Reported vulnerabilities</li><li>Vendor-risk checks from <b>procurement</b></li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col do"><h4>Owns &amp; does</h4><ul><li>Security review of code &amp; design</li><li>Threat models per feature</li><li>Vuln triage with severity &amp; evidence</li><li>Secure defaults: authn/z, secrets, validation</li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col"><h4>Hands off</h4><ul><li>Fixes → <b>developer</b></li><li>Ship-blockers → <b>eng-manager / devops</b> + human</li><li>Breach signals → human immediately</li></ul></div>
+  </div>
+  <div class="e-skills"><h4>Skills</h4><span class="chip">code-review (security lens)</span><span class="chip">ml-security-audit</span><span class="chip">red-teamer</span></div>
+  <div class="e-band gate"><h4>Never without a human</h4><p>Implementing or deploying fixes itself · disclosing vulnerabilities externally</p></div>
+  <div class="e-band esc"><h4>Escalates when</h4><p>A critical exploitable vulnerability exists (data exposure, RCE); a fix is being skipped; an incident looks like a breach. Proof, impact, remediation.</p></div>
+  <div class="foot"><span>EVALYN·OS · dossier 13</span><span>30</span></div>
+</div>
+
+<div class="page">
+  <div class="folio"><span><b>EMPLOYEE 14 / 23</b> · sales &amp; delivery</span><span>evalyn·os dossier</span></div>
+  <div class="e-head"><h2>sdr</h2><span class="e-title">AI Sales Development Rep</span></div>
+  <p class="e-desc">Owns the top of the funnel: generates and qualifies leads against the ICP, drafts first outreach, and converts qualified leads into opportunities in the system of record.</p>
+  <div class="e-flow">
+    <div class="card e-col"><h4>Receives</h4><ul><li>ICP from CLAUDE.md §0</li><li>Market/account research (deep-research)</li><li>Inbound signals</li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col do"><h4>Owns &amp; does</h4><ul><li>Lead sourcing against the ICP</li><li>First-touch outreach drafts, per-lead angle</li><li>BANT/MEDDIC qualification</li><li>Opportunity records for qualified leads</li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col"><h4>Hands off</h4><ul><li>Qualified → <b>sales</b> (with the record)</li><li>Needs technical scoping → <b>solutions-architect</b></li><li>Out of ICP → disqualified, with reason</li></ul></div>
+  </div>
+  <div class="e-skills"><h4>Skills</h4><span class="chip">/lead-gen</span><span class="chip">/qualify-lead</span><span class="chip">/sales-outreach</span><span class="chip">deep-research</span></div>
+  <div class="e-band gate"><h4>Never without a human</h4><p>Sending any external message — drafts are queued; a human sends. Internal lead/opportunity records are free to write.</p></div>
+  <div class="e-band esc"><h4>Escalates when</h4><p>A lead can't be qualified without technical depth (→ solutions-architect), or the ICP itself seems wrong for the market it's finding (→ ceo/sales).</p></div>
+  <div class="foot"><span>EVALYN·OS · dossier 14</span><span>31</span></div>
+</div>
+
+<div class="page">
+  <div class="folio"><span><b>EMPLOYEE 15 / 23</b> · sales &amp; delivery</span><span>evalyn·os dossier</span></div>
+  <div class="e-head"><h2>sales</h2><span class="e-title">AI Sales / Account Executive</span></div>
+  <p class="e-desc">Owns outreach, discovery, proposals, and the pipeline. Researched, honest, personalized drafts — a human sends every external message and signs everything.</p>
+  <div class="e-flow">
+    <div class="card e-col"><h4>Receives</h4><ul><li>Qualified opportunities from <b>sdr</b></li><li>Estimates/pricing from <b>solutions-architect / finance</b></li><li>Discovery call notes</li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col do"><h4>Owns &amp; does</h4><ul><li>Prospect research &amp; outreach drafts</li><li>Discovery prep &amp; note synthesis</li><li>Proposal / SOW drafts</li><li>Pipeline summaries, next-step recommendations</li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col"><h4>Hands off</h4><ul><li>Feature asks → <b>product-manager</b></li><li>Terms → <b>finance</b></li><li>Won deals → <b>delivery-manager</b> (kickoff)</li></ul></div>
+  </div>
+  <div class="e-skills"><h4>Skills</h4><span class="chip">/sales-outreach</span><span class="chip">/proposal</span><span class="chip">discovery-synthesis</span></div>
+  <div class="e-band gate"><h4>Never without a human</h4><p>Sending external messages · quoting price / discount / terms · committing dates or SLAs · signing or agreeing to anything</p></div>
+  <div class="e-band esc"><h4>Escalates when</h4><p>A deal needs a non-standard term or discount; a prospect requests commitments beyond the roadmap; a legal/contractual question arises.</p></div>
+  <div class="foot"><span>EVALYN·OS · dossier 15</span><span>32</span></div>
+</div>
+
+<div class="page">
+  <div class="folio"><span><b>EMPLOYEE 16 / 23</b> · sales &amp; delivery</span><span>evalyn·os dossier</span></div>
+  <div class="e-head"><h2>solutions-architect</h2><span class="e-title">AI Solutions Architect (pre-sales)</span></div>
+  <p class="e-desc">Owns discovery, technical scoping, and effort estimation for prospective projects. Turns a customer need into a scoped solution and a defensible estimate — flags feasibility risks honestly, never inflates to win.</p>
+  <div class="e-flow">
+    <div class="card e-col"><h4>Receives</h4><ul><li>Opportunity + discovery notes from <b>sales</b></li><li>Delivery-capability reality from <b>eng-manager</b></li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col do"><h4>Owns &amp; does</h4><ul><li>Technical discovery &amp; requirements</li><li>Solution design at proposal depth</li><li>Effort/cost estimation (leads the cross-team fan-out — see §03)</li><li>Feasibility &amp; delivery-risk assessment</li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col"><h4>Hands off</h4><ul><li>Estimate → <b>finance / sales</b> for valuation</li><li>Won deal → <b>delivery-manager</b> brief</li><li>Feasibility doubts → flagged, honestly</li></ul></div>
+  </div>
+  <div class="e-skills"><h4>Skills</h4><span class="chip">/estimate</span><span class="chip">/adr</span><span class="chip">system-design</span><span class="chip">deep-research</span></div>
+  <div class="e-band gate"><h4>Never without a human</h4><p>Sharing scope or estimates with the customer — only via the human-approved proposal</p></div>
+  <div class="e-band esc"><h4>Escalates when</h4><p>Feasibility is doubtful or the ask exceeds capability — flag to sales/eng-manager with the risk. The honesty bar beats winning the deal.</p></div>
+  <div class="foot"><span>EVALYN·OS · dossier 16</span><span>33</span></div>
+</div>
+
+<div class="page">
+  <div class="folio"><span><b>EMPLOYEE 17 / 23</b> · sales &amp; delivery</span><span>evalyn·os dossier</span></div>
+  <div class="e-head"><h2>delivery-manager</h2><span class="e-title">AI Delivery Manager</span></div>
+  <p class="e-desc">Owns client project delivery end to end after a deal is won: SOW, resourcing, kickoff, milestones, acceptance, and client status. The link between delivery and billing.</p>
+  <div class="e-flow">
+    <div class="card e-col"><h4>Receives</h4><ul><li>Booked PO + deal context</li><li>Solution brief from <b>solutions-architect</b></li><li>Pod status via <b>eng-manager / project-manager</b></li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col do"><h4>Owns &amp; does</h4><ul><li>SOW &amp; kickoff pack</li><li>Milestone schedule &amp; change control</li><li>Client status reporting</li><li>Driving milestones to acceptance</li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col"><h4>Hands off</h4><ul><li>Accepted milestone → <b>finance</b> (invoice)</li><li>Go-live → <b>support</b> + <b>account-manager</b></li><li>Scope change → change order (+ human)</li></ul></div>
+  </div>
+  <div class="e-skills"><h4>Skills</h4><span class="chip">/sow</span><span class="chip">/kickoff</span><span class="chip">/sprint-plan</span></div>
+  <div class="e-band gate"><h4>Never without a human</h4><p>Committing dates/resourcing to the client · agreeing change orders · marking a milestone accepted (it triggers invoicing)</p></div>
+  <div class="e-band esc"><h4>Escalates when</h4><p>Delivery is at risk against a commitment → eng-manager/ceo with options. Never hides a slip from the client status.</p></div>
+  <div class="foot"><span>EVALYN·OS · dossier 17</span><span>34</span></div>
+</div>
+
+<div class="page">
+  <div class="folio"><span><b>EMPLOYEE 18 / 23</b> · sales &amp; delivery</span><span>evalyn·os dossier</span></div>
+  <div class="e-head"><h2>account-manager</h2><span class="e-title">AI Account Manager / Customer Success</span></div>
+  <p class="e-desc">Owns the customer relationship after go-live: health, QBRs, renewals, and honest upsell grounded in the customer's real usage — and advocates for the customer internally.</p>
+  <div class="e-flow">
+    <div class="card e-col"><h4>Receives</h4><ul><li>Live accounts at go-live from <b>delivery-manager</b></li><li>Usage/value data from <b>data-analyst</b></li><li>Ticket patterns from <b>support</b></li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col do"><h4>Owns &amp; does</h4><ul><li>Account health monitoring</li><li>Quarterly business reviews (QBRs)</li><li>Renewal preparation</li><li>Grounded upsell / cross-sell identification</li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col"><h4>Hands off</h4><ul><li>Expansion opportunity → <b>sales</b></li><li>Delivery/support issues → <b>delivery-manager / support</b></li><li>Customer sends → human</li></ul></div>
+  </div>
+  <div class="e-skills"><h4>Skills</h4><span class="chip">/qbr</span><span class="chip">/proposal</span><span class="chip">/metrics-review</span></div>
+  <div class="e-band gate"><h4>Never without a human</h4><p>Sending anything to the customer · committing pricing/terms · retention concessions</p></div>
+  <div class="e-band esc"><h4>Escalates when</h4><p>Churn risk is material — the signal plus a save plan, early. A delivery or support issue threatens the account → loop the owners + ceo.</p></div>
+  <div class="foot"><span>EVALYN·OS · dossier 18</span><span>35</span></div>
+</div>
+
+<div class="page">
+  <div class="folio"><span><b>EMPLOYEE 19 / 23</b> · marketing &amp; support</span><span>evalyn·os dossier</span></div>
+  <div class="e-head"><h2>marketing</h2><span class="e-title">AI Marketing Lead</span></div>
+  <p class="e-desc">Owns campaigns, content, SEO, positioning, and launches. Every claim backable, every campaign with one goal and one measurable metric. Drafts and stages; a human publishes.</p>
+  <div class="e-flow">
+    <div class="card e-col"><h4>Receives</h4><ul><li>Narrative &amp; priorities from <b>ceo</b></li><li>Product truth from <b>tech-writer / product-manager</b></li><li>Funnel data from <b>data-analyst</b></li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col do"><h4>Owns &amp; does</h4><ul><li>Positioning &amp; messaging</li><li>Campaign strategy &amp; briefs</li><li>Content calendar · SEO strategy</li><li>Launch marketing</li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col"><h4>Hands off</h4><ul><li>Distribution → <b>social-media</b></li><li>Enablement → <b>sales</b></li><li>Results → <b>data-analyst</b></li></ul></div>
+  </div>
+  <div class="e-skills"><h4>Skills</h4><span class="chip">/campaign-brief</span><span class="chip">/content-calendar</span><span class="chip">/seo-brief</span></div>
+  <div class="e-band gate"><h4>Never without a human</h4><p>Publishing anything public · committing marketing spend · public product or roadmap claims</p></div>
+  <div class="e-band esc"><h4>Escalates when</h4><p>A claim can't be substantiated (→ product-manager); a campaign needs budget beyond policy (→ finance); messaging conflicts with product or legal.</p></div>
+  <div class="foot"><span>EVALYN·OS · dossier 19</span><span>36</span></div>
+</div>
+
+<div class="page">
+  <div class="folio"><span><b>EMPLOYEE 20 / 23</b> · marketing &amp; support</span><span>evalyn·os dossier</span></div>
+  <div class="e-head"><h2>social-media</h2><span class="e-title">AI Social Media Manager</span></div>
+  <p class="e-desc">Owns the social calendar, post drafting, and community engagement — each platform in its own voice. Drafts everything; a human approves before anything goes public.</p>
+  <div class="e-flow">
+    <div class="card e-col"><h4>Receives</h4><ul><li>Calendar &amp; campaigns from <b>marketing</b></li><li>Launch plans</li><li>Mentions &amp; community signals</li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col do"><h4>Owns &amp; does</h4><ul><li>The social content calendar</li><li>Platform-tailored post drafts + variants</li><li>Engagement/response drafts</li><li>Capturing what resonates</li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col"><h4>Hands off</h4><ul><li>Strategy alignment → <b>marketing</b></li><li>Performance → <b>data-analyst</b></li><li>Escalations → <b>ceo</b> + human</li></ul></div>
+  </div>
+  <div class="e-skills"><h4>Skills</h4><span class="chip">/social-post</span><span class="chip">/content-calendar</span></div>
+  <div class="e-band gate"><h4>Never without a human</h4><p>Publishing any post, reply, or DM · public responses to complaints/criticism · anything PR-sensitive</p></div>
+  <div class="e-band esc"><h4>Escalates when</h4><p>A post could be a PR risk; a complaint escalates publicly; a trend demands a fast company response — never freelances a crisis response.</p></div>
+  <div class="foot"><span>EVALYN·OS · dossier 20</span><span>37</span></div>
+</div>
+
+<div class="page">
+  <div class="folio"><span><b>EMPLOYEE 21 / 23</b> · marketing &amp; support</span><span>evalyn·os dossier</span></div>
+  <div class="e-head"><h2>support</h2><span class="e-title">AI Customer Support Engineer</span></div>
+  <p class="e-desc">Owns ticket triage, bug reproduction, and customer response drafting — empathetic, policy-grounded replies, and clean repro handed to engineering. A human sends every reply.</p>
+  <div class="e-flow">
+    <div class="card e-col"><h4>Receives</h4><ul><li>Customer tickets</li><li>Product knowledge from <b>tech-writer</b> docs</li><li>Policies (refund, SLA)</li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col do"><h4>Owns &amp; does</h4><ul><li>Triage: severity, category, routing</li><li>Bug reproduction with concrete steps</li><li>Reply drafts, grounded in policy</li><li>Pattern spotting across tickets</li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col"><h4>Hands off</h4><ul><li>Bugs → <b>developer / tester</b></li><li>Recurring issues → <b>product-manager</b></li><li>Incidents → <b>devops</b></li></ul></div>
+  </div>
+  <div class="e-skills"><h4>Skills</h4><span class="chip">/ticket-triage</span><span class="chip">/support-macro</span></div>
+  <div class="e-band gate"><h4>Never without a human</h4><p>Sending any external customer message · promising a fix, refund, or timeline · committing anything the company must honor</p></div>
+  <div class="e-band esc"><h4>Escalates when</h4><p>A ticket is a security/privacy report; a customer is at churn or legal risk; a bug is widespread — possible incident, straight to devops.</p></div>
+  <div class="foot"><span>EVALYN·OS · dossier 21</span><span>38</span></div>
+</div>
+
+<div class="page">
+  <div class="folio"><span><b>EMPLOYEE 22 / 23</b> · operations</span><span>evalyn·os dossier</span></div>
+  <div class="e-head"><h2>procurement</h2><span class="e-title">AI Procurement &amp; Asset Manager</span></div>
+  <p class="e-desc">Owns buying (vendors, quotes, outbound POs) and inventory (licenses, devices, cloud). Checks reclaim before buying, compares on TCO, and never commits spend itself.</p>
+  <div class="e-flow">
+    <div class="card e-col"><h4>Receives</h4><ul><li>Buying needs from any department</li><li>Budget caps from <b>finance</b></li><li>Renewal dates from the asset register</li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col do"><h4>Owns &amp; does</h4><ul><li>Reclaim-check → vendor comparison (TCO)</li><li>Outbound PO drafts · receiving</li><li>Vendor management</li><li>Asset register: allocation, utilization, renewals</li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col"><h4>Hands off</h4><ul><li>PO draft → human approval</li><li>Risky vendors → <b>security</b></li><li>Renewal decisions → budget owner + human</li></ul></div>
+  </div>
+  <div class="e-skills"><h4>Skills</h4><span class="chip">/procurement-request</span><span class="chip">/asset-register</span><span class="chip">deep-research</span></div>
+  <div class="e-band gate"><h4>Never without a human</h4><p>Placing any order · committing spend · signing a vendor agreement</p></div>
+  <div class="e-band esc"><h4>Escalates when</h4><p>Spend exceeds policy; a vendor poses a security/data risk; a needed asset is blocking delivery. Waste (unused/duplicate assets) surfaced for reclaim.</p></div>
+  <div class="foot"><span>EVALYN·OS · dossier 22</span><span>39</span></div>
+</div>
+
+<div class="page">
+  <div class="folio"><span><b>EMPLOYEE 23 / 23</b> · operations</span><span>evalyn·os dossier</span></div>
+  <div class="e-head"><h2>data-analyst</h2><span class="e-title">AI Data Analyst</span></div>
+  <p class="e-desc">Turns product and business data into trustworthy metrics, dashboards, and insight. Computes every number it reports — never guesses, never exposes PII.</p>
+  <div class="e-flow">
+    <div class="card e-col"><h4>Receives</h4><ul><li>Product &amp; business data</li><li>Metric questions from every department</li><li>Success metrics from <b>product-manager</b></li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col do"><h4>Owns &amp; does</h4><ul><li>Metric definitions &amp; scorecards</li><li>Trend / cohort analysis · root-cause digs</li><li>Dashboards (dataviz)</li><li>The "so what" + recommended action</li></ul></div>
+    <div class="e-arrow">→</div>
+    <div class="card e-col"><h4>Hands off</h4><ul><li>Product insight → <b>product-manager</b></li><li>Growth insight → <b>marketing / sales</b></li><li>Company metrics → <b>ceo</b></li></ul></div>
+  </div>
+  <div class="e-skills"><h4>Skills</h4><span class="chip">/metrics-review</span><span class="chip">dataviz</span><span class="chip">data-validator</span></div>
+  <div class="e-band gate"><h4>Never without a human</h4><p>Analysis is advisory — humans decide · sharing sensitive metrics externally · any PII in outputs</p></div>
+  <div class="e-band esc"><h4>Escalates when</h4><p>Data quality is too poor to trust; a metric reveals a serious problem (churn spike, revenue drop, SLA breach); numbers can't be reconciled.</p></div>
+  <div class="foot"><span>EVALYN·OS · dossier 23</span><span>40</span></div>
+</div>
+
+</body>
+</html>

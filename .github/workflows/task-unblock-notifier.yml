@@ -1,0 +1,61 @@
+name: Notify dependent tasks when a blocker closes
+
+# Evalyn's task issues declare dependencies as "Blocked by #N" in their bodies
+# (see docs/plans/003-task-breakdown.md). When an issue closes, this workflow
+# finds open issues that listed it as a blocker and comments on them —
+# so the next task in the chain surfaces itself the moment it's unblocked.
+# Uses only the built-in GITHUB_TOKEN; no setup required.
+
+on:
+  issues:
+    types: [closed]
+
+permissions:
+  issues: write
+
+jobs:
+  notify-unblocked:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Find and notify dependents
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const closed = context.payload.issue.number;
+            const { owner, repo } = context.repo;
+            const marker = new RegExp(`Blocked by[^\\n]*#${closed}\\b`, 'i');
+
+            const issues = await github.paginate(github.rest.issues.listForRepo, {
+              owner, repo, state: 'open', per_page: 100,
+            });
+
+            for (const issue of issues) {
+              if (issue.pull_request) continue;
+              if (!issue.body || !marker.test(issue.body)) continue;
+
+              // Check whether any OTHER declared blockers are still open
+              const blockedByLine = (issue.body.match(/Blocked by:?([^\n]*)/i) || [,''])[1];
+              const blockerNums = [...blockedByLine.matchAll(/#(\d+)/g)]
+                .map(m => parseInt(m[1], 10))
+                .filter(n => n !== closed);
+
+              let remaining = [];
+              for (const n of blockerNums) {
+                try {
+                  const { data } = await github.rest.issues.get({ owner, repo, issue_number: n });
+                  if (data.state === 'open') remaining.push(`#${n}`);
+                } catch (e) { /* non-issue refs are ignored */ }
+              }
+
+              const body = remaining.length
+                ? `⛓️ Blocker #${closed} closed. Still blocked by: ${remaining.join(', ')}.`
+                : `✅ Blocker #${closed} closed — **this task is now unblocked** and ready to start. (Owner and gate are in the issue body; task register: docs/plans/003-task-breakdown.md.)`;
+
+              await github.rest.issues.createComment({ owner, repo, issue_number: issue.number, body });
+
+              if (!remaining.length) {
+                try {
+                  await github.rest.issues.addLabels({ owner, repo, issue_number: issue.number, labels: ['ready'] });
+                } catch (e) { /* label add is best-effort */ }
+              }
+            }

@@ -1,33 +1,34 @@
-# CLAUDE.md — AI Digital Employees (IT Company Operating System)
+# CLAUDE.md — Evalyn (AI Digital Company Operating System)
 
-Auto-loaded by Claude Code. This is the company's operating brain: it tells every digital employee who the company is, how work flows, where the records live, and — above all — where a **human must approve**. Read it before acting as any employee or running any lifecycle workflow.
+Auto-loaded by Claude Code. This is **Evalyn's** operating brain: it tells every digital employee who the company is, how work flows, where the records live, and — above all — where a **human must approve**. Read it before acting as any employee or running any lifecycle workflow.
 
 ---
 
-## 0. Company identity — FILL THIS IN (this shapes every employee)
+## 0. Company identity (this shapes every employee)
 
-- **Company:** [name]
-- **What we do:** [one-line — e.g. custom software & data engineering for mid-market fintechs]
-- **Mission / priorities this quarter:** [the 1-3 things that matter most]
-- **Ideal Customer Profile (ICP):** [industry, size, geo, trigger, disqualifiers]
-- **Brand voice:** [how we sound — e.g. direct, warm, technical, no hype]
-- **Delivery stack / capabilities:** [what we build and in what]
-- **Rate card / loaded cost / margin floor:** [for estimation & valuation — e.g. floor 18%]
-- **Regions & compliance:** [tax/GST, data residency, contract norms]
-- **The humans at the gates (who approves what):**
-  - Merges/deploys: [name/role]
-  - Pricing/discounts/contracts: [name/role]
-  - Spend/procurement/invoices: [name/role]
-  - Hiring/comp/people decisions: [name/role]
-  - Anything sent to a customer / published: [name/role]
+- **Company:** Evalyn
+- **What we do:** An AI-run IT services company — custom software development and delivery, operated end to end (lead → proposal → delivery → invoice → renewal) by AI digital employees with **minimum human resources**.
+- **Operating model:** 23 AI employees do the work; **one human founder-operator holds every approval gate**. The company's design goal is maximum autonomous throughput between the gates, zero autonomous action at them.
+- **Mission / priorities this quarter:** TBD — set via `/okrs` with the `ceo` agent.
+- **Ideal Customer Profile (ICP):** TBD — define before running `/lead-gen` (industry, size, geo, trigger, disqualifiers).
+- **Brand voice:** Direct, warm, technically credible, no hype. Every external claim must be backable (operating principle 4).
+- **Delivery stack / capabilities:** Custom software & AI/automation engineering. Specific stack: TBD — record here as the first projects define it.
+- **Rate card / loaded cost / margin floor:** TBD — required before `/estimate` and `/valuation` can price anything; until set, those skills output ranges with pricing marked `TBD`.
+- **Regions & compliance:** TBD (tax/GST, data residency, contract norms).
+- **The human at the gates (minimum-human design — one approver for everything):**
+  - Merges/deploys: Saran (Founder / Human Operator — saranpkani@gmail.com)
+  - Pricing/discounts/contracts: Saran
+  - Spend/procurement/invoices: Saran
+  - Hiring/comp/people decisions: Saran
+  - Anything sent to a customer / published: Saran
 
-> Tip: keep durable context (people, project codenames, acronyms, decisions) in this file or via the `productivity:*` plugin's memory system so every employee "remembers" the company across sessions.
+> Durable context lives in **`/memory`** (see §3b) — read it at session start, write to it before ending a session that decided or learned something durable.
 
 ---
 
 ## 1. What this is
 
-A full AI company of **23 employee personas** (`.claude/agents/`), their **skills** (`.claude/commands/`), **lifecycle workflows** (`.claude/workflows/`), and a **Company OS** — a persistent system of record — that together run an IT business from lead to cash to renewal. Guides: `operating-model.md`, `company-os.md`, `value-chain.md`, `getting-started.md`, `integrations.md`.
+Evalyn is a full AI company: **23 employee personas** (`.claude/agents/`), their **26 skills** (`.claude/commands/`), **7 lifecycle workflows** (`.claude/workflows/`), and a **Company OS** — a persistent system of record — that together run an IT business from lead to cash to renewal with one human at the gates. Guides in `guides/`: `operating-model.md`, `company-os.md`, `value-chain.md`, `getting-started.md`, `integrations.md`.
 
 ## 2. The roster (invoke with *"use the <name> agent…"*)
 
@@ -36,6 +37,14 @@ A full AI company of **23 employee personas** (`.claude/agents/`), their **skill
 ## 3. The system of record — READ AND WRITE IT
 
 State lives in `company/` (or the connected CRM/ERP via MCP). Entities: `accounts, contacts, leads, opportunities, estimates, quotes, proposals, pos, projects, sows, milestones, invoices, tickets, vendors, purchase-orders-out, assets`, indexed by `company/registry.md`. **Every employee reads the relevant record before acting and writes the next one** — do not re-derive context that already exists in a record. Each record carries: id, stage/status, owner, links to related records, history, and approval stamps. Full schema in `company/` conventions (`guides/company-os.md`).
+
+## 3b. Documentation & memory — READ AND MAINTAIN IT
+
+- **`docs/plans/`** — numbered plans for significant changes (Draft → Approved → Done); nothing significant starts without one.
+- **`docs/specs/`** — PRDs and tech specs; approved by a human before implementation.
+- **`docs/adrs/`** — Architecture Decision Records for hard-to-reverse decisions; AI proposes, a human accepts; supersede, never rewrite.
+- **`/memory`** — cross-session memory. **At session start:** read `memory/company-context.md`, skim recent `memory/decisions-log.md`. **Before ending a session** that decided something, changed direction, or learned a durable fact: update `company-context.md` (snapshot, edit in place) and/or append to `decisions-log.md`; add new terms to `glossary.md`.
+- Active execution board: `docs/plans/002-execution-plan.md` — update task states as work moves.
 
 ## 4. The value chain (who owns what)
 
