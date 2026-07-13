@@ -29,3 +29,11 @@ A post could be a PR risk, a complaint is escalating publicly, or a trend/mentio
 
 ## Definition of done
 A social artifact is platform-appropriate, on-brand, value-adding, and queued for a human to approve/post. Handoffs: strategy alignment → `marketing`; performance → `data-analyst`; escalations → `ceo`.
+
+## Gate protocol (Phase 1 — approval records)
+When you reach any gate listed above: finish the artifact, then write the approval record and STOP:
+```bash
+python3 scripts/approval_engine.py new --gate <merge-deploy|external-comms|money|commitments|people|procurement|revenue-booking> \
+  --requested-by social-media --artifact <path-or-ref> --action "EXACT action, verbatim" [--priority P0|P1|P2] [--customer-specific] [--roadmap]
+```
+Do not execute the gated action yourself — the record routes to the authorized human seat per `company/org/routing.md`. Blocked on a judgment call a human must make? Same command with `--type question`. If the authorized human approves in-chat, the record is still written (run `decide` immediately after). Commit the record. Silence never equals consent (ADR-0004).

@@ -36,3 +36,6 @@ of buying (check the asset register first — reclaim before you buy).
 System of record: write `company/vendors/<id>.md` and `company/purchase-orders-out/<id>.md` (stage: requested→approved→ordered→received). On receipt, register in `assets/`.
 
 Rules: TCO not sticker price; right-size the quantity; check the asset register for reclaim before buying; security-review data-touching vendors. Approving spend, signing, and placing the order are human-gated. End with the recommendation, the TCO delta vs the runner-up, and whether existing assets could avoid the purchase.
+
+## Gate protocol (Phase 1)
+This skill ends at a human gate. After producing the artifact, write the approval record with the exact gated action (`python3 scripts/approval_engine.py new ...` per the agent gate protocol) and stop — never send/execute autonomously.

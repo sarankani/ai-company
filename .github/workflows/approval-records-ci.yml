@@ -1,0 +1,25 @@
+name: Approval records — schema validation & engine tests
+
+# EX-101: a malformed record breaks routing silently, so every push/PR
+# validates all records (incl. append-only history vs the previous commit)
+# and runs the engine's unit tests.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2   # needed for --against-git append-only check
+      - name: Engine unit tests
+        run: python3 -m unittest discover -s tests -v
+      - name: Validate all approval/question records
+        run: python3 scripts/approval_engine.py validate --against-git

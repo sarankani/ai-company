@@ -13,17 +13,17 @@ Deliver Phases 0–3 of Plan 001: the distributed approval model on paper → th
 
 States: `todo` · `in-progress` · `blocked` · `in-review` · `done`. IDs are stable — reference them in commits and standups.
 
-### Phase 0 — Define & specify (Week 1) — target: 2026-07-17
+### Phase 0 — Define & specify — ✅ DONE 2026-07-13 (PR #1 + PR #33)
 
 | ID | Task | Owner (AI) | Gate / approver | State |
 |---|---|---|---|---|
 | EX-001 | Plan 001 reviewed & direction approved | — | Saran | done (2026-07-12) |
-| EX-002 | Write PRD for Control Panel (`docs/specs/prd-001-control-panel.md`) | product-manager | Saran approves | in-review |
-| EX-003 | Write tech spec: approval loop + panel (`docs/specs/tech-spec-001-…`) | solutions-architect | Saran approves | in-review |
-| EX-004 | Record foundational ADRs (0001–0006) | tech-writer | Saran approves | in-review |
+| EX-002 | Write PRD for Control Panel (`docs/specs/prd-001-control-panel.md`) | product-manager | Saran approves | done (PR #1 merged) |
+| EX-003 | Write tech spec: approval loop + panel (`docs/specs/tech-spec-001-…`) | solutions-architect | Saran approves | done (PR #1 merged) |
+| EX-004 | Record foundational ADRs (0001–0006) | tech-writer | Saran approves | done (PR #1 merged — ADRs 0002–0006 Accepted) |
 | EX-005 | Establish `/memory` convention and seed files | tech-writer | — | done |
-| EX-006 | Update `CLAUDE.md` §0/§5 to distributed-approver model | tech-writer | Saran approves | in-review (#7) |
-| EX-007 | Create `company/org/` (departments, humans, routing, SLAs — Saran in all seats) | hr + tech-writer | Saran approves | in-review (#8) |
+| EX-006 | Update `CLAUDE.md` §0/§5 to distributed-approver model | tech-writer | Saran approves | done (PR #33 merged) |
+| EX-007 | Create `company/org/` (departments, humans, routing, SLAs) | hr + tech-writer | Saran approves | done (PR #33 merged) |
 | EX-008 | Dry-run on paper: fire one sample gate, verify routing resolves correct department/approver | tester | — | done — 9/9 pass (#9) |
 
 **Phase 0 definition of done:** specs + ADRs approved; `company/org/` exists; a sample gate routes correctly on paper.
@@ -32,13 +32,13 @@ States: `todo` · `in-progress` · `blocked` · `in-review` · `done`. IDs are s
 
 | ID | Task | Owner (AI) | Gate / approver | State |
 |---|---|---|---|---|
-| EX-101 | Implement approval/question record templates + `registry.md` indexing | developer | code-reviewer → Saran merge | todo |
-| EX-102 | Gate-integration pass: update gate-hitting agents/skills to write approval records and stop | developer + tech-writer | code-reviewer → Saran merge | todo |
-| EX-103 | SLA/escalation job (scheduled): scan pending records, reassign per chain, append hops | developer | code-reviewer → Saran merge | todo |
-| EX-104 | Email notifications on assign / SLA-50 % / escalation | developer + devops | Saran merge | todo |
-| EX-105 | `/approve` helper skill (decide + stamp a record from CLI in one step) | developer | Saran merge | todo |
-| EX-106 | Execution/resume mechanism per tech spec §6 (approved → executed exactly once) | developer | code-reviewer + security → Saran merge | todo |
-| EX-107 | **Live drill:** run one real deliverable end to end through the loop | delivery-manager | Saran approves the item | todo |
+| EX-101 | Implement approval/question record templates + `registry.md` indexing | developer | code-reviewer → Saran merge | in-review (#10) |
+| EX-102 | Gate-integration pass: update gate-hitting agents/skills to write approval records and stop | developer + tech-writer | code-reviewer → Saran merge | in-review (#11) |
+| EX-103 | SLA/escalation job (scheduled): scan pending records, reassign per chain, append hops | developer | code-reviewer → Saran merge | in-review (#12) |
+| EX-104 | Email notifications on assign / SLA-50 % / escalation | developer + devops | Saran merge | in-review (#13 — needs SMTP secrets to go live) |
+| EX-105 | `/approve` helper skill (decide + stamp a record from CLI in one step) | developer | Saran merge | in-review (#14) |
+| EX-106 | Execution/resume mechanism per tech spec §6 (approved → executed exactly once) | developer | code-reviewer + security → Saran merge | in-review (#15) |
+| EX-107 | **Live drill:** run one real deliverable end to end through the loop | delivery-manager | Saran approves the item | in-progress — drill record = the E1 PR merge itself (#16) |
 | EX-108 | **Escalation drill:** Saran deliberately ignores one request; verify hop chain + notifications fire | tester | — | todo |
 | EX-109 | Capture baseline metrics (time-to-decision, hops) in `memory/decisions-log.md` | data-analyst | — | todo |
 

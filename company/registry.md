@@ -13,11 +13,12 @@ Index of all records in `company/`. Every employee updates this file when creati
 
 ## Approvals & questions (open items)
 
+<!-- approvals:begin -->
 | id | type | gate | department | state | assignee | sla_due |
 |---|---|---|---|---|---|---|
-| — | — | — | — | — | — | — |
+| APR-20260713-001 | approval | merge-deploy | engineering | pending | saravanan-p | 2026-07-14T14:54:50Z |
+<!-- approvals:end -->
 
-*No open items. Records appear here when the Phase-1 loop (EX-101+) starts writing `approvals/` and `questions/`.*
 
 ## Business records
 

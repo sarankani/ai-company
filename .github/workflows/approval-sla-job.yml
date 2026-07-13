@@ -1,0 +1,50 @@
+name: Approval SLA & escalation job
+
+# EX-103/EX-104: the routing engine's heartbeat (Tech Spec 001 §4).
+# Every ~15 min: skip unavailable humans, escalate SLA breaches one hop,
+# send email notifications (assigned / 50% SLA / escalated), rebuild the
+# registry — then commit any record changes. Idempotent: append-only
+# hops/notified logs make re-runs no-ops (ADR-0004: never auto-approves).
+#
+# Email needs repo secrets: SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS,
+# NOTIFY_FROM. Without them the job still routes/escalates and logs what
+# it would have sent.
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: approval-sla-job
+  cancel-in-progress: false
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Scan, escalate, notify
+        env:
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          NOTIFY_FROM: ${{ secrets.NOTIFY_FROM }}
+        run: python3 scripts/approval_engine.py scan --send-email
+      - name: Commit record changes
+        run: |
+          git config user.name "evalyn-approval-engine"
+          git config user.email "evalyn-approvals@users.noreply.github.com"
+          if ! git diff --quiet; then
+            git add company/
+            git commit -m "approval-engine: SLA scan $(date -u +%Y-%m-%dT%H:%M:%SZ) [skip ci]"
+            git push
+          else
+            echo "no changes"
+          fi

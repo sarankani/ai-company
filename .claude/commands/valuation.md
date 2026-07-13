@@ -40,3 +40,6 @@ Milestones/schedule, deposit, net terms — with their cash-flow impact.
 System of record: write `company/quotes/<opp-id>.md` (stage: draft→approved→sent→accepted), linked to the estimate/opportunity.
 
 Rules: model fits the risk; show the build-up; never silently cross the margin floor; value-based justification. This is a DRAFT — end by noting price and any discount are human-gated, and flag the margin floor for this deal and the assumption the margin is most sensitive to.
+
+## Gate protocol (Phase 1)
+This skill ends at a human gate. After producing the artifact, write the approval record with the exact gated action (`python3 scripts/approval_engine.py new ...` per the agent gate protocol) and stop — never send/execute autonomously.
