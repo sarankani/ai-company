@@ -1,30 +1,22 @@
+import Link from "next/link";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { loadRecords, type ApprovalRecord } from "@/lib/records";
 import { verifySession } from "@/lib/auth";
 import { humanById, authorized } from "@/lib/org";
+import { canView } from "@/lib/engine";
+import { slaLabel } from "@/lib/format";
 
-// Approval Inbox skeleton (EX-202 scope): sections + row anatomy + urgency
-// sort per Design Brief §4.1. Rows are not yet actionable — the decide
-// surface (Item Detail + DecisionPanel) is EX-203.
-
-function slaLabel(due: string, now: Date): { text: string; overdue: boolean } {
-  const ms = new Date(due).getTime() - now.getTime();
-  const overdue = ms < 0;
-  const abs = Math.abs(ms);
-  const h = Math.floor(abs / 3600_000);
-  const m = Math.floor((abs % 3600_000) / 60_000);
-  const span = h >= 48 ? `${Math.floor(h / 24)}d` : h > 0 ? `${h}h ${m}m` : `${m}m`;
-  return { text: overdue ? `Overdue by ${span}` : `Due in ${span}`, overdue };
-}
+// Approval Inbox (Design Brief §4.1): sections + row anatomy + urgency sort.
+// Every row opens the Item Detail decide surface (EX-203).
 
 function Row({ r, now }: { r: ApprovalRecord; now: Date }) {
   const sla = slaLabel(r.sla_due, now);
   const escalated = r.hops.length > 0;
   const last = r.hops[r.hops.length - 1];
   return (
-    <div className={`row${sla.overdue && r.state === "pending" ? " overdue" : ""}`}
-         title="Open item — the decide surface arrives with EX-203">
+    <Link href={`/item/${r.id}`}
+          className={`row${sla.overdue && r.state === "pending" ? " overdue" : ""}`}>
       <span className="chip gate">{r.gate}</span>
       <span className="chip mono">{r.type === "question" ? "QST" : "APR"}</span>
       <span className="action">{r.action}</span>
@@ -40,7 +32,7 @@ function Row({ r, now }: { r: ApprovalRecord; now: Date }) {
       ) : (
         <span className="chip state">{r.state}</span>
       )}
-    </div>
+    </Link>
   );
 }
 
@@ -50,7 +42,8 @@ export default async function Inbox() {
   const me = await humanById(session);
   if (!me) redirect("/api/auth/signout");
 
-  const { records, asOf } = await loadRecords();
+  const { records: all, asOf } = await loadRecords();
+  const records = all.filter((r) => canView(me, r)); // people-gate restriction
   const now = new Date();
   const week = 7 * 24 * 3600_000;
 
