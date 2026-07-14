@@ -16,7 +16,7 @@
 
 ## Current focus
 
-- **Active project:** Approval Loop & Control Panel. Board: `docs/plans/002-execution-plan.md`. **Phase 0 DONE (2026-07-13, PR #1 + PR #33). Phase 1 next: EX-101 (#10) is ready.**
+- **Active project:** Approval Loop & Control Panel. Board: `docs/plans/002-execution-plan.md`. **Phases 0–1 DONE (PR #1/#33/#34/#35 + drills, 2026-07-14). The approval loop is proven end to end in production. Next: Phase 2 — Control Panel MVP (E2, #4); every E2 merge goes through the loop.**
 - **Done:** PR #1 (specs+ADRs) and PR #33 (E0: CLAUDE.md model, company/org/, dry-run 9/9, first seat handover to Saravanan P) both merged 2026-07-13. Issues #7–#9 closed; Epic #2 closed.
 - **Branch:** `claude/evalyn-ai-setup-oocv7m`, restarted from main after PR #33.
 
