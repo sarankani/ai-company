@@ -49,3 +49,41 @@ export async function humanById(id: string): Promise<Human | null> {
 export function authorized(h: Human, department: string): boolean {
   return h.roles.some((r) => r.seat === "ceo" || r.department === department);
 }
+
+export function isCeoSeat(h: Human): boolean {
+  return h.roles.some((r) => r.seat === "ceo");
+}
+
+export function isHeadOf(h: Human, department: string): boolean {
+  return h.roles.some((r) => r.seat === "ceo" || (r.department === department && r.seat === "head"));
+}
+
+// ---------- departments (company/org/departments.md, markdown table) ----------
+
+export interface Department {
+  id: string;
+  name: string;
+  employees: string[];
+  gates: string;
+}
+
+let deptCache: { at: number; depts: Department[] } | null = null;
+
+export async function loadDepartments(): Promise<Department[]> {
+  if (deptCache && Date.now() - deptCache.at < TTL_MS) return deptCache.depts;
+  const raw = await repoSource().readFile("company/org/departments.md");
+  const depts: Department[] = [];
+  for (const line of raw.split("\n")) {
+    // data rows look like: | `engineering` | Engineering | developer, … | merge / deploy |
+    const m = line.match(/^\|\s*`([a-z-]+)`\s*\|([^|]*)\|([^|]*)\|([^|]*)\|/);
+    if (!m) continue;
+    depts.push({
+      id: m[1],
+      name: m[2].trim(),
+      employees: m[3].split(",").map((s) => s.trim()).filter(Boolean),
+      gates: m[4].trim(),
+    });
+  }
+  deptCache = { at: Date.now(), depts };
+  return depts;
+}

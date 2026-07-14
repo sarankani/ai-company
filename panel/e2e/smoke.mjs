@@ -131,6 +131,25 @@ await page.goto(`${BASE}/item/${APR}`);
 const done = await page.textContent("main");
 ok("decided item shows stamp, no decide panel", done.includes("approved") && !done.includes("Your decision"));
 
+// 8b. dashboard + board (EX-204) as the engineering approver
+await page.goto(`${BASE}/dashboard`);
+const dash = await page.textContent("main");
+ok("dashboard renders all 7 department tiles",
+  ["Leadership", "People & Finance", "Product & Design", "Engineering", "Sales & Delivery", "Marketing & Support", "Operations"].every((n) => dash.includes(n)));
+ok("people-gate item absent from tiles for non-people seat", !dash.includes("Extend offer"));
+const pfTile = await page.locator('a[href="/board/people-finance"]').textContent();
+ok("people-finance tile counts nothing (restricted item not counted)", !pfTile.includes("1"));
+await page.click('a[href="/board/engineering"]');
+await page.waitForURL(/board\/engineering/);
+const board = await page.textContent("main");
+ok("engineering board shows approved item under In flight", board.includes("In flight") && board.includes("smoke-test PR #999"));
+ok("people-gate item absent from engineering-neighbor boards", !board.includes("Extend offer"));
+await page.goto(`${BASE}/board/engineering?emp=developer&state=approved`);
+const filtered = await page.textContent("main");
+ok("composable URL filters narrow the board", filtered.includes("smoke-test PR #999"));
+await page.goto(`${BASE}/board/engineering?emp=nobody`);
+ok("filter with no matches shows empty groups", (await page.textContent("main")).includes("Nothing here"));
+
 // 9. question records answered through the same surface
 py(["new", "--type", "question", "--gate", "merge-deploy", "--priority", "P2",
   "--requested-by", "developer", "--artifact", "docs/plans/002-execution-plan.md",
@@ -162,6 +181,14 @@ await p2.click('form:has(input[value="approved"]) button');
 await p2.waitForURL(/done=approved/);
 ok("second stamp closes the dual gate", readFileSync(`${REPO}/company/approvals/${PEOPLE}.md`, "utf8").includes("state: approved"));
 ok("engine validates all panel-written records", py(["validate"]).includes("OK"));
+
+// 11. dashboard as ceo seat: people-gate work IS visible and counted
+await p2.goto(`${BASE}/dashboard`);
+const pfTileCeo = await p2.locator('a[href="/board/people-finance"]').textContent();
+ok("ceo's people-finance tile counts the approved item in flight", pfTileCeo.includes("1 in flight"));
+await p2.goto(`${BASE}/board/people-finance`);
+const pfBoard = await p2.textContent("main");
+ok("people-finance board shows the item to the ceo seat", pfBoard.includes("Extend offer to candidate X"));
 
 await browser.close();
 console.log(process.exitCode ? "SMOKE: FAILURES" : "SMOKE: ALL PASS");

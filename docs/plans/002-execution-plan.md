@@ -51,7 +51,7 @@ States: `todo` · `in-progress` · `blocked` · `waiting-on-gate` · `in-review`
 | EX-201 | Design brief: Approval Inbox + Company Dashboard + Department Board flows | designer | Saran approves | done — approved by saravanan-p, executor-merged PR #37 (#19) |
 | EX-202 | App scaffold, auth (humans-registry-mapped), repo read layer | developer | code-reviewer → gate | done — approved via #20, executor-merged PR #38 |
 | EX-203 | Approval Inbox screen (approve / reject-with-reason / delegate / follow-up question) | developer | code-reviewer + security + tester → gate | done — approved in-channel, PR #40 merged (#21) |
-| EX-204 | Company Dashboard + Department Board screens | developer | code-reviewer + tester → gate | todo |
+| EX-204 | Company Dashboard + Department Board screens | developer | code-reviewer + tester → gate | waiting-on-gate |
 | EX-205 | Availability toggle + People & Routing admin screen | developer | code-reviewer → gate | todo |
 | EX-206 | Security review of the whole panel (authz per role, PII in artifacts, write attribution) | security | Saran accepts | todo |
 | EX-207 | Deploy (devops) — behind auth, production checklist | devops | Saran deploy gate | todo |
