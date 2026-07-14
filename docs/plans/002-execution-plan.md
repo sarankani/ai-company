@@ -11,7 +11,7 @@ Deliver Phases 0–3 of Plan 001: the distributed approval model on paper → th
 
 ## 2. Task board
 
-States: `todo` · `in-progress` · `blocked` · `in-review` · `done`. IDs are stable — reference them in commits and standups.
+States: `todo` · `in-progress` · `blocked` · `waiting-on-gate` · `in-review` · `done`. IDs are stable — reference them in commits and standups. Transitions follow the **Task lifecycle protocol** (CLAUDE.md §3b): issues get an `in-progress` label + comment before work starts, and a gate comment (record id, exact action, assignee, SLA, how to decide) the moment a task is `waiting-on-gate`.
 
 ### Phase 0 — Define & specify — ✅ DONE 2026-07-13 (PR #1 + PR #33)
 
