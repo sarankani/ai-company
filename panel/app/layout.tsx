@@ -20,7 +20,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <nav className="topnav">
               <a href="/inbox">Inbox</a>
               <a href="/dashboard">Dashboard</a>
-              {human.roles.some((r) => r.seat === "head" || r.seat === "ceo") && <a href="/admin">Admin</a>}
+              {human.roles.some((r) => r.seat === "head" || r.seat === "ceo") && (
+                <>
+                  <a href="/audit">Ledger</a>
+                  <a href="/admin">Admin</a>
+                </>
+              )}
             </nav>
           )}
           <span className="spacer" />

@@ -2,6 +2,10 @@
 
 Append-only, newest first. Format: `## YYYY-MM-DD — decision` + who + why in 1–3 lines. Architectural decisions go to `docs/adrs/` instead.
 
+## 2026-07-14 — EX-302 built: decision ledger (/audit) — full accountability view
+
+**Who:** developer (pull-forward). Delegation UI already shipped in EX-203 (item-page Delegate control). This adds the remaining half: `/audit` (Head/CEO only), a filterable chronological ledger of every stamp, hop/delegation, and execution across visible records (PRD US-12) — filter by department/human/gate/date, People-gate records excluded for unauthorized seats, links back to each record. Read-only over records, no new state (ADR-0002). The screenshot shows the company's entire construction history rendered as an audit trail (every PR merge, the escalation drill, the EX-301 unavailable-skips), human decisions amber / system events teal. 67 e2e checks (6 new ledger) + 26 Python tests green.
+
 ## 2026-07-14 — EX-301 SHIPPED (PR #45): OOO toggle reassigns pending items instantly
 
 **Who:** saran (approved by merging PR #45) / devops (completion stamp). Gate APR-20260714-009 closed. First Phase-3 task done (pulled forward). panel-ci now guards every panel change (all 4 checks green on #45).

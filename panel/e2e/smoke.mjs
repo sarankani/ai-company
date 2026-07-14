@@ -297,5 +297,20 @@ ok("execution stamped exactly once",
   readFileSync(`${REPO}/company/approvals/${proposalId}.md`, "utf8").includes("executed_at"));
 ok("engine validates after seat change", py(["validate"]).includes("OK"));
 
+// 14. EX-302 — decision ledger (Head/CEO only)
+await page.goto(`${BASE}/audit`);
+ok("ledger restricted for non-head seat", (await page.textContent("main")).includes("Head & CEO only"));
+await p2.goto(`${BASE}/audit`);
+const ledger = await p2.textContent("main");
+ok("ledger lists decision events", /\d+ events?/.test(ledger) && ledger.includes("Decision ledger"));
+ok("ledger includes a known approved decision", ledger.includes("approved"));
+ok("ledger includes an execution event", ledger.includes("executed"));
+await p2.goto(`${BASE}/audit?gate=people`);
+const peopleLedger = await p2.locator("table.ledger").textContent().catch(() => "");
+ok("ledger filters by gate (people includes PEOPLE, excludes merge-deploy record)",
+  peopleLedger.includes(PEOPLE) && !peopleLedger.includes(APR));
+await p2.goto(`${BASE}/audit?from=2099-01-01`);
+ok("ledger date filter narrows to empty", (await p2.textContent("main")).includes("No events match"));
+
 await browser.close();
 console.log(process.exitCode ? "SMOKE: FAILURES" : "SMOKE: ALL PASS");
