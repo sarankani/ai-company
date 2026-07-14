@@ -2,6 +2,10 @@
 
 Append-only, newest first. Format: `## YYYY-MM-DD — decision` + who + why in 1–3 lines. Architectural decisions go to `docs/adrs/` instead.
 
+## 2026-07-14 — EX-201 approved by Saravanan P (first direct human engine decision); executor performed the merge
+
+**Who:** saravanan-p (decision, via `decide` CLI himself — first non-founder, non-chat-mediated stamp) / devops (executor). APR-20260714-001: approved 07:14:49Z -> claimed -> PR #37 merged by the executor (cde768d) -> completed. The full resume loop — human approves, AI executes exactly once — ran with real role separation for the first time. Design brief 001 is final-for-build; §9 open questions unanswered -> designer recommendations stand as defaults (stay-on-item + Next button, deputy sees queue only on reassignment, 7-day sessions) unless overridden before EX-203.
+
 ## 2026-07-14 — PHASE 1 COMPLETE — escalation drill passed; the loop is proven end to end
 
 **Who:** tester/data-analyst (verification) / saran (drill decisions). **EX-108:** APR-20260713-002 (P0) breached 2026-07-13T17:31Z; the scheduled job's first scan after the record reached main (dispatched 05:50:34Z) hopped it saravanan-p→saran autonomously (hop logged, chain_pos 0→1, new sla_due +1h cadence, registry updated by bot commit 0935f96) and the item stayed `pending` — ADR-0004 held in production. Rejected with reason "drill complete" (pre-authorized in the drill design). **EX-109 final baselines:** decision path 34m39s (EX-107, 2.4% of P1 SLA); escalation path: breach→hop latency = one scan cycle after visibility; gate volume to date: engineering 2, others 0 → hiring-order signal still needs Phase-3 trial data. **Known gap:** email sends pending SMTP secrets (job logs 'would send', retries until configured — by design, unsent ≠ sent). **E1 definition of done met in full.** Next: Phase 2 (Control Panel MVP, E2 #4), whose merges dogfood this loop.
