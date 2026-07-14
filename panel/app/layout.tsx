@@ -38,7 +38,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                     <button name="availability" value="ooo">○ OOO until…</button>
                     <input type="date" name="ooo_until" aria-label="OOO until date" />
                   </div>
-                  <p className="avail-note">Routing skips you from the next scan (≤15 min); pending items reassign along the chain.</p>
+                  <p className="avail-note">Going busy/OOO reassigns your pending items now, along the chain; new requests skip you too.</p>
                 </form>
               </details>
               <span className="chip">{human.id}</span>

@@ -226,7 +226,8 @@ export function repoSource(): RepoSource {
 
 // ---------- cache (TTL ≤ 5 min, revalidated after own writes) ----------
 
-const TTL_MS = 5 * 60 * 1000;
+// ≤5 min in production; CACHE_TTL_MS=0 makes reads uncached (deterministic e2e).
+const TTL_MS = Number(process.env.CACHE_TTL_MS ?? 5 * 60 * 1000);
 const cache = new Map<string, { at: number; value: unknown }>();
 
 export function revalidate() {
