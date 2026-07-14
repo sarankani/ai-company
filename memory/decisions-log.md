@@ -2,6 +2,14 @@
 
 Append-only, newest first. Format: `## YYYY-MM-DD — decision` + who + why in 1–3 lines. Architectural decisions go to `docs/adrs/` instead.
 
+## 2026-07-14 — EX-301 built: immediate reassignment when a human toggles OOO in the panel
+
+**Who:** developer. Pulled forward from Phase 3 (its real deps — the scan job EX-103 and availability EX-205 — are both merged; the listed EX-207 blocker was a phase-ordering artifact, not technical; Plan 002 sanctions pulling tasks forward). Finding: EX-301's cron-side unavailability skip was ALREADY implemented + tested in EX-103's scan job (test_unavailability_skips_immediately). The genuinely-unbuilt piece — and the reason EX-301 listed a panel dependency — was interactive immediacy: going busy/OOO in the panel now reassigns your pending items in the SAME availability commit (skipUnavailableAssignee, lockstep with the scan's logic) instead of leaving them parked until the next ≤15-min scan. New assertions (frontmatter assignee moved, unavailable-skip hop, shared commit) pass. Also: cache TTL is now env-overridable (CACHE_TTL_MS, prod default unchanged) so the e2e harness reads uncached deterministically — the earlier "flaky" failures were a warm-server 5-min record cache serving stale data across rapid rerun cycles, not a product bug (proven by a direct item-page probe showing correct reassignment). 26 Python + 45 e2e checks green.
+
+## 2026-07-14 — EX-207 groundwork SHIPPED (PR #44): panel is deploy-ready; deploy itself awaits Founder
+
+**Who:** saran (approved by merging PR #44) / devops (completion stamp). Hosting-agnostic deploy prep in main: panel CI (build + npm audit + gitleaks — the security-review precondition, now live and catching), real SMTP delivery (nodemailer), standalone Dockerfile, .env.example, deploy runbook. Gate APR-20260714-008 closed. **EX-207 stays open** — the production deploy is a separate Founder-authorized gate needing hosting choice + SESSION_SECRET + repo-scoped GITHUB_TOKEN + SMTP creds + domain (checklist: docs/runbooks/panel-deploy.md). CI note: first panel-ci run 403'd on gitleaks (needed pull-requests:read); fixed same-PR, green.
+
 ## 2026-07-14 — EX-205 SHIPPED (PR #42): availability + gated seat changes; Admin live
 
 **Who:** saran (approved in-channel by merging PR #42) / devops (completion stamp). One-tap availability (commits to registry, routing skips next scan) and /admin two-step seat changes (Head proposes → dual approval → CEO applies exactly-once) are in main. Gate APR-20260714-006 closed approved+executed. EX-206 (security review + fixes) pushed immediately after as its own PR.

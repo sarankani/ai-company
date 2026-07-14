@@ -193,10 +193,10 @@ export const GATE_DEPT: Record<string, string> = {
   "revenue-booking": "people-finance",
 };
 
-const PRIORITIES: Record<string, { firstH: number; business: boolean }> = {
-  P0: { firstH: 2, business: false },
-  P1: { firstH: 24, business: true },
-  P2: { firstH: 72, business: true },
+const PRIORITIES: Record<string, { firstH: number; escH: number; business: boolean }> = {
+  P0: { firstH: 2, escH: 1, business: false },
+  P1: { firstH: 24, escH: 24, business: true },
+  P2: { firstH: 72, escH: 72, business: true },
 };
 
 function addBusinessDelta(start: Date, hours: number): Date {
@@ -211,21 +211,22 @@ function addBusinessDelta(start: Date, hours: number): Date {
   return cur;
 }
 
-export function slaDueFrom(start: Date, priority: string): string {
+export function slaDueFrom(start: Date, priority: string, cadence = false): string {
   const p = PRIORITIES[priority];
   if (!p) throw new DecisionError(`unknown priority ${priority}`);
+  const hours = cadence ? p.escH : p.firstH; // cadence = post-hop window (lockstep w/ Python)
   const due = p.business
-    ? addBusinessDelta(start, p.firstH)
-    : new Date(start.getTime() + p.firstH * 3600_000);
+    ? addBusinessDelta(start, hours)
+    : new Date(start.getTime() + hours * 3600_000);
   return due.toISOString().replace(/\.\d{3}Z$/, "Z");
 }
 
 const isAvailable = (h: Human) => h.availability === "available";
 
-/** First available seat-holder along the chain; the ceo seat is the terminal
- * backstop even when busy (lockstep with resolve_assignee). */
-export function resolveAssignee(humans: Human[], department: string): { assignee: string; pos: number } {
-  for (let pos = 0; pos < CHAIN.length; pos++) {
+/** First available seat-holder along the chain from startPos; the ceo seat is
+ * the terminal backstop even when busy (lockstep with resolve_assignee). */
+export function resolveAssignee(humans: Human[], department: string, startPos = 0): { assignee: string; pos: number } {
+  for (let pos = startPos; pos < CHAIN.length; pos++) {
     const holder = humans.find(
       (h) => isAvailable(h) && h.roles.some((r) => r.department === department && r.seat === CHAIN[pos]),
     );
@@ -233,6 +234,28 @@ export function resolveAssignee(humans: Human[], department: string): { assignee
   }
   const ceo = humans.find((h) => h.roles.some((r) => r.department === "leadership" && r.seat === "ceo"));
   return { assignee: ceo?.id ?? "UNASSIGNED", pos: CHAIN.length };
+}
+
+/** EX-301: reassign a pending record away from a now-unavailable assignee,
+ * immediately — the panel counterpart of the cron scan's unavailability skip
+ * (approval_engine.py cmd_scan), so a human toggling OOO doesn't leave items
+ * parked on them until the next scan. Mutates `data` and returns true if it
+ * reassigned. The ceo terminal backstop is never skipped. `humans` must
+ * already reflect the new (unavailable) status of `humanId`. */
+export function skipUnavailableAssignee(
+  data: RecordData, humanId: string, humans: Human[], at?: string,
+): boolean {
+  if (data.state !== "pending" || data.assignee !== humanId) return false;
+  const pos = Number(data.chain_pos ?? 0);
+  if (pos >= CHAIN.length) return false; // already at the ceo backstop — never skip
+  const when = at ?? nowIso();
+  const { assignee, pos: newPos } = resolveAssignee(humans, String(data.department), pos + 1);
+  if (assignee === humanId) return false; // no better target — leave it
+  (data.hops as InlineDict[]).push({ at: when, from: humanId, to: assignee, reason: "unavailable-skip" });
+  data.assignee = assignee;
+  data.chain_pos = newPos;
+  data.sla_due = slaDueFrom(new Date(when), String(data.priority), true);
+  return true;
 }
 
 export function nextId(type: "approval" | "question", existing: string[], at: string): string {

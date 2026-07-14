@@ -8,6 +8,8 @@
  *      git config user.email test@local && git config user.name "Smoke"
  *   2. cd panel && SESSION_SECRET=smoke LOCAL_REPO_PATH=/tmp/evalyn-smoke \
  *      PORT=3100 npm run dev > /tmp/panel-dev.log 2>&1 &
+ *      (start the dev server with CACHE_TTL_MS=0 so reads are uncached and
+ *       externally-seeded records are visible immediately — deterministic)
  *   3. SMOKE_REPO=/tmp/evalyn-smoke PANEL_LOG=/tmp/panel-dev.log \
  *      node e2e/smoke.mjs        (needs `playwright` + a chromium)
  *
@@ -223,6 +225,14 @@ const waitForCommit = async (substr, tries = 60) => {
   }
   return false;
 };
+// seed a fresh pending engineering item assigned to saravanan-p (the approver)
+const parkId = py(["new", "--type", "approval", "--gate", "merge-deploy", "--priority", "P2",
+  "--requested-by", "developer", "--artifact", "docs/plans/002-execution-plan.md",
+  "--action", "Item parked on the approver before they go OOO", "--summary", "probe"]).match(/APR-\d+-\d+/)[0];
+git(["add", "-A"]); git(["commit", "-qm", "smoke: park item on approver"]);
+ok("seeded item assigned to the approver",
+  readFileSync(`${REPO}/company/approvals/${parkId}.md`, "utf8").includes("assignee: saravanan-p"));
+
 await page.goto(`${BASE}/inbox`);
 await page.click(".avail-menu summary");
 await page.click('.avail-form button[value="busy"]');
@@ -231,6 +241,14 @@ await page.goto(`${BASE}/inbox`);
 ok("topbar chip reflects new status", (await page.textContent(".avail-menu summary")).includes("busy"));
 ok("humans file updated, comments preserved",
   readFileSync(`${REPO}/company/org/humans/saravanan-p.md`, "utf8").match(/availability: busy.*#/));
+// EX-301: the parked item reassigned immediately, in the same availability commit
+const parked = readFileSync(`${REPO}/company/approvals/${parkId}.md`, "utf8");
+ok("EX-301: frontmatter assignee moved off the OOO approver",
+  /^assignee: saran$/m.test(parked) && !/^assignee: saravanan-p$/m.test(parked));
+ok("EX-301: reassignment logged as unavailable-skip hop", parked.includes("unavailable-skip"));
+ok("EX-301: reassignment shared the availability commit",
+  git(["show", "--stat", "--format=%s", "HEAD"]).includes(`${parkId}.md`) &&
+  /reassigned \d+ pending item/.test(git(["log", "-1", "--format=%s"])));
 const routed = py(["new", "--type", "approval", "--gate", "merge-deploy", "--priority", "P2",
   "--requested-by", "developer", "--artifact", "docs/plans/002-execution-plan.md",
   "--action", "Routing probe while approver busy", "--summary", "probe"]);

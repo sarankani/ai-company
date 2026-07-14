@@ -11,7 +11,7 @@ export interface Human {
 }
 
 let orgCache: { at: number; humans: Human[] } | null = null;
-const TTL_MS = 5 * 60 * 1000;
+const TTL_MS = Number(process.env.CACHE_TTL_MS ?? 5 * 60 * 1000);
 
 /** Drop org caches after a write that touched company/org/. */
 export function revalidateOrg() {
