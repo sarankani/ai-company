@@ -1,5 +1,5 @@
 import { humanByEmail } from "@/lib/org";
-import { makeLoginToken, deliverLink, safeReturnTo } from "@/lib/auth";
+import { makeLoginToken, deliverLink, safeReturnTo, panelBaseUrl } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
 // Magic-link sign-in: the email must match company/org/humans/ 1:1.
@@ -11,8 +11,7 @@ async function requestLink(formData: FormData) {
   const human = await humanByEmail(email);
   if (human) {
     const token = makeLoginToken(human.id, returnTo);
-    const base = process.env.PANEL_BASE_URL || "http://localhost:3000";
-    await deliverLink(human.email, `${base}/api/auth/verify?token=${token}`);
+    await deliverLink(human.email, `${panelBaseUrl()}/api/auth/verify?token=${token}`);
   }
   redirect(`/signin?sent=1&return=${encodeURIComponent(returnTo)}`);
 }
