@@ -2,6 +2,10 @@
 
 Append-only, newest first. Format: `## YYYY-MM-DD — decision` + who + why in 1–3 lines. Architectural decisions go to `docs/adrs/` instead.
 
+## 2026-07-14 — EX-207 groundwork SHIPPED (PR #44): panel is deploy-ready; deploy itself awaits Founder
+
+**Who:** saran (approved by merging PR #44) / devops (completion stamp). Hosting-agnostic deploy prep in main: panel CI (build + npm audit + gitleaks — the security-review precondition, now live and catching), real SMTP delivery (nodemailer), standalone Dockerfile, .env.example, deploy runbook. Gate APR-20260714-008 closed. **EX-207 stays open** — the production deploy is a separate Founder-authorized gate needing hosting choice + SESSION_SECRET + repo-scoped GITHUB_TOKEN + SMTP creds + domain (checklist: docs/runbooks/panel-deploy.md). CI note: first panel-ci run 403'd on gitleaks (needed pull-requests:read); fixed same-PR, green.
+
 ## 2026-07-14 — EX-205 SHIPPED (PR #42): availability + gated seat changes; Admin live
 
 **Who:** saran (approved in-channel by merging PR #42) / devops (completion stamp). One-tap availability (commits to registry, routing skips next scan) and /admin two-step seat changes (Head proposes → dual approval → CEO applies exactly-once) are in main. Gate APR-20260714-006 closed approved+executed. EX-206 (security review + fixes) pushed immediately after as its own PR.
