@@ -2,6 +2,14 @@
 
 Append-only, newest first. Format: `## YYYY-MM-DD — decision` + who + why in 1–3 lines. Architectural decisions go to `docs/adrs/` instead.
 
+## 2026-07-14 — EX-302 built: decision ledger (/audit) — full accountability view
+
+**Who:** developer (pull-forward). Delegation UI already shipped in EX-203 (item-page Delegate control). This adds the remaining half: `/audit` (Head/CEO only), a filterable chronological ledger of every stamp, hop/delegation, and execution across visible records (PRD US-12) — filter by department/human/gate/date, People-gate records excluded for unauthorized seats, links back to each record. Read-only over records, no new state (ADR-0002). The screenshot shows the company's entire construction history rendered as an audit trail (every PR merge, the escalation drill, the EX-301 unavailable-skips), human decisions amber / system events teal. 67 e2e checks (6 new ledger) + 26 Python tests green.
+
+## 2026-07-14 — EX-301 SHIPPED (PR #45): OOO toggle reassigns pending items instantly
+
+**Who:** saran (approved by merging PR #45) / devops (completion stamp). Gate APR-20260714-009 closed. First Phase-3 task done (pulled forward). panel-ci now guards every panel change (all 4 checks green on #45).
+
 ## 2026-07-14 — EX-301 built: immediate reassignment when a human toggles OOO in the panel
 
 **Who:** developer. Pulled forward from Phase 3 (its real deps — the scan job EX-103 and availability EX-205 — are both merged; the listed EX-207 blocker was a phase-ordering artifact, not technical; Plan 002 sanctions pulling tasks forward). Finding: EX-301's cron-side unavailability skip was ALREADY implemented + tested in EX-103's scan job (test_unavailability_skips_immediately). The genuinely-unbuilt piece — and the reason EX-301 listed a panel dependency — was interactive immediacy: going busy/OOO in the panel now reassigns your pending items in the SAME availability commit (skipUnavailableAssignee, lockstep with the scan's logic) instead of leaving them parked until the next ≤15-min scan. New assertions (frontmatter assignee moved, unavailable-skip hop, shared commit) pass. Also: cache TTL is now env-overridable (CACHE_TTL_MS, prod default unchanged) so the e2e harness reads uncached deterministically — the earlier "flaky" failures were a warm-server 5-min record cache serving stale data across rapid rerun cycles, not a product bug (proven by a direct item-page probe showing correct reassignment). 26 Python + 45 e2e checks green.

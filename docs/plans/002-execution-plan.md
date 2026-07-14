@@ -63,8 +63,8 @@ States: `todo` · `in-progress` · `blocked` · `waiting-on-gate` · `in-review`
 
 | ID | Task | Owner (AI) | Gate / approver | State |
 |---|---|---|---|---|
-| EX-301 | Auto-reassign on unavailability status (skip, don't wait for SLA) | developer | gate | waiting-on-gate — cron skip was already in EX-103; added panel-immediate reassignment on OOO toggle (pulled forward; deps EX-103/EX-205 met) |
-| EX-302 | Delegation UI + full hop-history/audit-log screen | developer | gate | todo |
+| EX-301 | Auto-reassign on unavailability status (skip, don't wait for SLA) | developer | gate | done — PR #45 merged (#27); cron skip (EX-103) + panel-immediate reassignment |
+| EX-302 | Delegation UI + full hop-history/audit-log screen | developer | gate | waiting-on-gate — delegation UI shipped in EX-203; added /audit decision ledger (pulled forward) |
 | EX-303 | Slack notifications with deep links | developer + devops | gate | todo |
 | EX-304 | 2-week SLA trial: zero terminal breaches | data-analyst | — | todo |
 | EX-305 | `/hiring-plan` for first Department Approvers (order: by gate volume — measure in EX-109/304) | hr | Saran hire decision | todo |

@@ -155,6 +155,24 @@ main.wide { max-width: 1080px; }
 .fsep { width: 1px; height: 18px; background: var(--line); }
 .chip.reassign { background: var(--surface); color: var(--teal); border-color: var(--teal); }
 
+/* --- Decision ledger (EX-302) --- */
+.ledger-filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 14px 0; }
+.ledger-filters select, .ledger-filters input[type="date"] {
+  padding: 7px 9px; border: 1px solid var(--line); border-radius: 8px;
+  background: var(--bg); color: var(--ink); font-size: 13px;
+}
+.ledger-filters button { width: auto; margin: 0; padding: 7px 16px; font-size: 13px; }
+table.ledger { border-collapse: collapse; width: 100%; font-size: 13px; }
+table.ledger th, table.ledger td { border-bottom: 1px solid var(--line); padding: 7px 10px; text-align: left; vertical-align: top; }
+table.ledger th { color: var(--muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; }
+table.ledger .nowrap { white-space: nowrap; }
+table.ledger .detail { color: var(--muted); max-width: 360px; }
+.who-human { font-weight: 600; }
+.who-sys { color: var(--muted); }
+.kind { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-family: ui-monospace, Menlo, Consolas, monospace; border: 1px solid var(--line); }
+tr.human .kind { background: var(--amber-soft); color: var(--amber-ink); border-color: var(--amber); }
+tr.system .kind { background: var(--teal-soft); color: var(--teal); }
+
 /* --- Availability + Admin (EX-205) --- */
 .avail-menu { position: relative; }
 .avail-menu summary { list-style: none; cursor: pointer; }
