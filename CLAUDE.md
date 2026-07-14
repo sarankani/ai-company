@@ -44,6 +44,17 @@ State lives in `company/` (or the connected CRM/ERP via MCP). Entities: `account
 - **`/memory`** — cross-session memory. **At session start:** read `memory/company-context.md`, skim recent `memory/decisions-log.md`. **Before ending a session** that decided something, changed direction, or learned a durable fact: update `company-context.md` (snapshot, edit in place) and/or append to `decisions-log.md`; add new terms to `glossary.md`.
 - Active execution board: `docs/plans/002-execution-plan.md` — update task states as work moves.
 
+### Task lifecycle protocol (GitHub issues are the visible state — keep them current)
+
+Every tracked task (an `EX-*` id with a GitHub issue) moves through: `todo → in-progress → waiting-on-gate → in-review → done`. The transitions are **mandatory, before the work, not after**:
+
+1. **Before starting a task:** set it `in-progress` — add the `in-progress` label to its issue, post a brief comment (who is executing, what will be delivered), and update the Plan 002 board.
+2. **The moment a task reaches a human gate** (`waiting-on-gate`): **comment on its issue** with — the APR/QST record id · the **exact action** awaiting decision · the assigned human seat · the SLA due time · how to decide (chat / `/approve` / panel). Swap the label to `waiting-on-gate`. The humans must never have to discover a waiting gate by reading files.
+3. **On decision:** comment the outcome (approved/rejected + by whom); rejected → back to `in-progress` with the rework noted.
+4. **On done:** close via PR `Closes #N` keywords where possible; otherwise comment the evidence and close. Update the board and, for milestones, `memory/decisions-log.md`.
+
+No task is worked on silently: if the issue doesn't say it's in progress, it isn't started.
+
 ## 4. The value chain (who owns what)
 
 ```

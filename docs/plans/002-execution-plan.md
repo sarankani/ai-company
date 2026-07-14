@@ -11,7 +11,7 @@ Deliver Phases 0–3 of Plan 001: the distributed approval model on paper → th
 
 ## 2. Task board
 
-States: `todo` · `in-progress` · `blocked` · `in-review` · `done`. IDs are stable — reference them in commits and standups.
+States: `todo` · `in-progress` · `blocked` · `waiting-on-gate` · `in-review` · `done`. IDs are stable — reference them in commits and standups. Transitions follow the **Task lifecycle protocol** (CLAUDE.md §3b): issues get an `in-progress` label + comment before work starts, and a gate comment (record id, exact action, assignee, SLA, how to decide) the moment a task is `waiting-on-gate`.
 
 ### Phase 0 — Define & specify — ✅ DONE 2026-07-13 (PR #1 + PR #33)
 
@@ -48,7 +48,7 @@ States: `todo` · `in-progress` · `blocked` · `in-review` · `done`. IDs are s
 
 | ID | Task | Owner (AI) | Gate / approver | State |
 |---|---|---|---|---|
-| EX-201 | Design brief: Approval Inbox + Company Dashboard + Department Board flows | designer | Saran approves | todo |
+| EX-201 | Design brief: Approval Inbox + Company Dashboard + Department Board flows | designer | Saran approves | waiting-on-gate (#19) |
 | EX-202 | App scaffold, auth (humans-registry-mapped), repo read layer | developer | code-reviewer → gate | todo |
 | EX-203 | Approval Inbox screen (approve / reject-with-reason / delegate / follow-up question) | developer | code-reviewer + security + tester → gate | todo |
 | EX-204 | Company Dashboard + Department Board screens | developer | code-reviewer + tester → gate | todo |
