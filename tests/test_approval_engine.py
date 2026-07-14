@@ -240,6 +240,19 @@ class EngineTest(unittest.TestCase):
         d2, b2 = ae.parse_record(p.read_text())
         self.assertEqual(ae.dump_record(d2, b2), p.read_text())
 
+    def test_artifact_sha_is_checkout_independent(self):
+        """Regression (APR-20260714-003): a Windows approver (CRLF checkout)
+        and a Linux executor must hash the same logical artifact identically,
+        or the exactly-once guard blocks execution of an approved action."""
+        f = ae.ROOT / "artifact-sha-probe.txt"
+        try:
+            f.write_bytes(b"line one\nline two\n")
+            lf = ae.artifact_sha(f.name)
+            f.write_bytes(b"\xef\xbb\xbfline one\r\nline two\r\n")  # BOM + CRLF
+            self.assertEqual(ae.artifact_sha(f.name), lf)
+        finally:
+            f.unlink(missing_ok=True)
+
     def test_save_roundtrip_guard_blocks_unstable_write(self):
         """save() must refuse to write a record whose dump doesn't parse back
         to identical text, instead of silently corrupting the file."""
