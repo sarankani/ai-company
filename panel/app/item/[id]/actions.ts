@@ -12,7 +12,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { verifySession } from "@/lib/auth";
-import { parseRecord, repoSource, revalidate, type RecordData } from "@/lib/records";
+import { parseRecord, repoSource, revalidate, isRenderableArtifactPath, type RecordData } from "@/lib/records";
 import { loadHumans, humanById, type Human } from "@/lib/org";
 import {
   decide, delegate, followUp, dumpChecked, contentSha, canView,
@@ -99,11 +99,12 @@ export async function decideAction(form: FormData) {
     const reason = String(f.get("reason") ?? "").trim();
     const conditions = String(f.get("conditions") ?? "").trim();
 
-    // approval-time artifact hash — same is-file-else-external rule as Python
+    // approval-time artifact hash — same is-file-else-external rule as Python,
+    // but only read paths that pass the traversal/allowlist guard (EX-206 H1).
     let artifactShaNow = "external";
     try {
       const ref = String(data.artifact ?? "");
-      if (ref && !/^[a-z]+:\/\//.test(ref))
+      if (ref && !/^[a-z]+:\/\//.test(ref) && isRenderableArtifactPath(ref))
         artifactShaNow = contentSha(await repoSource().readFile(ref));
     } catch { /* not a repo file → external */ }
 

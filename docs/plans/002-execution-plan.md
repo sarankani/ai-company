@@ -52,8 +52,8 @@ States: `todo` · `in-progress` · `blocked` · `waiting-on-gate` · `in-review`
 | EX-202 | App scaffold, auth (humans-registry-mapped), repo read layer | developer | code-reviewer → gate | done — approved via #20, executor-merged PR #38 |
 | EX-203 | Approval Inbox screen (approve / reject-with-reason / delegate / follow-up question) | developer | code-reviewer + security + tester → gate | done — approved in-channel, PR #40 merged (#21) |
 | EX-204 | Company Dashboard + Department Board screens | developer | code-reviewer + tester → gate | done — approved in-channel, PR #41 merged (#22) |
-| EX-205 | Availability toggle + People & Routing admin screen | developer | code-reviewer → gate | in-review — built & verified locally; PR opens once #41 merges |
-| EX-206 | Security review of the whole panel (authz per role, PII in artifacts, write attribution) | security | Saran accepts | todo |
+| EX-205 | Availability toggle + People & Routing admin screen | developer | code-reviewer → gate | done — approved in-channel, PR #42 merged (#23) |
+| EX-206 | Security review of the whole panel (authz per role, PII in artifacts, write attribution) | security | Saran accepts | in-review — review done (2H/4M/3L), all findings fixed; report `docs/specs/security-review-001` |
 | EX-207 | Deploy (devops) — behind auth, production checklist | devops | Saran deploy gate | todo |
 | EX-208 | **Acceptance test:** a non-technical human approves an AI delivery without touching git/Claude Code | tester + delivery-manager | Saran accepts | todo |
 

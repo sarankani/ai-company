@@ -113,19 +113,34 @@ export function decide(data: RecordData, body: string, inp: DecideInput): { data
   const stamps = data.stamps as InlineDict[];
   stamps.push(stamp);
 
-  // dual approval: the people gate needs a department stamp AND a ceo stamp
+  // dual approval: the people gate needs a department stamp AND a ceo stamp.
+  // EX-206 M3: the two approving stamps must come from DISTINCT humans once
+  // the org has ≥2 humans qualified to approve this gate; at n=1 (one human
+  // holds both the ceo and people-finance seats) the documented same-human
+  // two-stamp behavior stands (EX-008 note b) — otherwise the gate would be
+  // unsatisfiable. Separation of duties turns on automatically as we hire.
   let done = true;
   if (inp.outcome === "approved" && DUAL_GATES.has(String(data.gate))) {
     const oks = stamps.filter((s) => s.outcome === "approved");
     const byId = new Map(inp.humans.map((h) => [h.id, h]));
-    const haveCeo = oks.some((s) => isCeo(byId.get(String(s.by))));
+    const ceoStampers = oks.filter((s) => isCeo(byId.get(String(s.by))));
     const deptIds = new Set(
       inp.humans
         .filter((h) => h.roles.some((r) => r.department === data.department && CHAIN.includes(r.seat)))
         .map((h) => h.id),
     );
-    const haveDept = oks.some((s) => deptIds.has(String(s.by)));
-    done = haveCeo && haveDept && oks.length >= 2;
+    const deptStampers = oks.filter((s) => deptIds.has(String(s.by)));
+    const haveCeo = ceoStampers.length > 0;
+    const haveDept = deptStampers.length > 0;
+    const qualified = new Set(
+      inp.humans
+        .filter((h) => isCeo(h) || h.roles.some((r) => r.department === data.department && CHAIN.includes(r.seat)))
+        .map((h) => h.id),
+    );
+    const distinctOk =
+      qualified.size <= 1 || // n=1: same human may co-sign (documented)
+      ceoStampers.some((c) => deptStampers.some((d) => d.by !== c.by));
+    done = haveCeo && haveDept && oks.length >= 2 && distinctOk;
   }
 
   if (done) {
@@ -308,8 +323,10 @@ export function setAvailabilityRaw(raw: string, availability: "available" | "bus
   return out;
 }
 
+const reEsc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 export function removeRoleRaw(raw: string, department: string, seat: string): string {
-  const re = new RegExp(`^[ \\t]*- \\{department: ${department}, seat: ${seat}\\}[^\\n]*\\n`, "m");
+  const re = new RegExp(`^[ \\t]*- \\{department: ${reEsc(department)}, seat: ${reEsc(seat)}\\}[^\\n]*\\n`, "m");
   if (!re.test(raw)) throw new DecisionError(`${department}/${seat} role not found on current holder`);
   return raw.replace(re, "");
 }

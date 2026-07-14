@@ -128,6 +128,38 @@ export interface RepoSource {
   readFile(p: string): Promise<string>;
 }
 
+/**
+ * Containment guard (EX-206 H1): a repo-relative path must not escape the
+ * repo. Record fields like `artifact` are attacker-influenceable (any AI
+ * employee writes them), so every read derived from them passes through here.
+ * Rejects absolute paths, `..` segments, and NUL; normalizes to forward
+ * slashes. Callers additionally restrict to an allowlist of top dirs.
+ */
+export function safeRepoPath(p: string): string {
+  const norm = p.replace(/\\/g, "/");
+  if (
+    !norm ||
+    norm.includes("\0") ||
+    norm.startsWith("/") ||
+    norm.split("/").some((seg) => seg === ".." )
+  ) {
+    throw new Error(`unsafe repo path: ${p}`);
+  }
+  return norm;
+}
+
+const ARTIFACT_ALLOW = ["company/", "docs/", "panel/", "guides/", "scripts/", "tests/"];
+
+/** True if a repo path is safe AND under an allowlisted top directory. */
+export function isRenderableArtifactPath(p: string): boolean {
+  try {
+    const s = safeRepoPath(p);
+    return ARTIFACT_ALLOW.some((d) => s.startsWith(d));
+  } catch {
+    return false;
+  }
+}
+
 class LocalSource implements RepoSource {
   private root: string;
   constructor(root: string) {
@@ -141,7 +173,13 @@ class LocalSource implements RepoSource {
     }
   }
   async readFile(p: string) {
-    return fs.readFile(path.join(this.root, p), "utf8");
+    const safe = safeRepoPath(p);
+    const full = path.resolve(this.root, safe);
+    // defense in depth: the resolved path must stay within the repo root
+    if (full !== this.root && !full.startsWith(this.root + path.sep)) {
+      throw new Error(`path escapes repo root: ${p}`);
+    }
+    return fs.readFile(full, "utf8");
   }
 }
 
@@ -155,8 +193,11 @@ class GitHubSource implements RepoSource {
     this.ref = ref;
   }
   private async api(p: string): Promise<any> {
+    // encode each path segment so a value with ?/#/& (EX-206 L9) can't alter
+    // the query (e.g. override ref); host is hard-pinned to api.github.com.
+    const encoded = safeRepoPath(p).split("/").map(encodeURIComponent).join("/");
     const res = await fetch(
-      `https://api.github.com/repos/${this.repo}/contents/${p}?ref=${this.ref}`,
+      `https://api.github.com/repos/${this.repo}/contents/${encoded}?ref=${encodeURIComponent(this.ref)}`,
       { headers: { Authorization: `Bearer ${this.token}`, Accept: "application/vnd.github+json" } },
     );
     if (!res.ok) throw new Error(`GitHub API ${res.status} for ${p}`);

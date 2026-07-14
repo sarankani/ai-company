@@ -2,7 +2,7 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import { verifySession } from "@/lib/auth";
-import { parseRecord, repoSource, loadRecords, type InlineDict } from "@/lib/records";
+import { parseRecord, repoSource, loadRecords, isRenderableArtifactPath, type InlineDict } from "@/lib/records";
 import { humanById, loadHumans, authorized, type Human } from "@/lib/org";
 import { contentSha, canView, DUAL_GATES, CHAIN } from "@/lib/engine";
 import { slaLabel, bodySection } from "@/lib/format";
@@ -61,21 +61,29 @@ function Timeline({ data }: { data: Record<string, unknown> }) {
   );
 }
 
-async function ArtifactCard({ artifact, sha }: { artifact: string; sha: string }) {
+async function ArtifactCard({ artifact, sha, me }: { artifact: string; sha: string; me: Human }) {
   const isUrl = /^[a-z]+:\/\//.test(artifact);
-  if (!isUrl && artifact.endsWith(".md")) {
+  // Only render repo files that are safe (no traversal) and allowlisted
+  // (EX-206 H1). If the artifact IS itself a record, re-check canView on
+  // THAT record so a widely-visible record can't smuggle a People-gate
+  // record's body into view.
+  if (!isUrl && artifact.endsWith(".md") && isRenderableArtifactPath(artifact)) {
     try {
       const raw = await repoSource().readFile(artifact);
-      return (
-        <div className="artifact">
-          <div className="artifact-head mono">{artifact} · sha {sha}</div>
-          <Markdown source={raw.replace(/^---\n[\s\S]*?\n---\n/, "")} />
-        </div>
-      );
+      const isRecord = /^company\/(approvals|questions)\//.test(artifact.replace(/\\/g, "/"));
+      const viewable = !isRecord || canView(me, parseRecord(raw).data);
+      if (viewable) {
+        return (
+          <div className="artifact">
+            <div className="artifact-head mono">{artifact} · sha {sha}</div>
+            <Markdown source={raw.replace(/^---\n[\s\S]*?\n---\n/, "")} />
+          </div>
+        );
+      }
     } catch { /* fall through to link-out */ }
   }
   const gh = process.env.GITHUB_REPO;
-  const href = isUrl ? artifact : gh ? `https://github.com/${gh}/blob/main/${artifact}` : null;
+  const href = isUrl ? artifact : gh && isRenderableArtifactPath(artifact) ? `https://github.com/${gh}/blob/main/${artifact}` : null;
   return (
     <div className="artifact linkout">
       <span className="mono">{artifact}</span>
@@ -188,7 +196,7 @@ export default async function Item({
       )}
 
       <div className="section-label">Artifact</div>
-      <ArtifactCard artifact={String(data.artifact)} sha={String(data.artifact_sha)} />
+      <ArtifactCard artifact={String(data.artifact)} sha={String(data.artifact_sha)} me={me} />
 
       <DualMeter data={data} humans={humans} />
 
