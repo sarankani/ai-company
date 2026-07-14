@@ -166,6 +166,179 @@ export function followUp(body: string, by: Human, text: string, at?: string): st
   return body.slice(0, insertAt) + body.slice(insertAt).trimEnd() + (body.slice(insertAt).trim() ? "\n" : "\n") + line;
 }
 
+// ---------- routing + record creation (lockstep with cmd_new) ----------
+
+export const GATE_DEPT: Record<string, string> = {
+  "merge-deploy": "engineering",
+  "external-comms": "marketing-support",
+  money: "people-finance",
+  commitments: "sales-delivery",
+  people: "people-finance",
+  procurement: "operations",
+  "revenue-booking": "people-finance",
+};
+
+const PRIORITIES: Record<string, { firstH: number; business: boolean }> = {
+  P0: { firstH: 2, business: false },
+  P1: { firstH: 24, business: true },
+  P2: { firstH: 72, business: true },
+};
+
+function addBusinessDelta(start: Date, hours: number): Date {
+  let days = Math.floor(hours / 24);
+  const cur = new Date(start);
+  while (days > 0) {
+    cur.setUTCDate(cur.getUTCDate() + 1);
+    if (cur.getUTCDay() >= 1 && cur.getUTCDay() <= 5) days--;
+  }
+  cur.setUTCHours(cur.getUTCHours() + (hours % 24));
+  while (cur.getUTCDay() === 0 || cur.getUTCDay() === 6) cur.setUTCDate(cur.getUTCDate() + 1);
+  return cur;
+}
+
+export function slaDueFrom(start: Date, priority: string): string {
+  const p = PRIORITIES[priority];
+  if (!p) throw new DecisionError(`unknown priority ${priority}`);
+  const due = p.business
+    ? addBusinessDelta(start, p.firstH)
+    : new Date(start.getTime() + p.firstH * 3600_000);
+  return due.toISOString().replace(/\.\d{3}Z$/, "Z");
+}
+
+const isAvailable = (h: Human) => h.availability === "available";
+
+/** First available seat-holder along the chain; the ceo seat is the terminal
+ * backstop even when busy (lockstep with resolve_assignee). */
+export function resolveAssignee(humans: Human[], department: string): { assignee: string; pos: number } {
+  for (let pos = 0; pos < CHAIN.length; pos++) {
+    const holder = humans.find(
+      (h) => isAvailable(h) && h.roles.some((r) => r.department === department && r.seat === CHAIN[pos]),
+    );
+    if (holder) return { assignee: holder.id, pos };
+  }
+  const ceo = humans.find((h) => h.roles.some((r) => r.department === "leadership" && r.seat === "ceo"));
+  return { assignee: ceo?.id ?? "UNASSIGNED", pos: CHAIN.length };
+}
+
+export function nextId(type: "approval" | "question", existing: string[], at: string): string {
+  const prefix = type === "question" ? "QST" : "APR";
+  const stamp = at.slice(0, 10).replace(/-/g, "");
+  let seq = 1;
+  for (const id of existing) {
+    const m = id.match(new RegExp(`^${prefix}-${stamp}-(\\d+)$`));
+    if (m) seq = Math.max(seq, parseInt(m[1], 10) + 1);
+  }
+  return `${prefix}-${stamp}-${String(seq).padStart(3, "0")}`;
+}
+
+export interface NewRecordInput {
+  type: "approval" | "question";
+  gate: string;
+  priority: "P0" | "P1" | "P2";
+  requestedBy: string;
+  artifact: string;
+  artifactShaNow: string;
+  action: string;
+  links?: string;
+  summary: string;
+  bodyExtra?: string; // extra sections appended after Summary (e.g. Proposed change)
+  humans: Human[];
+  existingIds: string[];
+  at?: string;
+}
+
+export function createRecord(inp: NewRecordInput): { id: string; data: RecordData; body: string } {
+  const at = inp.at ?? nowIso();
+  const department = GATE_DEPT[inp.gate];
+  if (!department) throw new DecisionError(`unknown gate ${inp.gate}`);
+  const { assignee, pos } = resolveAssignee(inp.humans, department);
+  const id = nextId(inp.type, inp.existingIds, at);
+  const data: RecordData = {
+    id, type: inp.type, state: "pending",
+    gate: inp.gate, department, priority: inp.priority,
+    requested_by: inp.requestedBy, artifact: inp.artifact,
+    artifact_sha: inp.artifactShaNow,
+    action: inp.action,
+    links: inp.links ?? "",
+    created: at, sla_due: slaDueFrom(new Date(at), inp.priority),
+    assignee, chain_pos: pos,
+    hops: [], notified: [], stamps: [],
+    decision: null, execution: null,
+  };
+  const body =
+    `\n## Summary\n\n${inp.summary}\n\n` +
+    (inp.bodyExtra ? `${inp.bodyExtra.trim()}\n\n` : "") +
+    `## Decision\n\n_pending — authorized seat: ${department} (assignee: ${assignee})_\n\n## Thread\n\n`;
+  return { id, data, body };
+}
+
+// ---------- execution (lockstep with cmd_claim / cmd_complete) ----------
+
+export function claimExecution(data: RecordData, by: string, artifactShaNow: string, at?: string): void {
+  const when = at ?? nowIso();
+  if (data.state !== "approved") throw new DecisionError(`record is '${data.state}', not approved`);
+  const ex = data.execution as InlineDict | null;
+  if (ex?.executed_at) throw new DecisionError("already executed exactly once");
+  if (ex?.claimed_at) throw new DecisionError(`already claimed by ${ex.by} — a stale claim goes to a human, never a silent retry`);
+  const approvedSha = String(data.approved_artifact_sha ?? "");
+  if (approvedSha && approvedSha !== "external" && approvedSha !== artifactShaNow)
+    throw new DecisionError("artifact changed since approval — withdraw and re-request (Tech Spec §6)");
+  data.execution = { claimed_at: when, by };
+}
+
+export function completeExecution(data: RecordData, result: string, at?: string): void {
+  const when = at ?? nowIso();
+  const ex = data.execution as InlineDict | null;
+  if (!ex?.claimed_at) throw new DecisionError("no claim on record — claim before complete");
+  if (ex.executed_at) throw new DecisionError("already executed exactly once");
+  ex.executed_at = when;
+  ex.result = result;
+}
+
+// ---------- org-file edits (comment-preserving raw-text surgery) ----------
+// humans files carry hand-written comments in their frontmatter, so these
+// edits NEVER go through parse/dump (which would strip them) — they are
+// targeted line edits, validated by re-parsing afterwards.
+
+export function setAvailabilityRaw(raw: string, availability: "available" | "busy" | "ooo", oooUntil: string | null): string {
+  let out = raw.replace(/^(availability:\s*)\S+([^\n]*)$/m, `$1${availability}$2`);
+  out = out.replace(/^(ooo_until:\s*)\S+([^\n]*)$/m, `$1${availability === "ooo" ? (oooUntil ?? "null") : "null"}$2`);
+  const check = parseRecord(out).data;
+  if (check.availability !== availability) throw new DecisionError("availability edit failed validation");
+  return out;
+}
+
+export function removeRoleRaw(raw: string, department: string, seat: string): string {
+  const re = new RegExp(`^[ \\t]*- \\{department: ${department}, seat: ${seat}\\}[^\\n]*\\n`, "m");
+  if (!re.test(raw)) throw new DecisionError(`${department}/${seat} role not found on current holder`);
+  return raw.replace(re, "");
+}
+
+export function addRoleRaw(raw: string, department: string, seat: string): string {
+  const line = `  - {department: ${department}, seat: ${seat}}\n`;
+  const m = raw.match(/^roles:[^\n]*\n/m);
+  if (!m) throw new DecisionError("no roles list in humans file");
+  const idx = raw.indexOf(m[0]) + m[0].length;
+  const out = raw.slice(0, idx) + line + raw.slice(idx);
+  const roles = parseRecord(out).data.roles as InlineDict[];
+  if (!roles.some((r) => r.department === department && r.seat === seat))
+    throw new DecisionError("role add failed validation");
+  return out;
+}
+
+// ---------- seat-change proposals (machine-readable body section) ----------
+
+export interface SeatChange { department: string; seat: string; from: string; to: string }
+
+export function parseSeatChange(body: string): SeatChange | null {
+  const sec = body.match(/## Proposed change\n([\s\S]*?)(?=\n## |$)/);
+  if (!sec) return null;
+  const get = (k: string) => sec[1].match(new RegExp(`^- ${k}: (.+)$`, "m"))?.[1]?.trim();
+  if (get("change") !== "seat") return null;
+  const department = get("department"), seat = get("seat"), from = get("from"), to = get("to");
+  return department && seat && from && to ? { department, seat, from, to } : null;
+}
+
 // ---------- registry (lockstep with rebuild_registry) ----------
 
 const BEGIN = "<!-- approvals:begin -->";

@@ -190,5 +190,71 @@ await p2.goto(`${BASE}/board/people-finance`);
 const pfBoard = await p2.textContent("main");
 ok("people-finance board shows the item to the ceo seat", pfBoard.includes("Extend offer to candidate X"));
 
+// 12. EX-205 — availability: one tap, committed, routing skips next run
+// The action redirects back to the same URL, so waiting on the URL is a
+// no-op — wait for the commit itself to land instead.
+const waitForCommit = async (substr, tries = 60) => {
+  for (let i = 0; i < tries; i++) {
+    if (git(["log", "-1", "--format=%s"]).includes(substr)) return true;
+    await new Promise((r) => setTimeout(r, 250));
+  }
+  return false;
+};
+await page.goto(`${BASE}/inbox`);
+await page.click(".avail-menu summary");
+await page.click('.avail-form button[value="busy"]');
+ok("availability commit written", await waitForCommit("saravanan-p availability → busy"));
+await page.goto(`${BASE}/inbox`);
+ok("topbar chip reflects new status", (await page.textContent(".avail-menu summary")).includes("busy"));
+ok("humans file updated, comments preserved",
+  readFileSync(`${REPO}/company/org/humans/saravanan-p.md`, "utf8").match(/availability: busy.*#/));
+const routed = py(["new", "--type", "approval", "--gate", "merge-deploy", "--priority", "P2",
+  "--requested-by", "developer", "--artifact", "docs/plans/002-execution-plan.md",
+  "--action", "Routing probe while approver busy", "--summary", "probe"]);
+ok("routing skips the busy approver (assigns deputy)", routed.includes("engineering / saran"), routed.trim());
+git(["add", "-A"]); git(["commit", "-qm", "smoke: routing probe"]);
+await page.click(".avail-menu summary");
+await page.click('.avail-form button[value="available"]');
+ok("availability restored", await waitForCommit("saravanan-p availability → available"));
+
+// 13. EX-205 — admin: guard, then the two-step seat change end to end
+await page.goto(`${BASE}/admin`);
+ok("admin restricted for non-head seat", (await page.textContent("main")).includes("Head & CEO only"));
+await p2.goto(`${BASE}/admin`);
+const admin = await p2.textContent("main");
+ok("admin lists humans with seats", admin.includes("saravanan-p") && admin.includes("engineering·approver"));
+await p2.selectOption('select[name="department"]', "engineering");
+await p2.selectOption('select[name="seat"]', "approver");
+await p2.selectOption('select[name="to"]', "saran");
+await p2.fill('input[name="why"]', "smoke: exercise the two-step path");
+await p2.click(".propose button");
+await p2.waitForURL(/proposed=APR/);
+const proposalId = new URL(p2.url()).searchParams.get("proposed");
+ok("proposal created as people-gate record", !!proposalId,  proposalId ?? "");
+const propRec = readFileSync(`${REPO}/company/approvals/${proposalId}.md`, "utf8");
+ok("proposal routed people-finance, pending", propRec.includes("gate: people") && propRec.includes("state: pending"));
+// dual approval on the normal decide surface (ceo + dept seats both = saran at n=2)
+await p2.goto(`${BASE}/item/${proposalId}`);
+await p2.click('form:has(input[value="approved"]) button');
+await p2.waitForURL(/stamped=1/);
+await p2.click('form:has(input[value="approved"]) button');
+await p2.waitForURL(/done=approved/);
+// apply from /admin — exactly-once commit moves the role
+await p2.goto(`${BASE}/admin`);
+await p2.click("button.apply");
+await p2.waitForURL(/applied=/);
+ok("apply banner shown", (await p2.textContent("main")).includes("applied"));
+ok("role moved: saran now engineering approver",
+  readFileSync(`${REPO}/company/org/humans/saran.md`, "utf8").includes("{department: engineering, seat: approver}"));
+ok("role moved: saravanan-p no longer engineering approver",
+  !readFileSync(`${REPO}/company/org/humans/saravanan-p.md`, "utf8").includes("{department: engineering, seat: approver}"));
+const applyStat = git(["show", "--stat", "--format=", "HEAD"]);
+ok("one apply commit: record + both humans files + registry",
+  applyStat.includes(`${proposalId}.md`) && applyStat.includes("saran.md") &&
+  applyStat.includes("saravanan-p.md") && applyStat.includes("registry.md"));
+ok("execution stamped exactly once",
+  readFileSync(`${REPO}/company/approvals/${proposalId}.md`, "utf8").includes("executed_at"));
+ok("engine validates after seat change", py(["validate"]).includes("OK"));
+
 await browser.close();
 console.log(process.exitCode ? "SMOKE: FAILURES" : "SMOKE: ALL PASS");

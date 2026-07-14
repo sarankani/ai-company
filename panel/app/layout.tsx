@@ -2,8 +2,11 @@ import "./globals.css";
 import { cookies } from "next/headers";
 import { verifySession } from "@/lib/auth";
 import { humanById } from "@/lib/org";
+import { setAvailabilityAction } from "./org-actions";
 
 export const metadata = { title: "Evalyn Control Panel" };
+
+const DOTS = { available: "●", busy: "◐", ooo: "○" } as const;
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const session = verifySession((await cookies()).get("evalyn_session")?.value);
@@ -17,14 +20,27 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <nav className="topnav">
               <a href="/inbox">Inbox</a>
               <a href="/dashboard">Dashboard</a>
+              {human.roles.some((r) => r.seat === "head" || r.seat === "ceo") && <a href="/admin">Admin</a>}
             </nav>
           )}
           <span className="spacer" />
           {human && (
             <>
-              <span className="chip avail" title="Availability (toggle arrives with EX-205)">
-                <span className="dot" /> {human.availability}
-              </span>
+              <details className="avail-menu">
+                <summary className={`chip avail a-${human.availability}`}>
+                  {DOTS[human.availability]} {human.availability}
+                </summary>
+                <form action={setAvailabilityAction} className="avail-form">
+                  <input type="hidden" name="return" value="/inbox" />
+                  <button name="availability" value="available">● Available</button>
+                  <button name="availability" value="busy">◐ Busy</button>
+                  <div className="ooo-row">
+                    <button name="availability" value="ooo">○ OOO until…</button>
+                    <input type="date" name="ooo_until" aria-label="OOO until date" />
+                  </div>
+                  <p className="avail-note">Routing skips you from the next scan (≤15 min); pending items reassign along the chain.</p>
+                </form>
+              </details>
               <span className="chip">{human.id}</span>
               <a href="/api/auth/signout" style={{ fontSize: 13 }}>sign out</a>
             </>

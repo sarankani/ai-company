@@ -13,6 +13,12 @@ export interface Human {
 let orgCache: { at: number; humans: Human[] } | null = null;
 const TTL_MS = 5 * 60 * 1000;
 
+/** Drop org caches after a write that touched company/org/. */
+export function revalidateOrg() {
+  orgCache = null;
+  deptCache = null;
+}
+
 export async function loadHumans(): Promise<Human[]> {
   if (orgCache && Date.now() - orgCache.at < TTL_MS) return orgCache.humans;
   const src = repoSource();
