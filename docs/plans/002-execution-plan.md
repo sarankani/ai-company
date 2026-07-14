@@ -28,7 +28,7 @@ States: `todo` · `in-progress` · `blocked` · `in-review` · `done`. IDs are s
 
 **Phase 0 definition of done:** specs + ADRs approved; `company/org/` exists; a sample gate routes correctly on paper.
 
-### Phase 1 — Prove the loop, zero UI (Weeks 2–3) — target: 2026-07-31
+### Phase 1 — Prove the loop, zero UI — ✅ DONE 2026-07-14 (PR #34 + #35 + drills)
 
 | ID | Task | Owner (AI) | Gate / approver | State |
 |---|---|---|---|---|
@@ -39,8 +39,8 @@ States: `todo` · `in-progress` · `blocked` · `in-review` · `done`. IDs are s
 | EX-105 | `/approve` helper skill (decide + stamp a record from CLI in one step) | developer | Saran merge | done (PR #34) |
 | EX-106 | Execution/resume mechanism per tech spec §6 (approved → executed exactly once) | developer | code-reviewer + security → Saran merge | done (PR #34) |
 | EX-107 | **Live drill:** run one real deliverable end to end through the loop | delivery-manager | Saran approves the item | done — APR-20260713-001 executed exactly once; 2 bugs found+fixed (#16) |
-| EX-108 | **Escalation drill:** Saran deliberately ignores one request; verify hop chain + notifications fire | tester | — | in-progress — APR-20260713-002 armed, P0 breach 17:31Z (#17) |
-| EX-109 | Capture baseline metrics (time-to-decision, hops) in `memory/decisions-log.md` | data-analyst | — | in-progress — EX-107 baseline logged; final after EX-108 (#18) |
+| EX-108 | **Escalation drill:** Saran deliberately ignores one request; verify hop chain + notifications fire | tester | — | done — autonomous hop verified on main (#17) |
+| EX-109 | Capture baseline metrics (time-to-decision, hops) in `memory/decisions-log.md` | data-analyst | — | done — baselines in decisions-log (#18) |
 
 **Phase 1 definition of done:** one real artifact went draft → approval record → human stamp → executed exactly once; one escalation exercised; metrics recorded.
 
