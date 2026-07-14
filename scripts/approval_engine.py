@@ -298,7 +298,11 @@ def next_id(rtype, when):
 def artifact_sha(ref):
     p = ROOT / ref
     if p.is_file():
-        return hashlib.sha256(p.read_bytes()).hexdigest()[:16]
+        # Normalize CRLF and a UTF-8 BOM so the hash is checkout-independent:
+        # a Windows approver (core.autocrlf) and a Linux executor must compute
+        # the same sha for the same logical content (APR-20260714-003 lesson).
+        content = p.read_bytes().removeprefix(b"\xef\xbb\xbf").replace(b"\r\n", b"\n")
+        return hashlib.sha256(content).hexdigest()[:16]
     return "external"  # non-file artifact (PR url etc.) — verified by reviewer
 
 
