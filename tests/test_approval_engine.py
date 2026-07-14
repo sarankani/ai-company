@@ -1,4 +1,5 @@
 """Unit tests for the approval engine (EX-101/103/105/106 acceptance criteria)."""
+import os
 import shutil
 import subprocess
 import sys
@@ -182,6 +183,49 @@ class EngineTest(unittest.TestCase):
             self.assertEqual(self.data(p)["state"], "approved")
         finally:
             temp.unlink(missing_ok=True)
+
+    def test_slack_message_has_deeplink_and_action(self):
+        """EX-303: the Slack message carries the exact action and a deep link."""
+        p = self.new(gate="merge-deploy")
+        d = self.data(p)
+        os.environ.pop("PANEL_BASE_URL", None)
+        msg = ae.slack_message(d, d["assignee"], "assigned")
+        self.assertIn(d["action"], msg)
+        self.assertIn(d["id"], msg)
+        self.assertIn("github.com", msg)  # falls back to the record file link
+
+    def test_record_link_prefers_panel_url(self):
+        p = self.new()
+        d = self.data(p)
+        os.environ["PANEL_BASE_URL"] = "https://panel.example"
+        try:
+            self.assertEqual(ae.record_link(d), f"https://panel.example/item/{d['id']}")
+        finally:
+            os.environ.pop("PANEL_BASE_URL", None)
+
+    def test_send_slack_dry_run_never_calls_network(self):
+        """Dry-run returns delivered without touching the network."""
+        p = self.new()
+        d = self.data(p)
+        delivered, ts = ae.send_slack({}, d, d["assignee"], "assigned", None, really=False)
+        self.assertTrue(delivered)
+
+    def test_send_slack_unconfigured_is_a_safe_noop(self):
+        """really=True but no webhook/token/slack_id → skip, never raises (UC3)."""
+        for var in ("SLACK_WEBHOOK_URL", "SLACK_BOT_TOKEN"):
+            os.environ.pop(var, None)
+        p = self.new()
+        d = self.data(p)
+        delivered, ts = ae.send_slack({}, d, d["assignee"], "assigned", None, really=True)
+        self.assertFalse(delivered)
+
+    def test_scan_send_slack_idempotent(self):
+        """A second scan with --send-slack must not re-notify (shared log)."""
+        p = self.new(gate="merge-deploy")
+        ae.main(["scan", "--send-slack", "--now", T0])
+        n1 = len(self.data(p)["notified"])
+        ae.main(["scan", "--send-slack", "--now", T0])
+        self.assertEqual(len(self.data(p)["notified"]), n1)  # no double-send
 
     def test_question_answered(self):
         args = ["new", "--type", "question", "--gate", "commitments", "--requested-by",

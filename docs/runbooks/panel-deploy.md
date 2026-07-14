@@ -44,6 +44,10 @@ Either way the repo checkout is **not** in the image — production reads via th
 - **App errors:** host-native (Vercel/Fly logs) + an uptime check on `/signin` (returns 200 unauthenticated).
 - **SLA-job silence:** `approval-sla-job.yml` runs every 15 min and commits when it reassigns; alert if it hasn't succeeded in >30 min (a silent SLA job means gates stop escalating — higher impact than the panel being down).
 - **No secrets in logs:** magic links are not logged when SMTP is set (EX-206 H2); spot-check after go-live.
+- **Slack notifications (EX-303):** the SLA job posts gate events (assigned / 50%-SLA / escalation) to Slack with a deep link to the item. Config lives on the **repo**, not the panel:
+  - `SLACK_WEBHOOK_URL` (repo **variable**) — posts to a channel. Works today, no environment needed.
+  - `PANEL_BASE_URL` (repo **variable**) — makes the deep links land on `/item/:id` (auth-gated) instead of the GitHub file.
+  - `SLACK_BOT_TOKEN` (prod-environment **secret**) — to DM approvers individually with threading, add a `slack_id` to each `company/org/humans/*.md` **and** add `environment: production` to the `scan` job in `approval-sla-job.yml`. ⚠️ If the production environment has required-reviewer protection, that would gate this scheduled heartbeat — prefer a repo-level secret (or no protection) for the automated job. Slack down/unconfigured never blocks routing — email still delivers.
 
 ## 5. Rollback (rehearse before go-live)
 

@@ -2,6 +2,10 @@
 
 Append-only, newest first. Format: `## YYYY-MM-DD — decision` + who + why in 1–3 lines. Architectural decisions go to `docs/adrs/` instead.
 
+## 2026-07-14 — EX-303 built: Slack notifications with deep links
+
+**Who:** developer + devops (pull-forward). The SLA job now posts gate events (assigned / 50%-SLA / escalation) to Slack alongside email, sharing the same idempotency log (no double-sends on re-run). Message carries gate/dept/priority/exact-action/SLA + a deep link that prefers the auth-gated panel item URL (PANEL_BASE_URL) and falls back to the GitHub record file. Transport: DM to the assignee (SLACK_BOT_TOKEN + a per-human `slack_id`, threaded) when configured, else channel post via SLACK_WEBHOOK_URL. Founder's secrets: SLACK_WEBHOOK_URL (repo variable — wired, works today), SLACK_BOT_TOKEN (prod-environment secret — inert until slack_ids added + `environment: production` set on the job; deliberately NOT auto-enabled to avoid gating the SLA heartbeat if prod has required-reviewer protection). Slack failure never blocks routing (UC3, email still fires) — never raises. Verified: real webhook POST captured by a local server (correct mrkdwn + panel deep link + exact action); 31 Python tests green (5 new).
+
 ## 2026-07-14 — EX-302 built: decision ledger (/audit) — full accountability view
 
 **Who:** developer (pull-forward). Delegation UI already shipped in EX-203 (item-page Delegate control). This adds the remaining half: `/audit` (Head/CEO only), a filterable chronological ledger of every stamp, hop/delegation, and execution across visible records (PRD US-12) — filter by department/human/gate/date, People-gate records excluded for unauthorized seats, links back to each record. Read-only over records, no new state (ADR-0002). The screenshot shows the company's entire construction history rendered as an audit trail (every PR merge, the escalation drill, the EX-301 unavailable-skips), human decisions amber / system events teal. 67 e2e checks (6 new ledger) + 26 Python tests green.
