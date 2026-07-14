@@ -224,6 +224,33 @@ class EngineTest(unittest.TestCase):
         self.assertIn("PR #34", d["decision"]["reason"])
         self.assertEqual(ae.validate_one(p), [])
 
+    def test_comma_in_quoted_values_survives_roundtrip(self):
+        """Regression (APR-20260714-002 corruption): a comma inside a quoted
+        value must not split the inline dict — split_top must be quote-aware."""
+        reason = ("Approved in-channel: issue #20 comment ('Approved through script') "
+                  "by repo owner; commit was not pushed, stamp recorded per rule")
+        p = self.new()
+        ae.main(["decide", p.stem, "--by", "saravanan-p", "--outcome", "approved",
+                 "--reason", reason, "--now", T0])
+        d = self.data(p)
+        self.assertEqual(d["decision"]["reason"], reason)
+        self.assertEqual(set(d["decision"]), {"by", "at", "outcome", "reason", "conditions"})
+        self.assertEqual(ae.validate_one(p), [])
+        # and the file must be dump/parse stable (the save() roundtrip guard)
+        d2, b2 = ae.parse_record(p.read_text())
+        self.assertEqual(ae.dump_record(d2, b2), p.read_text())
+
+    def test_save_roundtrip_guard_blocks_unstable_write(self):
+        """save() must refuse to write a record whose dump doesn't parse back
+        to identical text, instead of silently corrupting the file."""
+        p = self.new()
+        data, body = ae.load(p)
+        before = p.read_text()
+        data["action"] = "line one\nline two: smuggled key"  # newline breaks line-oriented frontmatter
+        with self.assertRaises(ValueError):
+            ae.save(p, data, body)
+        self.assertEqual(p.read_text(), before)  # file untouched
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

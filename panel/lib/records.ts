@@ -61,14 +61,18 @@ function coerce(v: string): Scalar {
   return v;
 }
 
+// Split on top-level commas only — never inside quotes or nested braces
+// (regression: quote-unaware splitting corrupted APR-20260714-002).
 function splitTop(s: string): string[] {
   const parts: string[] = [];
   let depth = 0,
-    cur = "";
+    cur = "",
+    quoted = false;
   for (const ch of s) {
-    if (ch === "{") depth++;
-    else if (ch === "}") depth--;
-    if (ch === "," && depth === 0) {
+    if (ch === '"') quoted = !quoted;
+    else if (ch === "{" && !quoted) depth++;
+    else if (ch === "}" && !quoted) depth--;
+    if (ch === "," && depth === 0 && !quoted) {
       parts.push(cur);
       cur = "";
     } else cur += ch;
