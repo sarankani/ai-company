@@ -82,9 +82,24 @@ export async function deliverLink(email: string, url: string): Promise<"sent" | 
     }
     return "logged";
   }
-  // Production SMTP delivery is wired in EX-207 alongside the deploy secrets.
-  // Do NOT log the URL here — that was the H2 leak. Log only that a link was
-  // issued, never the credential itself.
-  console.log(`[auth] sign-in link issued to ${email} (SMTP delivery lands with EX-207)`);
-  return "logged";
+  // Production SMTP delivery (EX-207). Never log the URL — that was the H2
+  // leak; log only that a link was issued. Import lazily so the dev/no-SMTP
+  // path never loads the mailer.
+  const { createTransport } = await import("nodemailer");
+  const transport = createTransport({
+    host,
+    port: Number(process.env.SMTP_PORT ?? 587),
+    secure: process.env.SMTP_SECURE === "1", // true for 465, false for 587/STARTTLS
+    auth: process.env.SMTP_USER
+      ? { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS ?? "" }
+      : undefined,
+  });
+  await transport.sendMail({
+    from: process.env.NOTIFY_FROM ?? "Evalyn Panel <no-reply@evalyn.in>",
+    to: email,
+    subject: "Your Evalyn Control Panel sign-in link",
+    text: `Sign in to the Evalyn Control Panel:\n\n${url}\n\nThis link is valid for 15 minutes and can be used to open your approval inbox. If you didn't request it, ignore this email.`,
+  });
+  console.log(`[auth] sign-in link emailed to ${email}`);
+  return "sent";
 }

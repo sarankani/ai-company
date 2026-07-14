@@ -23,7 +23,15 @@ SESSION_SECRET=dev-secret npm run dev
 | `LOCAL_REPO_PATH` | Path to a company-repo checkout (default: parent directory) |
 | `GITHUB_REPO` + `GITHUB_TOKEN` | Production read/write mode via GitHub API (overrides local mode) |
 | `GITHUB_BRANCH` | Branch decisions are committed to in production (default `main`) |
-| `SMTP_*`, `NOTIFY_FROM` | Magic-link email delivery (wired at deploy, EX-207) |
+| `PANEL_BASE_URL` | Public base URL used in magic links |
+| `SMTP_HOST/PORT/SECURE/USER/PASS`, `NOTIFY_FROM` | Magic-link email delivery (nodemailer); with `SMTP_HOST` set, links are emailed and never logged |
+| `AUTH_DEV_LOG=1` | Dev only — print magic links to the server console |
+
+Full reference: `.env.example`.
+
+## Deploy (EX-207)
+
+Runbook: `docs/runbooks/panel-deploy.md` (go/no-go checklist, rollback, monitoring). Two paths: **Vercel** (root = `panel/`, env vars as Project settings, no Dockerfile) or a **container host** via `Dockerfile` (Next `output: "standalone"`, slim non-root image). The repo checkout is not in the image — production reads the Company OS via the GitHub API. The actual deploy is a **human-authorized gate**.
 
 ## Writes (EX-203)
 
