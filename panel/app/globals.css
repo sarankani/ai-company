@@ -1,0 +1,79 @@
+/* Evalyn Control Panel tokens (Design Brief §5): teal = AI/system,
+   amber = human decision — the only two accent hues. Light + dark from
+   one token set. */
+:root {
+  --bg: #f5f8f7; --surface: #ffffff; --ink: #16211f; --muted: #5d6e6b;
+  --line: #d9e2df; --teal: #157a6e; --teal-soft: #e4f1ee;
+  --amber: #a26e12; --amber-ink: #8a5d0d; --amber-soft: #fbf1da;
+  --error: #a4262c; --ok: #2e7d46;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #101817; --surface: #182220; --ink: #e4ecea; --muted: #8ca09c;
+    --line: #2e3d3a; --teal: #5cb6ac; --teal-soft: #14312c;
+    --amber: #d9a23f; --amber-ink: #e5b45c; --amber-soft: #33270f;
+    --error: #e07a7f; --ok: #6fbf7a;
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: system-ui, "Segoe UI", Roboto, sans-serif; line-height: 1.5;
+}
+a { color: var(--teal); }
+.mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+.topbar {
+  display: flex; align-items: center; gap: 16px; padding: 10px 20px;
+  background: var(--surface); border-bottom: 1px solid var(--line);
+}
+.wordmark { font-weight: 700; letter-spacing: 0.28em; font-size: 13px; text-decoration: none; color: var(--ink); }
+.wordmark i { font-style: normal; color: var(--teal); }
+.topbar .spacer { flex: 1; }
+.chip {
+  display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px;
+  border-radius: 999px; font-size: 12px; border: 1px solid var(--line);
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+}
+.chip.gate { background: var(--amber-soft); color: var(--amber-ink); border-color: var(--amber); }
+.chip.state { background: var(--teal-soft); color: var(--teal); }
+.chip.avail { background: var(--surface); }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); }
+main { max-width: 880px; margin: 0 auto; padding: 24px 20px 80px; }
+h1 { font-size: 22px; margin: 0 0 4px; }
+.asof { color: var(--muted); font-size: 12px; margin-bottom: 20px; }
+.section-label {
+  font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 11px;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
+  margin: 26px 0 8px;
+}
+.rows { display: flex; flex-direction: column; gap: 8px; }
+.row {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+  padding: 12px 16px; min-height: 56px;
+}
+.row.overdue { border-left: 4px solid var(--amber); }
+.row .action { flex: 1 1 320px; font-weight: 600; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.row .meta { color: var(--muted); font-size: 12.5px; }
+.sla { font-variant-numeric: tabular-nums; }
+.sla.overdue { background: var(--amber); color: #fff; border-color: var(--amber); font-weight: 700; }
+.empty {
+  background: var(--surface); border: 1px dashed var(--line); border-radius: 10px;
+  padding: 28px 20px; text-align: center; color: var(--muted);
+}
+.card {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+  padding: 24px; max-width: 420px; margin: 10vh auto;
+}
+.card h1 { margin-bottom: 12px; }
+input[type="email"] {
+  width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px;
+  background: var(--bg); color: var(--ink); font-size: 15px;
+}
+button {
+  margin-top: 12px; width: 100%; padding: 10px 12px; border: 0; border-radius: 8px;
+  background: var(--teal); color: #fff; font-size: 15px; font-weight: 600; cursor: pointer;
+}
+button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+.notice { margin-top: 12px; padding: 10px 12px; border-radius: 8px; background: var(--teal-soft); color: var(--teal); font-size: 13.5px; }
+.notice.err { background: var(--amber-soft); color: var(--amber-ink); }

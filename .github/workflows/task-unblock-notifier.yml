@@ -23,7 +23,7 @@ jobs:
           script: |
             const closed = context.payload.issue.number;
             const { owner, repo } = context.repo;
-            const marker = new RegExp(`Blocked by[^\\n]*#${closed}\\b`, 'i');
+            const marker = new RegExp(`Blocked by[^\\n·]*#${closed}\\b`, 'i');
 
             const issues = await github.paginate(github.rest.issues.listForRepo, {
               owner, repo, state: 'open', per_page: 100,
@@ -34,7 +34,7 @@ jobs:
               if (!issue.body || !marker.test(issue.body)) continue;
 
               // Check whether any OTHER declared blockers are still open
-              const blockedByLine = (issue.body.match(/Blocked by:?([^\n]*)/i) || [,''])[1];
+              const blockedByLine = (issue.body.match(/Blocked by[:*\s]*([^\n·]*)/i) || [,''])[1];
               const blockerNums = [...blockedByLine.matchAll(/#(\d+)/g)]
                 .map(m => parseInt(m[1], 10))
                 .filter(n => n !== closed);
