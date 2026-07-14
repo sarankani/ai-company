@@ -13,6 +13,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body>
         <header className="topbar">
           <a className="wordmark" href="/inbox">EVALYN<i>·</i>PANEL</a>
+          {human && (
+            <nav className="topnav">
+              <a href="/inbox">Inbox</a>
+              <a href="/dashboard">Dashboard</a>
+            </nav>
+          )}
           <span className="spacer" />
           {human && (
             <>
