@@ -50,5 +50,10 @@ shape, QST answers, dual approval, conflict rejection, follow-ups.
 - **EX-203 (this):** Item Detail decide surface — approve (conditions) /
   reject (reason required) / delegate (authorized only) / answer / follow-up,
   decisions as stamped commits, dual-approval meter, timeline, "Next (N)"
-- **EX-204:** Company Dashboard + Department Board
-- **EX-205:** availability toggle + People & Routing admin
+- **EX-204:** Company Dashboard (7 live tiles + CEO escalation strip) +
+  Department Board (state groups, composable URL filters); People-gate work
+  absent from all counts for unauthorized seats
+- **EX-205:** one-tap availability (top-bar → one commit; routing skips from
+  the next scan) + People & Routing admin: seat changes as a gated two-step —
+  Head proposes (people-gate record) → dual approval on the decide surface →
+  CEO applies via the exactly-once claim/complete path in one commit
