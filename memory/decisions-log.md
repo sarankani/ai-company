@@ -2,6 +2,10 @@
 
 Append-only, newest first. Format: `## YYYY-MM-DD — decision` + who + why in 1–3 lines. Architectural decisions go to `docs/adrs/` instead.
 
+## 2026-07-14 — EX-204 SHIPPED (PR #41): company-wide visibility from records
+
+**Who:** saran (approved in-channel by merging PR #41) / devops (completion stamp). Dashboard (7 live department tiles + CEO escalation strip) and Department Boards (state groups, composable filters) are in main — G3 visibility now exists as screens, computed straight from records, people-gate work absent for unauthorized seats. Gate APR-20260714-005 closed approved+executed. EX-205 (built & verified while #41 waited, per the autonomy directive) pushed immediately after — the between-gates pipelining worked as designed on its first use.
+
 ## 2026-07-14 — Founder directive: proceed autonomously between gates
 
 **Who:** Founder (in chat): "no need to wait for me — if any task is waiting-on-gate then wait, otherwise start working on it; you can choose what next to be done." Operating change: the AI picks and executes the next task without asking, following the Plan 002 board order and dependencies; the ONLY stopping points are human gates (unchanged, ADR-0003/0004). Task lifecycle protocol still applies in full — issues flip to in-progress/waiting-on-gate with comments before work moves.
