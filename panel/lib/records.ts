@@ -61,14 +61,18 @@ function coerce(v: string): Scalar {
   return v;
 }
 
+// Split on top-level commas only — never inside quotes or nested braces
+// (regression: quote-unaware splitting corrupted APR-20260714-002).
 function splitTop(s: string): string[] {
   const parts: string[] = [];
   let depth = 0,
-    cur = "";
+    cur = "",
+    quoted = false;
   for (const ch of s) {
-    if (ch === "{") depth++;
-    else if (ch === "}") depth--;
-    if (ch === "," && depth === 0) {
+    if (ch === '"') quoted = !quoted;
+    else if (ch === "{" && !quoted) depth++;
+    else if (ch === "}" && !quoted) depth--;
+    if (ch === "," && depth === 0 && !quoted) {
       parts.push(cur);
       cur = "";
     } else cur += ch;
@@ -88,7 +92,10 @@ function parseInlineDict(s: string): InlineDict {
   return out;
 }
 
-export function parseRecord(text: string): { data: RecordData; body: string } {
+export function parseRecord(raw: string): { data: RecordData; body: string } {
+  // Normalize CRLF (Windows checkouts with core.autocrlf) and a UTF-8 BOM —
+  // Python's read_text does this implicitly; the TS port must do it explicitly.
+  const text = raw.replace(/^﻿/, "").replace(/\r\n/g, "\n");
   const m = text.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/);
   if (!m) throw new Error("no frontmatter block");
   const data: RecordData = {};
@@ -122,7 +129,10 @@ export interface RepoSource {
 }
 
 class LocalSource implements RepoSource {
-  constructor(private root: string) {}
+  private root: string;
+  constructor(root: string) {
+    this.root = root;
+  }
   async listDir(dir: string) {
     try {
       return (await fs.readdir(path.join(this.root, dir))).filter((f) => f.endsWith(".md"));
@@ -136,7 +146,14 @@ class LocalSource implements RepoSource {
 }
 
 class GitHubSource implements RepoSource {
-  constructor(private repo: string, private token: string, private ref = "main") {}
+  private repo: string;
+  private token: string;
+  private ref: string;
+  constructor(repo: string, token: string, ref = "main") {
+    this.repo = repo;
+    this.token = token;
+    this.ref = ref;
+  }
   private async api(p: string): Promise<any> {
     const res = await fetch(
       `https://api.github.com/repos/${this.repo}/contents/${p}?ref=${this.ref}`,

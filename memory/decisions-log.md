@@ -2,6 +2,10 @@
 
 Append-only, newest first. Format: `## YYYY-MM-DD — decision` + who + why in 1–3 lines. Architectural decisions go to `docs/adrs/` instead.
 
+## 2026-07-14 — Parser bug #2 (quote-unaware split_top) fixed; APR-20260714-002 repaired; save() roundtrip guard added
+
+**Who:** developer (fix) / Founder (reported the CI failure). Second corruption of the same class as the EX-107 drill finding: `split_top` split inline dicts on commas *inside quoted values*, so a long decide reason mangled the saran stamp on APR-20260714-002; a git merge of two decision writes (saravanan-p's late-pushed CLI decide + the in-channel saran stamp) then duplicated sections → CI "list item outside list". Fixed in both parsers (Python engine + TS panel port), record repaired (both stamps kept, decision = saravanan-p's — first decision by the assigned seat), 2 regression tests added. **New invariant:** `save()` refuses to write any record whose dump doesn't parse back to identical text and keys — corruption now fails loudly at write time instead of landing on disk. Also found by the guard: empty strings dumped ambiguously as list-starts (now dumped as `""`). Process note: two decision channels racing on one record is what created the merge conflict — the executor should treat an already-decided record as terminal and skip re-stamping.
+
 ## 2026-07-14 — EX-201 approved by Saravanan P (first direct human engine decision); executor performed the merge
 
 **Who:** saravanan-p (decision, via `decide` CLI himself — first non-founder, non-chat-mediated stamp) / devops (executor). APR-20260714-001: approved 07:14:49Z -> claimed -> PR #37 merged by the executor (cde768d) -> completed. The full resume loop — human approves, AI executes exactly once — ran with real role separation for the first time. Design brief 001 is final-for-build; §9 open questions unanswered -> designer recommendations stand as defaults (stay-on-item + Next button, deputy sees queue only on reassignment, 7-day sessions) unless overridden before EX-203.

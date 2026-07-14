@@ -113,13 +113,16 @@ def parse_inline_dict(s):
 
 
 def split_top(s):
-    parts, depth, cur = [], 0, ""
+    """Split on top-level commas only — never inside quotes or nested braces."""
+    parts, depth, cur, quoted = [], 0, "", False
     for ch in s:
-        if ch == "{":
+        if ch == '"':
+            quoted = not quoted
+        elif ch == "{" and not quoted:
             depth += 1
-        elif ch == "}":
+        elif ch == "}" and not quoted:
             depth -= 1
-        if ch == "," and depth == 0:
+        if ch == "," and depth == 0 and not quoted:
             parts.append(cur)
             cur = ""
         else:
@@ -145,6 +148,8 @@ def dump_val(v):
     if isinstance(v, int):
         return str(v)
     s = str(v)
+    if s == "":
+        return '""'  # bare empty means "start of a list" to the parser
     if any(c in s for c in ":,{}#") or s != s.strip():
         return '"' + s.replace('"', "'") + '"'
     return s
@@ -213,7 +218,14 @@ def load(path):
 
 
 def save(path, data, body):
-    Path(path).write_text(dump_record(data, body))
+    text = dump_record(data, body)
+    # Roundtrip guard: refuse to write anything the parser can't read back to
+    # the exact same text (this bug class — quote-unaware parsing — has now
+    # corrupted records on disk twice; fail loudly instead of writing garbage).
+    d2, b2 = parse_record(text)
+    if dump_record(d2, b2) != text or set(d2) != set(data):
+        raise ValueError(f"roundtrip guard: dump/parse not stable for {path}; refusing to write")
+    Path(path).write_text(text)
 
 
 # ---------- org ----------
