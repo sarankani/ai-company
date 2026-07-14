@@ -2,6 +2,10 @@
 
 Append-only, newest first. Format: `## YYYY-MM-DD — decision` + who + why in 1–3 lines. Architectural decisions go to `docs/adrs/` instead.
 
+## 2026-07-14 — EX-303 SHIPPED (PR #47): Slack notifications live
+
+**Who:** saran (approved by merging PR #47) / devops (completion stamp). Gate APR-20260714-011 closed. Third Phase-3 task done (301/302/303, all pulled forward). Channel notifications via SLACK_WEBHOOK_URL are live; per-approver DMs await slack_ids + environment enablement. **Remaining work all needs time or Founder input:** EX-207 deploy (manual), EX-208 acceptance (post-deploy), EX-304 SLA trial (2 weeks real usage), EX-305/306 hiring+handover (business decisions).
+
 ## 2026-07-14 — EX-303 built: Slack notifications with deep links
 
 **Who:** developer + devops (pull-forward). The SLA job now posts gate events (assigned / 50%-SLA / escalation) to Slack alongside email, sharing the same idempotency log (no double-sends on re-run). Message carries gate/dept/priority/exact-action/SLA + a deep link that prefers the auth-gated panel item URL (PANEL_BASE_URL) and falls back to the GitHub record file. Transport: DM to the assignee (SLACK_BOT_TOKEN + a per-human `slack_id`, threaded) when configured, else channel post via SLACK_WEBHOOK_URL. Founder's secrets: SLACK_WEBHOOK_URL (repo variable — wired, works today), SLACK_BOT_TOKEN (prod-environment secret — inert until slack_ids added + `environment: production` set on the job; deliberately NOT auto-enabled to avoid gating the SLA heartbeat if prod has required-reviewer protection). Slack failure never blocks routing (UC3, email still fires) — never raises. Verified: real webhook POST captured by a local server (correct mrkdwn + panel deep link + exact action); 31 Python tests green (5 new).

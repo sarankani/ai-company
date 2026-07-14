@@ -65,7 +65,7 @@ States: `todo` · `in-progress` · `blocked` · `waiting-on-gate` · `in-review`
 |---|---|---|---|---|
 | EX-301 | Auto-reassign on unavailability status (skip, don't wait for SLA) | developer | gate | done — PR #45 merged (#27); cron skip (EX-103) + panel-immediate reassignment |
 | EX-302 | Delegation UI + full hop-history/audit-log screen | developer | gate | done — PR #46 merged (#28); delegation (EX-203) + /audit ledger |
-| EX-303 | Slack notifications with deep links | developer + devops | gate | waiting-on-gate — SLA job posts to Slack w/ deep links; webhook wired, bot-DM path documented (pulled forward) |
+| EX-303 | Slack notifications with deep links | developer + devops | gate | done — PR #47 merged (#29); webhook live, bot-DM path documented |
 | EX-304 | 2-week SLA trial: zero terminal breaches | data-analyst | — | todo |
 | EX-305 | `/hiring-plan` for first Department Approvers (order: by gate volume — measure in EX-109/304) | hr | Saran hire decision | todo |
 | EX-306 | Seat handover runbook + first non-Saran approver live | hr + tech-writer | Saran | todo |

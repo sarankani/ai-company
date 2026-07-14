@@ -94,12 +94,20 @@ export async function deliverLink(email: string, url: string): Promise<"sent" | 
       ? { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS ?? "" }
       : undefined,
   });
-  await transport.sendMail({
+  const info = await transport.sendMail({
     from: process.env.NOTIFY_FROM ?? "Evalyn Panel <no-reply@evalyn.in>",
     to: email,
     subject: "Your Evalyn Control Panel sign-in link",
     text: `Sign in to the Evalyn Control Panel:\n\n${url}\n\nThis link is valid for 15 minutes and can be used to open your approval inbox. If you didn't request it, ignore this email.`,
   });
-  console.log(`[auth] sign-in link emailed to ${email}`);
+  // "sendMail resolved" only means the SMTP server accepted the envelope — a
+  // recipient can still be rejected. Surface that instead of claiming success,
+  // and log the messageId + server response so delivery is traceable (never
+  // the URL — EX-206 H2).
+  if (info.rejected?.length) {
+    console.error(`[auth] SMTP REJECTED ${email} — response: ${info.response}`);
+    return "logged";
+  }
+  console.log(`[auth] sign-in link accepted for ${email} (id=${info.messageId}, response=${info.response})`);
   return "sent";
 }
