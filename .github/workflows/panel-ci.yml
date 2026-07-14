@@ -1,0 +1,66 @@
+name: Panel CI (build + security scanning)
+
+# EX-207 / EX-206 precondition (Tech Spec §7): the panel must build cleanly
+# and pass dependency + secret scanning before it can be deployed. Runs on any
+# change under panel/ and on the workflow itself.
+
+on:
+  push:
+    paths: ["panel/**", ".github/workflows/panel-ci.yml"]
+  pull_request:
+    paths: ["panel/**", ".github/workflows/panel-ci.yml"]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Type-check & build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: panel
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: panel/package-lock.json
+      - run: npm ci
+      - name: Build (tsc + next build)
+        run: npm run build
+        env:
+          # a dummy secret so the build's env access doesn't throw; never a real one
+          SESSION_SECRET: ci-build-only-not-a-real-secret
+
+  dependency-audit:
+    name: Dependency audit
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: panel
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: panel/package-lock.json
+      - run: npm ci
+      # fail only on high/critical; moderate transitive advisories are triaged
+      # in the security review (e.g. postcss via Next build tooling).
+      - name: npm audit (high+)
+        run: npm audit --audit-level=high
+
+  secret-scan:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
