@@ -161,6 +161,28 @@ class EngineTest(unittest.TestCase):
         self.assertEqual(d["state"], "approved")
         self.assertEqual(len([s for s in d["stamps"] if s["outcome"] == "approved"]), 2)
 
+    def test_dual_approval_requires_distinct_humans_when_two_qualified(self):
+        """EX-206 M3: once a second human is qualified for the people gate,
+        the two approving stamps must come from DISTINCT people; the same human
+        can no longer co-sign alone."""
+        temp = ae.ORG / "humans" / "pf-approver.md"
+        temp.write_text(
+            "---\nid: pf-approver\nname: PF Approver\nemail: pf@example.com\n"
+            "title: Finance\navailability: available\nooo_until: null\nroles:\n"
+            "  - {department: people-finance, seat: approver}\ncreated: 2026-07-14\n---\n\nx\n"
+        )
+        try:
+            p = self.new(gate="people")
+            # two ceo stamps by the SAME human no longer close the gate
+            ae.main(["decide", p.stem, "--by", "saran", "--outcome", "approved", "--now", T0])
+            ae.main(["decide", p.stem, "--by", "saran", "--outcome", "approved", "--now", NOW(h=1)])
+            self.assertEqual(self.data(p)["state"], "pending")  # distinct now required
+            # a distinct people-finance seat-holder's stamp closes it
+            ae.main(["decide", p.stem, "--by", "pf-approver", "--outcome", "approved", "--now", NOW(h=2)])
+            self.assertEqual(self.data(p)["state"], "approved")
+        finally:
+            temp.unlink(missing_ok=True)
+
     def test_question_answered(self):
         args = ["new", "--type", "question", "--gate", "commitments", "--requested-by",
                 "sales", "--artifact", "README.md", "--action", "Which option?", "--now", T0]

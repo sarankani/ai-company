@@ -12,7 +12,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { verifySession } from "@/lib/auth";
 import { parseRecord, repoSource, revalidate, type RecordData } from "@/lib/records";
-import { loadHumans, humanById, revalidateOrg, isHeadOf, isCeoSeat, type Human } from "@/lib/org";
+import { loadHumans, humanById, loadDepartments, revalidateOrg, isHeadOf, isCeoSeat, type Human } from "@/lib/org";
 import {
   createRecord, claimExecution, completeExecution, dumpChecked, contentSha,
   removeRoleRaw, addRoleRaw, rebuildRegistryText, parseSeatChange,
@@ -52,6 +52,10 @@ export async function proposeSeatChangeAction(form: FormData) {
   let dest = "/admin?proposed=1";
   try {
     if (!CHAIN.includes(seat)) throw new DecisionError("seat must be approver/deputy/head");
+    // EX-206 L8: department must be a real one before it flows into the
+    // role-edit regex builder — no metacharacters, no unknown targets.
+    const departments = await loadDepartments();
+    if (!departments.some((d) => d.id === department)) throw new DecisionError("unknown department");
     if (!isHeadOf(me, department)) throw new DecisionError(`only the ${department} Head (or CEO) proposes seat changes`);
     const humans = await loadHumans();
     const toHuman = humans.find((h) => h.id === to);

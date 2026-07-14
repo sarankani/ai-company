@@ -2,6 +2,10 @@
 
 Append-only, newest first. Format: `## YYYY-MM-DD — decision` + who + why in 1–3 lines. Architectural decisions go to `docs/adrs/` instead.
 
+## 2026-07-14 — EX-206 security review done: 2 High + 4 Med + 3 Low, all fixed
+
+**Who:** security (review) / developer (fixes). Full panel audit (report: `docs/specs/security-review-001-control-panel.md`). Ship-blockers found and fixed: **H1** `artifact` path traversal → local file read + a People-gate read bypass (a visible record naming a People-gate record as its artifact rendered its body) — fixed with a repo-path containment guard + allowlist + `canView` re-check on artifacts that are records; **H2** magic links logged as bearer credentials even with SMTP set — logging gated, SMTP delivery + single-use tokens flagged as EX-207 preconditions. Also: **M4** People-gate seat-changes leaked to any Head (now `canView`-filtered), **M5** open redirect via `return=` (now same-origin only), **M6** Next 15.1.6 CVE-2025-29927 (→15.5.20), **L8/L9** input validation. **Policy calls resolved by Founder (2026-07-14):** (M3) **graduated** separation of duties — n=1 same-human co-sign stays, distinct humans auto-required on the 2nd qualified hire; (H2) **accept** the 15-minute magic-link replay window as a documented residual (no state store — keeps ADR-0002 statelessness). Applied to BOTH engines (TS + Python) for lockstep. 26 Python tests + 42 e2e checks green. Held locally behind PR #42's gate.
+
 ## 2026-07-14 — EX-204 SHIPPED (PR #41): company-wide visibility from records
 
 **Who:** saran (approved in-channel by merging PR #41) / devops (completion stamp). Dashboard (7 live department tiles + CEO escalation strip) and Department Boards (state groups, composable filters) are in main — G3 visibility now exists as screens, computed straight from records, people-gate work absent for unauthorized seats. Gate APR-20260714-005 closed approved+executed. EX-205 (built & verified while #41 waited, per the autonomy directive) pushed immediately after — the between-gates pipelining worked as designed on its first use.

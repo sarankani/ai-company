@@ -522,12 +522,21 @@ def cmd_decide(a):
     done = True
     if a.outcome == "approved" and data["gate"] in DUAL_GATES:
         oks = [s for s in data["stamps"] if s["outcome"] == "approved"]
-        have_ceo = any(is_ceo(s["by"]) for s in oks)
+        ceo_stampers = [s["by"] for s in oks if is_ceo(s["by"])]
         dept_ids = {h["id"] for seat in CHAIN for h in seat_holders(humans, data["department"], seat)}
-        have_dept = any(s["by"] in dept_ids for s in oks)
+        dept_stampers = [s["by"] for s in oks if s["by"] in dept_ids]
+        have_ceo = bool(ceo_stampers)
+        have_dept = bool(dept_stampers)
         # two stamps required: one satisfying the department, one the ceo seat.
-        # At n=1 the same human writes both stamps — still two stamps (EX-008 note b).
-        done = have_ceo and have_dept and len(oks) >= 2
+        # EX-206 M3: they must be DISTINCT humans once ≥2 humans are qualified
+        # to approve this gate; at n=1 the same human co-signs (EX-008 note b),
+        # else the gate is unsatisfiable. Separation of duties auto-enables on
+        # hire. Keep this in lockstep with panel/lib/engine.ts.
+        qualified = {h["id"] for h in humans.values()
+                     if is_ceo(h["id"]) or h["id"] in dept_ids}
+        distinct_ok = (len(qualified) <= 1
+                       or any(c != d for c in ceo_stampers for d in dept_stampers))
+        done = have_ceo and have_dept and len(oks) >= 2 and distinct_ok
     if done:
         data["state"] = a.outcome
         data["decision"] = stamp

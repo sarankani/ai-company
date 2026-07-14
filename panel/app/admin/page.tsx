@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { verifySession } from "@/lib/auth";
 import { loadRecords } from "@/lib/records";
 import { humanById, loadHumans, loadDepartments, isCeoSeat } from "@/lib/org";
-import { parseSeatChange, CHAIN } from "@/lib/engine";
+import { parseSeatChange, canView, CHAIN } from "@/lib/engine";
 import { proposeSeatChangeAction, applySeatChangeAction } from "./actions";
 
 /** People & Routing admin (EX-205, Design Brief §4.5) — Head/CEO only.
@@ -36,10 +36,15 @@ export default async function Admin({
   const [humans, departments, { records }] = await Promise.all([
     loadHumans(), loadDepartments(), loadRecords(),
   ]);
+  // Seat-change records are gate:people (admin/actions.ts) — visible only to
+  // People & Finance seats + CEO (EX-206 M4). A Head of another department
+  // reaches /admin but must not see People-gate proposals.
   const seatChanges = records
+    .filter((r) => canView(me, r))
     .map((r) => ({ r, change: parseSeatChange(r.body) }))
     .filter((x) => x.change)
     .sort((a, b) => b.r.id.localeCompare(a.r.id));
+  const canSeeSeatChanges = me.roles.some((r) => r.seat === "ceo" || r.department === "people-finance");
 
   return (
     <main className="wide">

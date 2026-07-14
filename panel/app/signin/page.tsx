@@ -1,5 +1,5 @@
 import { humanByEmail } from "@/lib/org";
-import { makeLoginToken, deliverLink } from "@/lib/auth";
+import { makeLoginToken, deliverLink, safeReturnTo } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
 // Magic-link sign-in: the email must match company/org/humans/ 1:1.
@@ -7,7 +7,7 @@ import { redirect } from "next/navigation";
 async function requestLink(formData: FormData) {
   "use server";
   const email = String(formData.get("email") ?? "");
-  const returnTo = String(formData.get("return") ?? "/inbox");
+  const returnTo = safeReturnTo(formData.get("return")); // EX-206 M5
   const human = await humanByEmail(email);
   if (human) {
     const token = makeLoginToken(human.id, returnTo);

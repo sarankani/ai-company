@@ -45,10 +45,17 @@ export function makeLoginToken(humanId: string, returnTo: string): string {
   return pack({ h: humanId, r: returnTo, k: "login", exp: Math.floor(Date.now() / 1000) + LINK_TTL_S });
 }
 
+/** Only same-origin absolute paths are safe redirect targets (EX-206 M5):
+ * a single leading slash, not "//host" (protocol-relative) and no scheme. */
+export function safeReturnTo(v: unknown): string {
+  const s = String(v ?? "");
+  return /^\/(?!\/)/.test(s) ? s : "/inbox";
+}
+
 export function verifyLoginToken(token: string): { humanId: string; returnTo: string } | null {
   const p = unpack(token);
   if (!p || p.k !== "login" || Number(p.exp) < Date.now() / 1000) return null;
-  return { humanId: String(p.h), returnTo: String(p.r || "/inbox") };
+  return { humanId: String(p.h), returnTo: safeReturnTo(p.r) };
 }
 
 export function makeSession(humanId: string): string {
@@ -65,11 +72,19 @@ export function verifySession(cookie: string | undefined): string | null {
 export async function deliverLink(email: string, url: string): Promise<"sent" | "logged"> {
   const host = process.env.SMTP_HOST;
   if (!host) {
-    console.log(`[auth] magic link for ${email}: ${url}`);
+    // Dev only: the link is a 15-min bearer credential — never log it once
+    // SMTP is configured (EX-206 H2). Gate even the dev log behind a flag so
+    // it can't leak in a misconfigured non-SMTP prod.
+    if (process.env.AUTH_DEV_LOG === "1" || process.env.NODE_ENV !== "production") {
+      console.log(`[auth] magic link for ${email}: ${url}`);
+    } else {
+      console.warn(`[auth] no SMTP configured and AUTH_DEV_LOG unset — link for ${email} NOT delivered`);
+    }
     return "logged";
   }
-  // Minimal SMTP submission without extra dependencies is out of MVP scope;
-  // production delivery is wired in EX-207 alongside the deploy secrets.
-  console.log(`[auth] SMTP configured — delivery wiring lands with EX-207. Link for ${email}: ${url}`);
+  // Production SMTP delivery is wired in EX-207 alongside the deploy secrets.
+  // Do NOT log the URL here — that was the H2 leak. Log only that a link was
+  // issued, never the credential itself.
+  console.log(`[auth] sign-in link issued to ${email} (SMTP delivery lands with EX-207)`);
   return "logged";
 }

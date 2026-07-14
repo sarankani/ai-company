@@ -150,6 +150,29 @@ ok("composable URL filters narrow the board", filtered.includes("smoke-test PR #
 await page.goto(`${BASE}/board/engineering?emp=nobody`);
 ok("filter with no matches shows empty groups", (await page.textContent("main")).includes("Nothing here"));
 
+// 8c. EX-206 H1 — artifact path traversal / People-gate bypass is blocked.
+// A widely-visible engineering record whose artifact points at the People-gate
+// record must NOT render that record's body to the engineering approver.
+const bypass = py(["new", "--type", "approval", "--gate", "merge-deploy", "--priority", "P2",
+  "--requested-by", "developer", "--artifact", `company/approvals/${PEOPLE}.md`,
+  "--action", "Bypass probe: artifact points at a People-gate record", "--summary", "probe"]).match(/APR-\d+-\d+/)[0];
+git(["add", "-A"]); git(["commit", "-qm", "smoke: bypass probe"]);
+await page.goto(`${BASE}/item/${bypass}`);
+const bypassPage = await page.textContent("main");
+ok("H1: People-gate record body NOT rendered via artifact bypass", !bypassPage.includes("Extend offer to candidate X"));
+// a traversal artifact renders as link-out, never inline file read
+const trav = py(["new", "--type", "approval", "--gate", "merge-deploy", "--priority", "P2",
+  "--requested-by", "developer", "--artifact", "../../../../etc/hosts",
+  "--action", "Traversal probe", "--summary", "probe"]).match(/APR-\d+-\d+/)[0];
+git(["add", "-A"]); git(["commit", "-qm", "smoke: traversal probe"]);
+await page.goto(`${BASE}/item/${trav}`);
+ok("H1: traversal artifact does not read host files", !(await page.textContent("main")).includes("localhost"));
+
+// 8d. EX-206 M5 — open redirect is neutralized
+await page.goto(`${BASE}/signin?return=https://evil.example`);
+const returnField = await page.getAttribute('input[name="return"]', "value");
+ok("M5: off-site return= is not reflected into the form", returnField === "/inbox");
+
 // 9. question records answered through the same surface
 py(["new", "--type", "question", "--gate", "merge-deploy", "--priority", "P2",
   "--requested-by", "developer", "--artifact", "docs/plans/002-execution-plan.md",
