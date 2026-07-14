@@ -2,6 +2,10 @@
 
 Append-only, newest first. Format: `## YYYY-MM-DD — decision` + who + why in 1–3 lines. Architectural decisions go to `docs/adrs/` instead.
 
+## 2026-07-14 — Vercel deploy fixes (Founder deploying manually): mailer observability + standalone-off-Vercel
+
+**Who:** developer (fixes) / Founder (deploying to Vercel). Two deploy hotfixes: (PR #48) deliverLink now surfaces SMTP `info.rejected` + logs messageId/response instead of falsely logging "emailed" on a rejected recipient. (this change) `output: "standalone"` in next.config caused Vercel's "No Output Directory named public" error — scoped it to non-Vercel builds (VERCEL=1) so Docker still gets standalone and Vercel builds Next natively. Also documented Vercel setup (Root Directory = panel, no build command, env-var rules) + GitHub-token safety (fine-grained PAT, this repo, contents:write, server-side only) in the runbook. Local-login tip: unset SMTP_HOST so the magic link prints to console (AUTH_DEV_LOG/NODE_ENV only apply when SMTP_HOST is absent).
+
 ## 2026-07-14 — EX-303 SHIPPED (PR #47): Slack notifications live
 
 **Who:** saran (approved by merging PR #47) / devops (completion stamp). Gate APR-20260714-011 closed. Third Phase-3 task done (301/302/303, all pulled forward). Channel notifications via SLACK_WEBHOOK_URL are live; per-approver DMs await slack_ids + environment enablement. **Remaining work all needs time or Founder input:** EX-207 deploy (manual), EX-208 acceptance (post-deploy), EX-304 SLA trial (2 weeks real usage), EX-305/306 hiring+handover (business decisions).

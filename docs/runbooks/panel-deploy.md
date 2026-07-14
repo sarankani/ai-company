@@ -20,7 +20,7 @@ Full env reference: `panel/.env.example`.
 
 ## 2. Two supported deploy paths
 
-**Vercel** (tech-spec default): import the repo, root = `panel/`, add the env vars from `.env.example` as Project Environment Variables (Production), deploy. No Dockerfile needed. Set `NODE_ENV` is automatic.
+**Vercel** (tech-spec default): import the repo → **Settings → General → Root Directory = `panel`** (required — the app is in a subdirectory) → Framework Preset auto-detects **Next.js** → add the env vars from `.env.example` as Project Environment Variables (Production) → deploy. No custom build command, no Dockerfile, no Output Directory override — Vercel builds Next natively. `next.config.mjs` scopes `output: "standalone"` to non-Vercel builds (VERCEL=1), so it doesn't trip Vercel's static-output detection ("No Output Directory named public"). Env var names must be plain (never `NEXT_PUBLIC_*` for secrets). `GITHUB_TOKEN` = fine-grained PAT, this repo only, Contents read+write.
 
 **Container host** (Fly.io / Render / VPS): `panel/Dockerfile` builds a slim non-root standalone image (`output: "standalone"`). Inject the same env vars as runtime secrets. `docker build -t evalyn-panel panel/ && docker run -p 3000:3000 --env-file .env.local evalyn-panel`.
 
