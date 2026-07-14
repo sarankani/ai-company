@@ -2,6 +2,10 @@
 
 Append-only, newest first. Format: `## YYYY-MM-DD — decision` + who + why in 1–3 lines. Architectural decisions go to `docs/adrs/` instead.
 
+## 2026-07-14 — EX-203 SHIPPED (PR #40): the panel decides — approvals are now a web click away
+
+**Who:** saran (approved in-channel by merging PR #40) / devops (completion stamp). The Control Panel's decide surface is live in main: Item Detail with approve/reject-with-reason/delegate/answer/follow-up, every decision = one commit (stamp + registry + `Decided-by` trailer) through a TS engine kept in lockstep with the Python engine — the e2e suite proves the Python validator accepts panel-written records. 30/30 Playwright checks in a real browser (authz, people-gate visibility, dual-approval two-stamp sequence, optimistic-concurrency rejection, QST answers). Gate APR-20260714-004 closed approved+executed. **Non-technical humans can now decide without git or CLI — the EX-208 acceptance criterion is within reach.** Next: EX-204 (Dashboard+Board) and EX-205 (availability+admin), both unblocked.
+
 ## 2026-07-14 — PR #39 merged (gate APR-20260714-003 closed) + third CRLF finding: artifact_sha now checkout-independent
 
 **Who:** saravanan-p (decide via CLI + merged PR #39 himself) / devops (completion stamp). The exactly-once guard then blocked the executor's claim: the approver's decide ran on a Windows checkout, so `artifact_sha` hashed CRLF bytes (c484affc…) while main's LF content hashes bba186a9… — same logical file, different sha (proven byte-for-byte: CRLF-converting main's file reproduces the approved sha exactly). Fix: `artifact_sha` normalizes CRLF/BOM before hashing, regression-tested; the record's approved_artifact_sha corrected with the proof in its Thread. Third bug of the CRLF family (parser regex, panel parser, now the hash) — any byte-level comparison in this system must normalize line endings first. Both open gates are now closed; registry open-items table is empty.
