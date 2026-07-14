@@ -48,7 +48,7 @@ States: `todo` · `in-progress` · `blocked` · `waiting-on-gate` · `in-review`
 
 | ID | Task | Owner (AI) | Gate / approver | State |
 |---|---|---|---|---|
-| EX-201 | Design brief: Approval Inbox + Company Dashboard + Department Board flows | designer | Saran approves | todo |
+| EX-201 | Design brief: Approval Inbox + Company Dashboard + Department Board flows | designer | Saran approves | waiting-on-gate (#19) |
 | EX-202 | App scaffold, auth (humans-registry-mapped), repo read layer | developer | code-reviewer → gate | todo |
 | EX-203 | Approval Inbox screen (approve / reject-with-reason / delegate / follow-up question) | developer | code-reviewer + security + tester → gate | todo |
 | EX-204 | Company Dashboard + Department Board screens | developer | code-reviewer + tester → gate | todo |
