@@ -26,6 +26,8 @@ import re
 import smtplib
 import subprocess
 import sys
+import urllib.error
+import urllib.request
 from datetime import datetime, timedelta, timezone
 from email.message import EmailMessage
 from pathlib import Path
@@ -444,11 +446,18 @@ def cmd_scan(a):
                 dirty = True
         if dirty:
             changed.append((path, data, body))
-    # send + log notifications (append AFTER successful send; send=False just logs)
+    # send + log notifications (append AFTER successful send; send=False just
+    # logs). Slack shares the email idempotency log — one notified entry per
+    # (kind, to, ref), so job re-runs never double-send (EX-303 AC).
     for data, to, kind, ref in outbox:
-        ok = send_email(humans, data, to, kind, a.send_email)
-        if ok:
-            data["notified"].append({"at": iso(when), "to": to, "kind": kind, "ref": ref})
+        sent_email = send_email(humans, data, to, kind, a.send_email)
+        sent_slack, ts = send_slack(humans, data, to, kind,
+                                    last_slack_ts(data, to), a.send_slack)
+        if sent_email or sent_slack:
+            entry = {"at": iso(when), "to": to, "kind": kind, "ref": ref}
+            if ts:
+                entry["slack_ts"] = ts
+            data["notified"].append(entry)
     for path, data, body in changed:
         save(path, data, body)
     rebuild_registry()
@@ -489,6 +498,83 @@ def send_email(humans, data, to_id, kind, really):
             s.login(user, os.environ["SMTP_PASS"])
         s.send_message(msg)
     return True
+
+
+# ---------- Slack notifications (EX-303) ----------
+
+def record_link(data):
+    """Deep link into the panel item (auth-gated — an unauthenticated click
+    hits sign-in, then lands on the item) if PANEL_BASE_URL is set; else the
+    record file on GitHub."""
+    base = os.environ.get("PANEL_BASE_URL")
+    if base:
+        return f"{base.rstrip('/')}/item/{data['id']}"
+    repo = os.environ.get("GITHUB_REPOSITORY", "sarankani/ai-company")
+    folder = "approvals" if data["type"] == "approval" else "questions"
+    return f"https://github.com/{repo}/blob/main/company/{folder}/{data['id']}.md"
+
+
+def slack_message(data, to_id, kind):
+    """Slack mrkdwn for a gate event, with a deep link to the exact item."""
+    emoji = {"assigned": "\U0001F4E5", "sla-warning": "⏳",
+             "escalated": "⚠️"}.get(kind, "\U0001F514")
+    label = kind.replace("-", " ").title()
+    return (f"{emoji} *{label}* — <{record_link(data)}|{data['id']}>\n"
+            f"*Gate:* {data['gate']}   *Dept:* {data['department']}   *Priority:* {data['priority']}\n"
+            f"*Action:* {data['action']}\n"
+            f"*Assignee:* {to_id}   *SLA due:* {data['sla_due']}")
+
+
+def _http_post_json(url, payload, headers):
+    req = urllib.request.Request(
+        url, data=json.dumps(payload).encode(), headers=headers, method="POST")
+    with urllib.request.urlopen(req, timeout=10) as r:
+        body = r.read().decode() or "{}"
+    return json.loads(body) if body.strip().startswith("{") else {"ok": True, "raw": body}
+
+
+def last_slack_ts(data, to_id):
+    """Most recent Slack thread ts sent to this human for this record — used to
+    thread SLA-warning/escalation under the original assignment (UC2)."""
+    for n in reversed(data.get("notified", [])):
+        if n.get("to") == to_id and n.get("slack_ts"):
+            return n["slack_ts"]
+    return None
+
+
+def send_slack(humans, data, to_id, kind, thread_ts, really):
+    """Post a gate event to Slack. Returns (delivered, thread_ts). Prefers a DM
+    to the assignee (SLACK_BOT_TOKEN + the human's slack_id) with threading;
+    falls back to the channel webhook (SLACK_WEBHOOK_URL, no threading). Never
+    raises — Slack being down must not break routing (UC3: email still fires)."""
+    token = os.environ.get("SLACK_BOT_TOKEN")
+    webhook = os.environ.get("SLACK_WEBHOOK_URL")
+    slack_id = (humans.get(to_id) or {}).get("slack_id")
+    text = slack_message(data, to_id, kind)
+    if not really:
+        print(f"  [dry-run slack] to={to_id} kind={kind} :: {data['id']}")
+        return True, thread_ts
+    try:
+        if token and slack_id:  # DM the human, threaded
+            payload = {"channel": slack_id, "text": text}
+            if thread_ts:
+                payload["thread_ts"] = thread_ts
+            resp = _http_post_json(
+                "https://slack.com/api/chat.postMessage", payload,
+                {"Authorization": f"Bearer {token}",
+                 "Content-Type": "application/json; charset=utf-8"})
+            if resp.get("ok"):
+                return True, resp.get("ts", thread_ts)
+            print(f"  [slack error] chat.postMessage: {resp.get('error')}")
+            return False, thread_ts
+        if webhook:  # channel post (no per-message threading via webhooks)
+            _http_post_json(webhook, {"text": text}, {"Content-Type": "application/json"})
+            return True, thread_ts
+    except (urllib.error.URLError, TimeoutError, ValueError) as e:
+        print(f"  [slack skip] {e}")
+        return False, thread_ts
+    print(f"  [skip slack] no SLACK_WEBHOOK_URL and no bot DM target for {to_id}")
+    return False, thread_ts
 
 
 def find_record(rid):
@@ -672,6 +758,7 @@ def main(argv=None):
 
     s = sub.add_parser("scan")
     s.add_argument("--send-email", action="store_true")
+    s.add_argument("--send-slack", action="store_true")
     s.add_argument("--now")
     s.set_defaults(fn=cmd_scan)
 
