@@ -2,6 +2,10 @@
 
 Append-only, newest first. Format: `## YYYY-MM-DD — decision` + who + why in 1–3 lines. Architectural decisions go to `docs/adrs/` instead.
 
+## 2026-07-14 — Vercel deploy fix #2: pin framework=nextjs via vercel.json
+
+**Who:** developer / Founder (Vercel deploy). After the standalone fix (PR #49), the "No Output Directory named public" error persisted — second cause: the project's Framework Preset was "Other", so Vercel ran the build but looked for static output instead of using the Next builder. Fixed deterministically with `panel/vercel.json` `{"framework": "nextjs"}` (overrides the dashboard preset). Root Directory must still be `panel`. VERCEL=1 is auto-set by Vercel — no need to set it manually.
+
 ## 2026-07-14 — Vercel deploy fixes (Founder deploying manually): mailer observability + standalone-off-Vercel
 
 **Who:** developer (fixes) / Founder (deploying to Vercel). Two deploy hotfixes: (PR #48) deliverLink now surfaces SMTP `info.rejected` + logs messageId/response instead of falsely logging "emailed" on a rejected recipient. (this change) `output: "standalone"` in next.config caused Vercel's "No Output Directory named public" error — scoped it to non-Vercel builds (VERCEL=1) so Docker still gets standalone and Vercel builds Next natively. Also documented Vercel setup (Root Directory = panel, no build command, env-var rules) + GitHub-token safety (fine-grained PAT, this repo, contents:write, server-side only) in the runbook. Local-login tip: unset SMTP_HOST so the magic link prints to console (AUTH_DEV_LOG/NODE_ENV only apply when SMTP_HOST is absent).
