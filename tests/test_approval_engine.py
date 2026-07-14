@@ -214,6 +214,16 @@ class EngineTest(unittest.TestCase):
         with self.assertRaises(SystemExit):
             ae.main(["complete", p.stem])
 
+    def test_hash_in_quoted_values_survives_roundtrip(self):
+        """Regression (EX-107 drill finding): '#' inside quoted values must not
+        be treated as a comment — e.g. reason: "merge PR #34"."""
+        p = self.new()
+        ae.main(["decide", p.stem, "--by", "saravanan-p", "--outcome", "approved",
+                 "--reason", "Approved via GitHub merge of PR #34", "--now", T0])
+        d = self.data(p)  # re-parse of the saved file must succeed intact
+        self.assertIn("PR #34", d["decision"]["reason"])
+        self.assertEqual(ae.validate_one(p), [])
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

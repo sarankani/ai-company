@@ -2,6 +2,12 @@
 
 Append-only, newest first. Format: `## YYYY-MM-DD — decision` + who + why in 1–3 lines. Architectural decisions go to `docs/adrs/` instead.
 
+## 2026-07-13 — EX-107 LIVE DRILL COMPLETE — first real approval through the loop (+2 bugs found & fixed)
+
+**Who:** delivery-manager (drill) / saran (decision) / devops (executor). APR-20260713-001 ("Merge PR #34 into main"): created 14:54:50Z → routed engineering→saravanan-p → assigned-notification logged → approved by saran 15:29:29Z (via GitHub merge, in-channel rule) → claimed → executed exactly once 15:29:31Z. **Baseline metrics (EX-109, n=1): time-to-decision 34m39s (P1 SLA: 1bd — 2.4% used), hops 0, decision→execution 2s.**
+**Drill findings (both fixed + regression-tested):** (1) frontmatter parser treated ' #' inside quoted values as a comment → crash on "PR #34" in a reason; (2) same bug via a pre-fix scan roundtrip truncated record 001's action field on disk — repaired, documented in the record's Thread. This is why we drill before building UI on top.
+**EX-108 armed:** APR-20260713-002 (P0, 2h SLA, due 17:31:37Z) — deliberately undecided; the cron on main must hop it saravanan-p→saran and notify both. Reject it with reason 'drill complete' after the hop.
+
 ## 2026-07-13 — PHASE 0 COMPLETE — PR #33 merged (Founder sign-off)
 
 **Who:** Founder (merged) / delivery-manager (verified DoD). Exit criteria all met: specs+ADRs approved (PR #1), CLAUDE.md on the distributed model, `company/org/` live with two humans seated, dry-run 9/9. Epic #2 and issues #7–#9 closed. Phase 1 (E1, #3) unblocked — first task EX-101 (#10).
