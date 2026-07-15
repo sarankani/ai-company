@@ -20,6 +20,18 @@ SOPs are the executable operating knowledge of the company. An AI employee loade
 5. **Anti-patterns are explicit.** Each SOP names the failure modes it exists to prevent. Agents pattern-match; give them the negative pattern too.
 6. **Short enough to load, complete enough to act.** A role SOP should fit comfortably in an agent's context alongside its task. Cut narrative; keep decision rules.
 
+## 2a. The five mandatory parts
+
+Every operational SOP (all role SOPs, and foundation SOPs that define a process) must contain these parts, explicitly:
+
+1. **Purpose & Scope** — exactly what system, process, or role the procedure applies to, and what is out of scope.
+2. **Roles & Responsibilities (RACI)** — who builds, who tests, who signs off; Accountable is a human seat for anything gated.
+3. **Step-by-Step Instructions** — chronological, actionable, numbered; each procedure ends at a handoff or a gate.
+4. **Exceptions & Red Flags** — pre-defined rules for anomalies (especially AI anomalies: hallucination, drift, off-policy output — see SOP-013 §4) and the explicit exception paths with who authorizes them.
+5. **KPIs & Metrics** — concrete, computable measures of process success (SOP-008: computed, never guessed).
+
+Role SOPs follow the section layout in `roles/_template.md`, which realizes these five parts. Policy-style foundations (e.g. this document) carry at minimum Purpose & Scope plus explicit red flags/anti-patterns.
+
 ## 3. The SOP library layout
 
 ```

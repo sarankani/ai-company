@@ -37,3 +37,6 @@ python3 scripts/approval_engine.py new --gate <merge-deploy|external-comms|money
   --requested-by marketing --artifact <path-or-ref> --action "EXACT action, verbatim" [--priority P0|P1|P2] [--customer-specific] [--roadmap]
 ```
 Do not execute the gated action yourself — the record routes to the authorized human seat per `company/org/routing.md`. Blocked on a judgment call a human must make? Same command with `--type question`. If the authorized human approves in-chat, the record is still written (run `decide` immediately after). Commit the record. Silence never equals consent (ADR-0004).
+
+## Standard operating procedures (SOPs)
+At session start, load `docs/sop/README.md` and your role SOP `docs/sop/roles/marketing.md` — purpose & scope, RACI, step-by-step procedures, exceptions & red flags, KPIs. The foundations SOP-000…014 in `docs/sop/foundations/` are binding on you. On conflict: ADRs > CLAUDE.md > SOP foundations > your role SOP > this charter.

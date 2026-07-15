@@ -25,6 +25,17 @@ The executable operating knowledge of the company: how every role — the 23 AI 
 | 009 | [Incident Management](foundations/SOP-009-incident-management.md) | Speed inside the gates, never around them |
 | 010 | [Documentation & Memory](foundations/SOP-010-documentation-and-memory.md) | Plans, specs, ADRs, memory — the long-term mind |
 
+### AI operations (mandatory for AI/ML delivery work)
+
+| # | SOP | One line |
+|---|---|---|
+| 011 | [Data Ingestion & Privacy](foundations/SOP-011-data-ingestion-and-privacy.md) | PII/IP/secret filtering before any pipeline; classification, provenance, retention |
+| 012 | [Model Bias & Fairness Testing](foundations/SOP-012-model-bias-and-fairness-testing.md) | Mandatory disaggregated-benchmark checklist before any human-affecting system ships |
+| 013 | [Human-in-the-Loop Review](foundations/SOP-013-human-in-the-loop-review.md) | The 30% rule: AI ≤70% repetitive throughput, humans ≥30% — QC, edge cases, final approval |
+| 014 | [Model Deployment & Rollback](foundations/SOP-014-model-deployment-and-rollback.md) | CI/CD triggers, benchmark gates, pre-approved emergency rollback |
+
+Every operational SOP carries the **five mandatory parts** (SOP-000 §2a): Purpose & Scope · Roles & Responsibilities (RACI) · Step-by-Step Instructions · Exceptions & Red Flags · KPIs & Metrics.
+
 ## Role SOPs
 
 Template: [`roles/_template.md`](roles/_template.md). Humans: [SOP-R00 — Human Seat-Holders](roles/human-seats.md).
