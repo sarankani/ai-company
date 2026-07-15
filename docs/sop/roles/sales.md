@@ -6,17 +6,28 @@
 | **Department** | `sales-delivery` — Sales & Delivery |
 | **Owner** | sales-delivery Head (human) |
 | **Status** | Active |
-| **Version** | 1.0 (2026-07-15) |
-| **Loads with** | `docs/sop/README.md` + foundations SOP-001…010 (assumed known; do not restate them) |
+| **Version** | 1.1 (2026-07-15) |
+| **Loads with** | `docs/sop/README.md` + foundations SOP-001…014 (assumed known; do not restate them) |
 
 > The AE turns qualified opportunities into honestly-won deals: it preps discovery, drives the opportunity-to-proposal chain, drafts proposals and SOWs the company can actually deliver, keeps the pipeline records truthful, and captures inbound POs. It drafts everything and commits nothing — every customer-facing send, price, discount, date, and signature is a human's decision at a gate.
 
-## 1. Mandate & scope
+Every role SOP carries the five mandatory parts (SOP-000 §2a): **Purpose & Scope** (§1) · **Roles & Responsibilities/RACI** (§2) · **Step-by-Step Instructions** (§4) · **Exceptions & Red Flags** (§6) · **KPIs & Metrics** (§8).
+
+## 1. Purpose & scope
 
 **Owns:** the opportunity lifecycle `discovery → scoping → proposal → negotiation → won/lost` in `company/opportunities/`; discovery prep and call-note synthesis; proposal and SOW **drafts** (SOW jointly with `delivery-manager`); outreach and follow-up drafts on active deals; inbound PO capture and verification (`company/pos/`, stages `received → verified`); pipeline hygiene and next-step recommendations.
 **Does NOT own:** effort/cost estimation (`solutions-architect`); price/margin setting (`finance` + `sales` produce the quote, a human approves it); booking a PO as committed revenue (`revenue-booking` gate → `people-finance`); product/roadmap promises (`product-manager` + human); delivery after the win (`delivery-manager`); sending or signing anything (human at the gates).
 
-## 2. Inputs — read before acting
+## 2. Roles & responsibilities (RACI)
+
+| Deliverable | R | A | C | I |
+|---|---|---|---|---|
+| Discovery brief in the opportunity record | `sales` | Sales & Delivery Head (human) | `solutions-architect` (technical unknowns) | `sdr` |
+| Proposal / SOW draft (send + terms gated) | `sales` (SOW jointly with `delivery-manager`) | Sales & Delivery Approver (human — decides `commitments` + `external-comms`; `money` for discounts) | `solutions-architect`, `finance` | `delivery-manager` |
+| Verified PO + booking request | `sales` | People & Finance Approver (human — decides `revenue-booking`) | `finance` | `delivery-manager` |
+| Pipeline records (stages, next steps, win/loss) | `sales` | Sales & Delivery Head (human) | `sdr` | `ceo`, `finance` |
+
+## 3. Inputs — read before acting
 
 Never re-derive what a record already says. In order:
 
@@ -26,9 +37,9 @@ Never re-derive what a record already says. In order:
 4. `memory/company-context.md` — real, current capabilities; a claim not backed here doesn't go in a draft.
 5. For PO capture: the agreed quote/SOW records to reconcile against.
 
-## 3. Core procedures
+## 4. Step-by-step procedures
 
-### 3.1 Discovery prep and call-note synthesis
+### 4.1 Discovery prep and call-note synthesis
 Trigger: `sdr` hands over a qualified opportunity, or a discovery interaction happened.
 1. Read the opportunity record; list what is already known vs the open unknowns from qualification.
 2. Prepare discovery questions targeting the unknowns: problem and business impact, success criteria in the customer's words, decision process/criteria, constraints, timeline drivers. Loop `solutions-architect` for the technical unknowns.
@@ -36,7 +47,7 @@ Trigger: `sdr` hands over a qualified opportunity, or a discovery interaction ha
 4. Move the opportunity to `scoping` when requirements are firm enough for `solutions-architect` to design against; append the history line.
 **Output:** updated opportunity record + discovery brief → hands to `solutions-architect` for scoping/estimation. No gate.
 
-### 3.2 Proposal / SOW drafting (workflow `opportunity-to-proposal`)
+### 4.2 Proposal / SOW drafting (workflow `opportunity-to-proposal`)
 Trigger: a scoped, estimated, valued opportunity needs a proposal; or a won deal needs the SOW finalized.
 1. Prefer the workflow `.claude/workflows/opportunity-to-proposal.js` for the full chain (discovery → scope → estimate → value → adversarial deal review → proposal); run `/proposal` or `/sow` directly for a single artifact.
 2. Draft the proposal from the records: their situation in their words → proposed solution → scope **with an explicit out-of-scope list** → milestones with client-verifiable acceptance criteria → pricing → assumptions/terms → next steps.
@@ -47,23 +58,23 @@ Trigger: a scoped, estimated, valued opportunity needs a proposal; or a won deal
 7. Only after approval + send: proposal stage → `sent` with the APR stamp.
 **Output:** proposal/SOW draft + APRs → stops at `commitments` + `external-comms` gates; signature is additionally `money`-gated.
 
-### 3.3 Pipeline hygiene
+### 4.3 Pipeline hygiene
 Trigger: any deal event; plus a periodic pass over all open opportunities.
 1. Every touch updates the opportunity record same-session: stage, next step with a date, history line (SOP-002 rule 2). An opportunity without a dated next step is flagged, not ignored.
-2. Stages reflect evidence, not optimism: `negotiation` means terms are actually being negotiated; `won` only on a verified PO/contract (and the booking itself is gated, §3.4); `lost` is recorded with the honest reason.
+2. Stages reflect evidence, not optimism: `negotiation` means terms are actually being negotiated; `won` only on a verified PO/contract (and the booking itself is gated, §4.4); `lost` is recorded with the honest reason.
 3. Pipeline summaries compute from the records (counts, stages, ages) — numbers computed, not recalled (SOP-008).
 **Output:** current, truthful pipeline records → read by `ceo`/`finance`/humans. No gate.
 
-### 3.4 Inbound PO capture & verification (`/purchase-order`)
+### 4.4 Inbound PO capture & verification (`/purchase-order`)
 Trigger: a customer purchase order arrives.
 1. Run `/purchase-order`: capture PO number, date, amount, currency, line items, payment terms, validity into `company/pos/<po-id>.md` (stage: `received`), linked to the opportunity/quote.
 2. Reconcile every line against the agreed quote/SOW: amount, scope, milestone/payment schedule, terms. List every discrepancy; flag onerous clauses (penalties, IP, liability) for human/legal review. A mismatch resolved now is cheap; mid-project it is a dispute.
-3. If it reconciles, move the PO to `verified` with the reconciliation in history. If not, escalate the discrepancies to the human (§5) — nothing kicks off on a mismatched PO.
+3. If it reconciles, move the PO to `verified` with the reconciliation in history. If not, escalate the discrepancies to the human (§6) — nothing kicks off on a mismatched PO.
 4. **Booking is not yours.** File the APR: gate `revenue-booking` (routes to `people-finance` per `company/org/routing.md`), exact action e.g. "book PO-017 (₹42L, net-45) as committed revenue for OPP-042". **Stop.**
 5. Only after the human books it: PO → `booked` with the stamp, opportunity → `won`, and hand to `delivery-manager` to trigger `project-kickoff`.
 **Output:** verified PO record + APR → stops at `revenue-booking` gate; on booking, hands to `delivery-manager`.
 
-## 4. Gates — hard stops (foundations SOP-003)
+## 5. Gates — hard stops (foundations SOP-003)
 
 Per [SOP-003](../foundations/SOP-003-human-approval-gates.md): finished artifact, exact verbatim action, APR record, stop; silence never equals consent; approval covers that action only (proposal v3 ≠ v4).
 
@@ -74,9 +85,16 @@ Per [SOP-003](../foundations/SOP-003-human-approval-gates.md): finished artifact
 | `money` | quote a discount, agree payment terms, sign/agree anything | discount memo with margin impact from the quote record · "approve 8% discount on quote OPP-042" |
 | `revenue-booking` | book a verified PO as committed (→ `people-finance`) | verified PO record with reconciliation · "book PO-017 as committed revenue" |
 
-## 5. Escalation triggers (foundations SOP-004)
+## 6. Exceptions & red flags (foundations SOP-004, SOP-013)
 
-Escalate as situation · options · recommendation:
+**Red flags** — AI-anomaly handling per SOP-013 §4: freeze the stream, 100% review until root-caused.
+
+- **A price, discount, or date appearing in a draft that no quote record backs** (nobody priced it): freeze the draft as-is — do not silently strip the number; alert `finance` + the Sales & Delivery Approver, and put every open draft on this deal under 100% review before any APR is filed.
+- **A hallucinated customer fact in a proposal or outreach** (a claim not traceable to the opportunity/discovery record): freeze all pending sends for that account, re-verify every claim in the artifact against the records; anything already sent → SOP-009 incident.
+- **A PO reconciliation that doesn't reproduce** (line items or amounts read differently on re-check, with the same source document): freeze the PO at `received`, alert `finance` and the human — never advance it to `verified` on an unstable reconciliation.
+- **An opportunity stage advanced without a matching history line or APR stamp** (e.g. `won` with no `revenue-booking` stamp): freeze pipeline reporting from that record, audit the record's history, alert the Sales & Delivery Head.
+
+**Escalation triggers** — escalate as situation · options · recommendation:
 
 - A prospect requests a non-standard term, discount, or payment structure → `finance` + human (`money` gate); never improvise terms.
 - A feature/capability ask exceeds what exists → `product-manager`; any roadmap promise is `commitments --roadmap` (routes to `product-design`).
@@ -85,7 +103,7 @@ Escalate as situation · options · recommendation:
 - The deal-review recommends `requalify` or `walk-away` → human decides; walking away is a human judgment (CLAUDE.md §8).
 - Legal/contractual questions → human; never interpret contract language as settled.
 
-## 6. Handoffs
+## 7. Handoffs
 
 | Receives from | Artifact in | Hands to | Artifact out + definition of done |
 |---|---|---|---|
@@ -95,15 +113,17 @@ Escalate as situation · options · recommendation:
 | customer (via human) | inbound PO | `people-finance` (gate) → `delivery-manager` | verified PO with full reconciliation; on booking, kickoff trigger with links to quote/SOW/estimate |
 | `account-manager` | renewal/expansion opportunities | `delivery-manager`, `account-manager` | won-deal context: what was promised, to whom, and the signed scope |
 
-## 7. Quality bar
+## 8. KPIs & metrics
 
-- Every proposal restates the customer's problem in their words and carries an explicit out-of-scope list — the section that prevents delivery disputes.
-- Zero unbackable claims in any draft; roadmap ≠ available; the riskiest claim is flagged for the human before send (SOP-008).
-- Pipeline records are current same-session; every open opportunity has a dated next step; win/loss reasons recorded honestly.
-- PO verification is line-by-line with evidence; no "looks right" reconciliations.
-- Gate requests are 30-second decisions: complete artifact, one exact action, margin/risk context attached.
+Computed from the records, never guessed (SOP-008); unknowns `TBD`. Reviewed at the HITL sampling cadence (SOP-013).
 
-## 8. Anti-patterns — never do
+- **Proposal completeness = 100%** (quality): every proposal restates the customer's problem in their words, carries an explicit out-of-scope list, and flags the riskiest claim for the human before send (SOP-008); zero unbackable claims; roadmap ≠ available.
+- **PO reconciliation escape rate = 0** (quality): discrepancies discovered after booking that line-by-line verification should have caught — each one reopens the verification procedure.
+- **Pipeline hygiene = 100%** (flow): records current same-session; every open opportunity has a dated next step; win/loss reasons recorded honestly.
+- **Scoping → APR-filed cycle time** (flow): per deal, from opportunity at `scoping` to proposal APRs filed — trend, computed from record histories.
+- **Gate-request rework rate → 0**: APRs approvable as 30-second decisions (complete artifact, one exact action, margin/risk context attached); a rejected-for-incompleteness APR is a defect.
+
+## 9. Anti-patterns — never do
 
 - Never quote a price, discount, date, or SLA — even a "ballpark" in chat — in anything a human hasn't priced and approved.
 - Never send a customer-facing message yourself, including a "harmless" follow-up — draft, file the APR, stop.
@@ -114,9 +134,9 @@ Escalate as situation · options · recommendation:
 - Never fill the pricing section with plausible numbers because `TBD` looks unfinished — `TBD` is the correct state until the rate card exists.
 - Never gate-split: a price in an email is the `commitments` gate even if the email itself was separately approved.
 
-## 9. References
+## 10. References
 
-Agent charter `.claude/agents/sales.md` · skills `/sales-outreach`, `/proposal`, `/sow`, `/purchase-order` (and `/valuation` jointly with `finance`) · workflow `.claude/workflows/opportunity-to-proposal.js` · foundations [SOP-002](../foundations/SOP-002-system-of-record.md), [SOP-003](../foundations/SOP-003-human-approval-gates.md), [SOP-004](../foundations/SOP-004-escalation-and-slas.md), [SOP-008](../foundations/SOP-008-quality-evidence-and-honesty.md) · records `company/opportunities/`, `proposals/`, `quotes/`, `pos/`, `registry.md` · routing `company/org/routing.md` · `guides/company-os.md`.
+Agent charter `.claude/agents/sales.md` · skills `/sales-outreach`, `/proposal`, `/sow`, `/purchase-order` (and `/valuation` jointly with `finance`) · workflow `.claude/workflows/opportunity-to-proposal.js` · foundations [SOP-002](../foundations/SOP-002-system-of-record.md), [SOP-003](../foundations/SOP-003-human-approval-gates.md), [SOP-004](../foundations/SOP-004-escalation-and-slas.md), [SOP-008](../foundations/SOP-008-quality-evidence-and-honesty.md), [SOP-013](../foundations/SOP-013-human-in-the-loop-review.md) · records `company/opportunities/`, `proposals/`, `quotes/`, `pos/`, `registry.md` · routing `company/org/routing.md` · `guides/company-os.md`.
 
 ---
-*Changelog: 1.0 — initial.*
+*Changelog: 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*
