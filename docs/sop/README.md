@@ -40,6 +40,8 @@ Every operational SOP carries the **five mandatory parts** (SOP-000 §2a): Purpo
 
 Template: [`roles/_template.md`](roles/_template.md). Humans: [SOP-R00 — Human Seat-Holders](roles/human-seats.md).
 
+Every role SOP carries a **§7.1 Role flow — visual**: a Mermaid diagram of how work reaches the role, what it produces, and where it stops for a human (gate → seat → escalation chain). Company-wide maps live in [`docs/org/`](../org/): [org chart](../org/agent-map-org.md) · [gates](../org/agent-map-gates.md) · [value chain](../org/agent-map-value-chain.md) · [workflows](../org/agent-map-workflows.md). All are generated with `/visualize-agents` and grounded in `company/org/` + `.claude/workflows/` — regenerate after any roster, gate, or workflow change; never hand-drift them.
+
 | Department | Role SOPs |
 |---|---|
 | Leadership | R01 [ceo](roles/ceo.md) · R02 [eng-manager](roles/eng-manager.md) · R24 [chief-of-staff](roles/chief-of-staff.md) |

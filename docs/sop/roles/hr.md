@@ -6,7 +6,7 @@
 | **Department** | `people-finance` — People & Finance |
 | **Owner** | people-finance Head (human) |
 | **Status** | Active |
-| **Version** | 1.1 (2026-07-15) |
+| **Version** | 1.2 (2026-07-15) |
 | **Loads with** | `docs/sop/README.md` + foundations SOP-001…014 (assumed known; do not restate them) |
 
 > The People partner makes hiring fair and fast, onboarding smooth, and feedback honest — by structuring every people process so the evidence is complete and the decision takes a human minutes. It stops, always, at the decision itself: every offer, rejection, termination, rating, or comp change is a human call at the `people` gate (dual stamp: a people-finance seat **and** the CEO), and every candidate/employee send is a human call at `external-comms`.
@@ -113,6 +113,52 @@ Draft, don't send; write the APR record per [SOP-003](../foundations/SOP-003-hum
 | human manager | review request + period context | human manager | review DRAFT, whole-period evidence, rating as recommendation only |
 | new-hire access needs | onboarding plan §before-day-1 | `procurement` | itemized access/hardware/license request |
 
+### 7.1 Role flow — visual
+
+How work reaches this role, what it produces, and where it stops for a human (generated with `/visualize-agents`; grounded in the agent charter, `company/org/`, and `.claude/workflows/`):
+
+```mermaid
+flowchart LR
+  classDef ai fill:#dbeafe,stroke:#1d4ed8,color:#1e3a8a
+  classDef human fill:#fecaca,stroke:#b91c1c,color:#7f1d1d
+  classDef gate fill:#fef3c7,stroke:#b45309,color:#78350f
+  classDef art fill:#f1f5f9,stroke:#64748b,color:#334155
+  classDef wf fill:#ede9fe,stroke:#6d28d9,color:#4c1d95
+  w1[["hiring-pipeline"]]:::wf
+  w2[["company-standup"]]:::wf
+  ceo[ceo]:::ai
+  em[eng-manager]:::ai
+  fin[finance]:::ai
+  hr[hr]:::ai
+  proc[procurement]:::ai
+  kit("hiring kit (JD, sourcing, loop, scorecard)"):::art
+  pkt("debrief packet + hire recommendation"):::art
+  offer("offer letter draft"):::art
+  onb("onboarding plan (30/60/90)"):::art
+  rev("performance-review DRAFT"):::art
+  g1{"people gate (dual stamp)"}:::gate
+  g2{external-comms gate}:::gate
+  pfa(["People & Finance Approver — human"]):::human
+  pfd(["People & Finance Deputy — human"]):::human
+  pfh(["People & Finance Head — human"]):::human
+  ceoh(["CEO — human, terminal backstop"]):::human
+  msa(["Marketing & Support Approver — human"]):::human
+
+  w1 -->|"As HR: kit + fairness check"| hr
+  w2 -->|"people-finance report, with finance"| hr
+  ceo -->|"approved role plan"| hr
+  fin -->|"budget line for the role"| hr
+  hr --> kit -->|"to hiring manager"| em
+  hr --> pkt --> g1
+  g1 -->|"stamp 1"| pfa
+  g1 -->|"stamp 2"| ceoh
+  g1 -->|"dual approval"| offer --> g2 --> msa
+  hr --> onb -->|"to hiring manager / dept Head"| em
+  onb -->|"access/hardware needs"| proc
+  hr --> rev -->|"rating/comp finalization"| g1
+  pfa -. SLA breach .-> pfd -. SLA breach .-> pfh -. SLA breach .-> ceoh
+```
+
 ## 8. KPIs & metrics
 
 Computed from the hiring/onboarding records, never guessed (SOP-008); unknowns `TBD` with a `QST-*` to resolve. Reviewed at the HITL sampling cadence (SOP-013):
@@ -139,4 +185,4 @@ Computed from the hiring/onboarding records, never guessed (SOP-008); unknowns `
 Agent charter `.claude/agents/hr.md` · skills `/job-description`, `/hiring-plan`, `/onboarding-plan`, `/performance-review`, `/one-on-one` · workflow `.claude/workflows/hiring-pipeline.js` · foundations [SOP-003](../foundations/SOP-003-human-approval-gates.md), [SOP-004](../foundations/SOP-004-escalation-and-slas.md), [SOP-007](../foundations/SOP-007-security-and-data-protection.md) · `company/org/` (departments, humans, routing) · `docs/plans/001-*` (seat handover) · artifacts in `hiring/`, `onboarding/`.
 
 ---
-*Changelog: 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*
+*Changelog: 1.2 — added §7.1 role flow diagram (`/visualize-agents`). 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*

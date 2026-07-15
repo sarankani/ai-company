@@ -6,7 +6,7 @@
 | **Department** | All — seats exist per department (ADR-0003) |
 | **Owner** | Founder/CEO |
 | **Status** | Active |
-| **Version** | 1.1 (2026-07-15) |
+| **Version** | 1.2 (2026-07-15) |
 | **Loads with** | Foundations SOP-003 (gates), SOP-004 (SLAs), SOP-013 (HITL review) — this SOP is their human-side counterpart |
 
 > The AI workforce runs the company between the gates; you **are** the gates. Your job is not to do the work or redo it — it is to exercise judgment, on time, on the exact action presented, and leave an audit trail. The company's throughput is bounded by your decision latency; its safety is bounded by your rigor.
@@ -34,6 +34,37 @@ Every role SOP carries the five mandatory parts (SOP-000 §2a): **Purpose & Scop
 | Dual-stamp `people` gates | people-finance seat + CEO | CEO/Founder | `hr` (prep) | — |
 | HITL sample reviews of non-gated output streams (SOP-013 §3a) | Approver (or Head-designated) | Head | `data-analyst` (findings tracking) | stream-owning AI role |
 | Terminal backstop of every escalation chain | CEO/Founder | CEO/Founder | — | all |
+
+## 1b. The gate landscape — visual
+
+Every gate you may be asked to decide, and the one escalation chain behind every seat (generated with `/visualize-agents`; full maps in [`docs/org/agent-map-gates.md`](../../org/agent-map-gates.md)):
+
+```mermaid
+flowchart LR
+  classDef human fill:#fecaca,stroke:#b91c1c,color:#7f1d1d
+  classDef gate fill:#fef3c7,stroke:#b45309,color:#78350f
+
+  g1{merge-deploy}:::gate --> engA([Engineering Approver]):::human
+  g2{external-comms}:::gate --> msA([Marketing & Support Approver]):::human
+  g2 -. customer-specific .-> sdA
+  g3{money}:::gate --> pfA([People & Finance Approver]):::human
+  g4{commitments}:::gate --> sdA([Sales & Delivery Approver]):::human
+  g4 -. roadmap promises .-> pdA([Product & Design Approver]):::human
+  g5{people — dual}:::gate --> pfA
+  g5 --> ceoStamp([CEO seat — second stamp]):::human
+  g6{procurement}:::gate --> opA([Operations Approver]):::human
+  g7{revenue-booking}:::gate --> pfA
+```
+
+```mermaid
+flowchart LR
+  classDef human fill:#fecaca,stroke:#b91c1c,color:#7f1d1d
+  appr([Approver]):::human -. "SLA breach / unavailable" .-> dep([Deputy]):::human
+  dep -. "SLA breach / unavailable" .-> head([Head]):::human
+  head -. "SLA breach / unavailable" .-> ceoSeat([CEO — terminal backstop, never unassigned]):::human
+```
+
+Escalation only **reassigns** — it never approves, and silence never equals consent (ADR-0004).
 
 ## 2. Step-by-step: deciding an item
 
@@ -92,4 +123,4 @@ Every role SOP carries the five mandatory parts (SOP-000 §2a): **Purpose & Scop
 `company/org/` (departments, humans, routing) · ADR-0003, ADR-0004, ADR-0005 · SOP-003, SOP-004, SOP-013 · Plan 001 (Control Panel & approval model) · `/approve` skill.
 
 ---
-*Changelog: 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a; HITL sampling duties added. 1.0 — initial.*
+*Changelog: 1.2 — added §1b gate-landscape diagram (`/visualize-agents`). 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a; HITL sampling duties added. 1.0 — initial.*

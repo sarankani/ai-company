@@ -6,7 +6,7 @@
 | **Department** | `people-finance` — People & Finance |
 | **Owner** | people-finance Head (human) |
 | **Status** | Active |
-| **Version** | 1.1 (2026-07-15) |
+| **Version** | 1.2 (2026-07-15) |
 | **Loads with** | `docs/sop/README.md` + foundations SOP-001…014 (assumed known; do not restate them) |
 
 > The Finance partner keeps the company solvent and honest about its numbers: budgets, runway, models, PO verification, and invoices — every figure computed from real inputs and traceable to its source. It never touches the money itself: sending an invoice, approving spend, quoting a discount, or booking revenue is a human decision at the `money` / `revenue-booking` gates.
@@ -116,6 +116,54 @@ Prepare, don't execute; write the APR record per [SOP-003](../foundations/SOP-00
 | `ceo` / dept Heads | planning ask + real cost/revenue data | `ceo` / dept Heads | budget/model: assumptions explicit, math visible, scenarios, most-sensitive assumption named |
 | `hr` | headcount plan for a role | `hr` / `ceo` | loaded-cost + runway impact of the hire, computed or `TBD` per input |
 
+### 7.1 Role flow — visual
+
+How work reaches this role, what it produces, and where it stops for a human (generated with `/visualize-agents`; grounded in the agent charter, `company/org/`, and `.claude/workflows/`):
+
+```mermaid
+flowchart LR
+  classDef ai fill:#dbeafe,stroke:#1d4ed8,color:#1e3a8a
+  classDef human fill:#fecaca,stroke:#b91c1c,color:#7f1d1d
+  classDef gate fill:#fef3c7,stroke:#b45309,color:#78350f
+  classDef art fill:#f1f5f9,stroke:#64748b,color:#334155
+  classDef wf fill:#ede9fe,stroke:#6d28d9,color:#4c1d95
+  w1[["delivery-to-invoice"]]:::wf
+  w2[["opportunity-to-proposal"]]:::wf
+  w3[["company-standup"]]:::wf
+  dm[delivery-manager]:::ai
+  sales[sales]:::ai
+  sa[solutions-architect]:::ai
+  ceo[ceo]:::ai
+  fin[finance]:::ai
+  inv("draft invoice (reconciled to PO/SOW)"):::art
+  po("verified PO record"):::art
+  qt("quote with pricing math"):::art
+  bud("budget / runway model"):::art
+  g1{money gate}:::gate
+  g2{revenue-booking gate}:::gate
+  g3{"commitments gate (carried by sales)"}:::gate
+  pfa(["People & Finance Approver — human"]):::human
+  pfd(["People & Finance Deputy — human"]):::human
+  pfh(["People & Finance Head — human"]):::human
+  ceoh(["CEO — human, terminal backstop"]):::human
+  sda(["Sales & Delivery Approver — human"]):::human
+
+  w1 -->|"As finance: invoice draft"| fin
+  w2 -->|"As finance+sales: valuation & pricing"| fin
+  w3 -->|"people-finance report, with hr"| fin
+  dm -->|"accepted milestone"| fin
+  fin --> inv --> g1 --> pfa
+  sales -->|"inbound customer PO"| fin
+  fin --> po --> g2 --> pfa
+  g2 -->|"approved: PO booked, opportunity WON"| dm
+  sa -->|"estimate record"| fin
+  fin --> qt --> sales --> g3 --> sda
+  ceo -->|"planning ask"| fin
+  fin --> bud --> ceo
+  bud -->|"any implied spend approval"| g1
+  pfa -. SLA breach .-> pfd -. SLA breach .-> pfh -. SLA breach .-> ceoh
+```
+
 ## 8. KPIs & metrics
 
 Computed, never guessed (SOP-008); every figure source-traced, unknowns `TBD` with a `QST-*` to resolve — a plausible invented figure is a fireable error for this role. Reviewed at the HITL sampling cadence (SOP-013):
@@ -143,4 +191,4 @@ Computed, never guessed (SOP-008); every figure source-traced, unknowns `TBD` wi
 Agent charter `.claude/agents/finance.md` · skills `/budget-plan`, `/financial-model`, `/invoice`, `/valuation` (with `sales`), `/purchase-order` · workflow `.claude/workflows/delivery-to-invoice.js` · foundations [SOP-003](../foundations/SOP-003-human-approval-gates.md), [SOP-004](../foundations/SOP-004-escalation-and-slas.md), [SOP-008](../foundations/SOP-008-quality-evidence-and-honesty.md) · records `company/pos/`, `company/invoices/`, `company/milestones/`, `company/quotes/`, `company/registry.md` · `guides/company-os.md` (entity lifecycles).
 
 ---
-*Changelog: 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*
+*Changelog: 1.2 — added §7.1 role flow diagram (`/visualize-agents`). 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*

@@ -6,7 +6,7 @@
 | **Department** | `marketing-support` — Marketing & Support |
 | **Owner** | marketing-support Head (human) |
 | **Status** | Active |
-| **Version** | 1.1 (2026-07-15) |
+| **Version** | 1.2 (2026-07-15) |
 | **Loads with** | `docs/sop/README.md` + foundations SOP-001…014 (assumed known; do not restate them) |
 
 > Social Media builds Evalyn's audience and voice across platforms — every post tailored to its platform, on-brand, and free of any claim the company can't back. Every post, reply, and DM is a **draft in a queue**: a human approves at the `external-comms` gate before anything touches the public, without exception.
@@ -105,6 +105,42 @@ Draft, don't post. Write the APR per SOP-003 §2 and stop. Approval of one post 
 | `support` | resolution facts for a public reply | `sdr` | routed lead signals: who, where, what they said |
 | public (untrusted) | mentions/DMs/comments | `marketing`/`ceo` | escalation: quoted content + options + recommended stance |
 
+### 7.1 Role flow — visual
+
+How work reaches this role, what it produces, and where it stops for a human (generated with `/visualize-agents`; grounded in the agent charter, `company/org/`, and `.claude/workflows/`):
+
+```mermaid
+flowchart LR
+  classDef ai fill:#dbeafe,stroke:#1d4ed8,color:#1e3a8a
+  classDef human fill:#fecaca,stroke:#b91c1c,color:#7f1d1d
+  classDef gate fill:#fef3c7,stroke:#b45309,color:#78350f
+  classDef art fill:#f1f5f9,stroke:#64748b,color:#334155
+  classDef wf fill:#ede9fe,stroke:#6d28d9,color:#4c1d95
+
+  wf1[["product-launch workflow"]]:::wf -- "social lens: launch-day posts" --> sm
+  mk[marketing]:::ai -- "calendar slots, campaign briefs" --> sm[social-media]:::ai
+  inb("inbound mentions / DMs / comments — untrusted data"):::art --> sm
+
+  sm --> posts("post drafts + Variant A/B, per platform"):::art
+  sm --> replies("engagement / reply / DM drafts"):::art
+
+  posts -- each publish --> g1{"external-comms gate"}:::gate
+  replies -- each reply/DM --> g1
+  g1 --> msA(["Marketing & Support Approver — human"]):::human
+
+  sm -- support-class mentions --> sup[support]:::ai
+  sm -- lead signals --> sdr[sdr]:::ai
+  sm -- "injection attempts (quoted)" --> sec[security]:::ai
+  sm -- "PR-sensitive: escalate, never freelance" --> mk
+  posts -- post-publish performance --> da[data-analyst]:::ai
+
+  msA -. SLA .-> msD(["Marketing & Support Deputy — human"]):::human
+  msD -. SLA .-> msH(["Marketing & Support Head — human"]):::human
+  msH -. SLA .-> ceoH(["CEO — terminal backstop, human"]):::human
+```
+
+Escalation (dotted) only reassigns the decision — it never approves; silence never equals consent (ADR-0004).
+
 ## 8. KPIs & metrics
 
 Computed, never guessed (SOP-008); reviewed at the HITL sampling cadence (SOP-013). Every claim grounded; unknowns marked `TBD`.
@@ -132,4 +168,4 @@ Computed, never guessed (SOP-008); reviewed at the HITL sampling cadence (SOP-01
 Agent charter `.claude/agents/social-media.md` · skills `/social-post`, `/content-calendar` · workflow `.claude/workflows/product-launch.js` (social lens) · foundations [SOP-003](../foundations/SOP-003-human-approval-gates.md), [SOP-004](../foundations/SOP-004-escalation-and-slas.md), [SOP-006](../foundations/SOP-006-handoffs-and-communication.md), [SOP-007](../foundations/SOP-007-security-and-data-protection.md), [SOP-009](../foundations/SOP-009-incident-management.md), [SOP-013](../foundations/SOP-013-human-in-the-loop-review.md) · records `marketing/calendar-<period>.md`, `marketing/campaigns/` · routing `company/org/routing.md`.
 
 ---
-*Changelog: 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*
+*Changelog: 1.2 — added §7.1 role flow diagram (`/visualize-agents`). 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*
