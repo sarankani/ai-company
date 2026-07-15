@@ -2,6 +2,10 @@
 
 Append-only, newest first. Format: `## YYYY-MM-DD — decision` + who + why in 1–3 lines. Architectural decisions go to `docs/adrs/` instead.
 
+## 2026-07-15 — SOP library LIVE ON MAIN (PR #69 merged by saran)
+
+**Who:** saran (merged PR #69, 20:32 UTC). The `sop`→`main` promotion completed APR-20260715-009's approved action verbatim ("into main"). All agent sessions now auto-load the SOP library via the wired charters; chief-of-staff dispatcher available company-wide. Governance chain fully closed: APR-007/008/009 decided · issue #68 closed · board EX-G01 done. The stale "promotion pending" note in company-context is corrected.
+
 ## 2026-07-15 — MILESTONE: SOP library merged (PR #67) — APR-009 decided; lives on `sop`, not yet main
 
 **Who:** saran (decided by merging, 20:02 UTC) / tech-writer (stamped). APR-20260715-009 approved — but note: PR #67's base was the **`sop` branch, not `main`** (default branch is main). The full SOP library (foundations 000–014, 24 role SOPs, charter wiring, chief-of-staff) is live on `sop`; agents working from `main` will NOT load it until `sop` is promoted to `main`. EX-G01 done on the board; issue #68 closed with evidence. Open follow-up: Founder to promote `sop` → `main` (or confirm `sop` is intentionally the staging branch).
