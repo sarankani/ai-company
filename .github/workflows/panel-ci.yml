@@ -1,4 +1,4 @@
-name: Panel CI (build + e2e + security scanning)
+name: Panel CI (build + unit + e2e + security scanning)
 
 # EX-207 / EX-206 precondition (Tech Spec §7): the panel must build cleanly
 # and pass dependency + secret scanning before it can be deployed. Runs on any
@@ -6,9 +6,10 @@ name: Panel CI (build + e2e + security scanning)
 #
 # EX-603: the `e2e` job runs the @playwright/test suite (EX-602) headless
 # against the EX-601 fixtures on every panel change, so no UI regression merges
-# unseen. Making it a *required* status check is a repo branch-protection
-# setting the Founder applies (see docs/runbooks/panel-required-checks.md;
-# enforced end to end in EX-606).
+# unseen. EX-604: the `unit` job runs the Vitest suite over the pure TS libs
+# (+ TS↔Python parity) with a coverage threshold. Making these *required*
+# status checks is a repo branch-protection setting the Founder applies (see
+# docs/runbooks/panel-required-checks.md; enforced end to end in EX-606).
 
 on:
   push:
@@ -83,6 +84,25 @@ jobs:
             panel/test-results/
           retention-days: 7
           if-no-files-found: ignore
+
+  unit:
+    name: Panel unit tests (Vitest)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: panel
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: panel/package-lock.json
+      - run: npm ci
+      # Vitest over the pure TS libs + TS↔Python parity (python3 preinstalled on
+      # the runner). --coverage enforces the thresholds in vitest.config.ts.
+      - name: Unit tests + coverage
+        run: npm run test:unit:cov
 
   dependency-audit:
     name: Dependency audit

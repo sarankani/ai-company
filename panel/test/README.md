@@ -5,7 +5,19 @@ Two layers, both built on the EX-601 fixtures (`test/fixtures/`):
 | Command | What runs | Needs a browser? |
 |---|---|---|
 | `npm run test:fixtures` | `test/self-check.mjs` — the fixtures harness self-check | no |
+| `npm run test:unit` | `vitest run` — unit tests over the pure TS libs (`test/unit/*.test.ts`) + TS↔Python parity | no |
 | `npm run test:e2e` | `playwright test` — the browser e2e suite (`test/specs/*.spec.ts`) | yes |
+
+## Unit suite (EX-604)
+
+Vitest over the pure logic in `lib/` (`engine`, `auth`, `records`, `audit`,
+`stats`, `org`) — no filesystem, no browser, runs in ~1s. `test/unit/parity.test.ts`
+asserts the TS engine and `scripts/approval_engine.py` agree byte-for-byte on the
+record format and SLA math (via `test/parity/engine_bridge.py`), and that a
+TS-written record validates under the Python engine. `npm run test:unit:cov`
+enforces the coverage threshold in `../vitest.config.ts`. The IO surfaces
+(`write.ts`, the repo sources, `loadHumans/loadRecords`) are covered by the e2e
+suite instead.
 
 ## E2E suite (EX-602)
 
