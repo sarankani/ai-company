@@ -44,7 +44,7 @@ States: `todo` · `in-progress` · `blocked` · `waiting-on-gate` · `in-review`
 
 **Phase 1 definition of done:** one real artifact went draft → approval record → human stamp → executed exactly once; one escalation exercised; metrics recorded.
 
-### Phase 2 — Control Panel MVP (Weeks 4–6) — target: 2026-08-21
+### Phase 2 — Control Panel MVP — ✅ COMPLETE 2026-07-15 (deployed to Vercel; EX-208 acceptance passed)
 
 | ID | Task | Owner (AI) | Gate / approver | State |
 |---|---|---|---|---|
@@ -55,7 +55,7 @@ States: `todo` · `in-progress` · `blocked` · `waiting-on-gate` · `in-review`
 | EX-205 | Availability toggle + People & Routing admin screen | developer | code-reviewer → gate | done — approved in-channel, PR #42 merged (#23) |
 | EX-206 | Security review of the whole panel (authz per role, PII in artifacts, write attribution) | security | Saran accepts | done — accepted, PR #43 merged (#24); all findings fixed |
 | EX-207 | Deploy (devops) — behind auth, production checklist | devops | Saran deploy gate | in-progress — groundwork done (CI scanning, SMTP wiring, Dockerfile, runbook); awaiting Founder hosting/secrets + deploy authorization |
-| EX-208 | **Acceptance test:** a non-technical human approves an AI delivery without touching git/Claude Code | tester + delivery-manager | Saran accepts | in-progress — panel live; test script + 3 seeded decisions ready; awaiting Founder's observed session |
+| EX-208 | **Acceptance test:** a non-technical human approves an AI delivery without touching git/Claude Code | tester + delivery-manager | Saran accepts | done — PASSED 2026-07-15; 3 decisions via panel in 84s, correct audit (#26) |
 
 **Every EX-2xx merge is approved through the Phase-1 loop itself** (dogfooding — the product gates its own construction).
 
