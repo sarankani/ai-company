@@ -1,8 +1,14 @@
-name: Panel CI (build + security scanning)
+name: Panel CI (build + e2e + security scanning)
 
 # EX-207 / EX-206 precondition (Tech Spec §7): the panel must build cleanly
 # and pass dependency + secret scanning before it can be deployed. Runs on any
 # change under panel/ and on the workflow itself.
+#
+# EX-603: the `e2e` job runs the @playwright/test suite (EX-602) headless
+# against the EX-601 fixtures on every panel change, so no UI regression merges
+# unseen. Making it a *required* status check is a repo branch-protection
+# setting the Founder applies (see docs/runbooks/panel-required-checks.md;
+# enforced end to end in EX-606).
 
 on:
   push:
@@ -34,6 +40,49 @@ jobs:
         env:
           # a dummy secret so the build's env access doesn't throw; never a real one
           SESSION_SECRET: ci-build-only-not-a-real-secret
+
+  e2e:
+    name: Panel E2E (Playwright)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: panel
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: panel/package-lock.json
+      - run: npm ci
+      # Cache the Playwright browser download keyed on the pinned version, so a
+      # green run doesn't re-fetch chromium every time.
+      - name: Resolve Playwright version
+        id: pw
+        run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.pw.outputs.version }}
+      - name: Install chromium (+ OS deps)
+        run: npx playwright install --with-deps chromium
+      # The fixtures seed records via scripts/approval_engine.py — python3 is
+      # preinstalled on ubuntu runners; this makes the dependency explicit.
+      - name: Show tool versions
+        run: node -v && python3 --version
+      - name: Run e2e suite
+        run: npm run test:e2e
+      - name: Upload Playwright report + traces on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            panel/playwright-report/
+            panel/test-results/
+          retention-days: 7
+          if-no-files-found: ignore
 
   dependency-audit:
     name: Dependency audit
