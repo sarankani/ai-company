@@ -3,7 +3,7 @@ id: saran
 name: Saravanan Pitchaikani
 email: saranpkani@gmail.com
 title: Founder / CEO / Human Operator
-availability: ooo        # available | busy | ooo
+availability: available        # available | busy | ooo
 ooo_until: null                # ISO date when availability = ooo
 roles:
   # ceo seat — terminal backstop of every escalation chain + dual-approval co-signer
