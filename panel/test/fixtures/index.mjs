@@ -27,7 +27,7 @@
  */
 import { promises as fs } from "fs";
 import { readFileSync } from "fs";
-import { execFile, spawn } from "child_process";
+import { execFile, spawn, spawnSync } from "child_process";
 import { promisify } from "util";
 import { randomBytes } from "crypto";
 import { createServer } from "net";
@@ -39,6 +39,33 @@ const run = promisify(execFile);
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 /** The real panel checkout (fixtures live at panel/test/fixtures/). */
 const PANEL_DIR = path.resolve(HERE, "..", "..");
+const IS_WIN = process.platform === "win32";
+
+/**
+ * Resolve a working Python 3 interpreter once. On Windows `python3` is usually
+ * a Microsoft-Store stub that fails; try `python`/`py` too. Override with the
+ * PYTHON (or PYTHON_BIN) env var.
+ */
+let PYTHON_CMD = null;
+async function resolvePython() {
+  if (PYTHON_CMD) return PYTHON_CMD;
+  const candidates = [process.env.PYTHON, process.env.PYTHON_BIN, "python3", "python", "py"].filter(Boolean);
+  for (const c of candidates) {
+    try {
+      const out = (await run(c, ["--version"], { maxBuffer: 1 << 20 })).stdout || "";
+      if (/Python 3\./.test(out) || c === "py") {
+        PYTHON_CMD = c;
+        return c;
+      }
+    } catch {
+      /* try the next candidate */
+    }
+  }
+  throw new Error(
+    `No Python 3 interpreter found (tried: ${candidates.join(", ")}). ` +
+      `Install Python 3 or set the PYTHON env var to its path.`,
+  );
+}
 
 // ---------- small helpers ----------
 
@@ -94,8 +121,9 @@ class Fixture {
 
   /** Run scripts/approval_engine.py in the clone; returns stdout. */
   async py(args) {
+    const python = await resolvePython();
     return (
-      await run("python3", ["scripts/approval_engine.py", ...args], {
+      await run(python, ["scripts/approval_engine.py", ...args], {
         cwd: this.dir,
         maxBuffer: 32 * 1024 * 1024,
       })
@@ -268,12 +296,17 @@ class Fixture {
     });
 
     const logFd = await fs.open(this.logPath, "w");
-    const nextBin = path.join(PANEL_DIR, "node_modules", ".bin", "next");
-    // detached so we can kill the whole process group (next spawns workers).
-    this.proc = spawn(nextBin, ["dev", "--port", String(this.port)], {
+    // Launch Next via `node <next-cli>` rather than the .bin shim: the shim is
+    // `next.cmd` on Windows (needs a shell to spawn), whereas the JS CLI runs
+    // the same everywhere with no shell. On POSIX, detach so we can signal the
+    // whole process group (next forks workers); on Windows we kill the tree
+    // with taskkill in teardown instead.
+    const nextCli = path.join(PANEL_DIR, "node_modules", "next", "dist", "bin", "next");
+    this.proc = spawn(process.execPath, [nextCli, "dev", "--port", String(this.port)], {
       cwd: PANEL_DIR,
       env,
-      detached: true,
+      detached: !IS_WIN,
+      windowsHide: true,
       stdio: ["ignore", logFd.fd, logFd.fd],
     });
     this.proc.on("error", (e) => {
@@ -370,13 +403,21 @@ class Fixture {
 
   // --- teardown ---
 
-  /** Kill the panel (whole process group) and remove the temp clone. */
+  /** Kill the panel (whole process tree) and remove the temp clone. */
   async teardown() {
     if (this.proc && this.proc.pid && this.proc.exitCode === null) {
-      try { process.kill(-this.proc.pid, "SIGTERM"); } catch { /* group gone */ }
-      const gone = await this._waitExit(3000);
-      if (!gone) {
-        try { process.kill(-this.proc.pid, "SIGKILL"); } catch { /* already dead */ }
+      const pid = this.proc.pid;
+      if (IS_WIN) {
+        // no POSIX process groups — kill the whole tree by pid.
+        try { spawnSync("taskkill", ["/pid", String(pid), "/T", "/F"], { windowsHide: true }); }
+        catch { /* already dead */ }
+        await this._waitExit(3000);
+      } else {
+        try { process.kill(-pid, "SIGTERM"); } catch { /* group gone */ }
+        const gone = await this._waitExit(3000);
+        if (!gone) {
+          try { process.kill(-pid, "SIGKILL"); } catch { /* already dead */ }
+        }
       }
     }
     this.proc = null;
