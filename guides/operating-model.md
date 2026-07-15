@@ -1,6 +1,8 @@
 # The AI Digital Company — Operating Model
 
-Part of the **Claude Workflows: AI Digital Employees Pack**. This is the backbone: how the 18 AI digital employees of a software company collaborate, hand off work, and — critically — where a **human approves** before anything irreversible happens.
+Part of the **Claude Workflows: AI Digital Employees Pack**. This is the backbone: how the AI digital employees of a software company collaborate, hand off work, and — critically — where a **human approves** before anything irreversible happens.
+
+> **Evalyn status (2026-07-15):** this guide is background reading from the original pack. Evalyn now runs **24 employees** under the **SOP library (`docs/sop/`)** — 15 foundation standards plus a five-part SOP per role — with distributed per-department human approvers (ADR-0003) and the routing config in `company/org/`. Where this guide and the SOPs differ, **the SOPs win** (precedence: ADRs > CLAUDE.md > SOP foundations > role SOPs > guides).
 
 A "digital employee" here is a persistent agent persona (in `.claude/agents/`) with a job charter, a set of skills (slash commands) it wields, workflows it runs, and defined collaboration and escalation rules. You "assign" one by invoking it (*"Use the developer agent to…"*) or by running a cross-functional workflow that coordinates several.
 
@@ -20,7 +22,7 @@ security            designer · tech-writer                   data-analyst
 
 Reporting lines are for escalation and decision rights, not rigid hierarchy — most work flows horizontally through handoffs.
 
-## The roster (18 employees)
+## The roster (original pack baseline — see CLAUDE.md §2 for Evalyn's current 24)
 
 | Employee | Owns | Key skills |
 |---|---|---|

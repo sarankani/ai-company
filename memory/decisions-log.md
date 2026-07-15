@@ -2,6 +2,10 @@
 
 Append-only, newest first. Format: `## YYYY-MM-DD — decision` + who + why in 1–3 lines. Architectural decisions go to `docs/adrs/` instead.
 
+## 2026-07-15 — Doc sync after SOP library (issue #71) + ADR-0007 proposed
+
+**Who:** Saran (asked "do we need to update any other documents?") / tech-writer (executed, issue #71 opened BEFORE the work this time). Synced: CLAUDE.md §3b now lists `docs/sop/`; README roster 23→24 + distributed-approver wording + SOP library in the repo map; guides/operating-model.md and getting-started.md stale "18 employees" fixed with a status banner (guides = background, SOPs authoritative); glossary +5 terms (SOP library, five-part standard, AI-ops SOPs, HITL 30% rule, chief-of-staff). **ADR-0007 proposed** ("SOP library as the binding operating layer" — precedence, five parts, change control, no gate-weakening via SOP edit) — awaiting Saran's acceptance.
+
 ## 2026-07-15 — SOP library LIVE ON MAIN (PR #69 merged by saran)
 
 **Who:** saran (merged PR #69, 20:32 UTC). The `sop`→`main` promotion completed APR-20260715-009's approved action verbatim ("into main"). All agent sessions now auto-load the SOP library via the wired charters; chief-of-staff dispatcher available company-wide. Governance chain fully closed: APR-007/008/009 decided · issue #68 closed · board EX-G01 done. The stale "promotion pending" note in company-context is corrected.

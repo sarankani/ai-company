@@ -1,6 +1,6 @@
 # Evalyn — The AI Digital Company
 
-**Evalyn** is an IT services company run by AI digital employees with **minimum human resources**: 23 AI employee personas do the work — sales, engineering, delivery, finance, marketing, support, operations — and **one human founder-operator approves at the gates**. Everything between the gates runs autonomously; nothing irreversible or external-facing happens without human sign-off.
+**Evalyn** is an IT services company run by AI digital employees with **minimum human resources**: 24 AI employee personas do the work — sales, engineering, delivery, finance, marketing, support, operations — and **humans approve at the gates via per-department seats** (Approver / Deputy / Head, with the Founder-CEO as terminal backstop — ADR-0003). Everything between the gates runs autonomously; nothing irreversible or external-facing happens without human sign-off.
 
 Built on [Claude Code](https://claude.com/claude-code): the personas are agents, their skills are slash commands, and cross-functional work runs as multi-agent workflows.
 
@@ -11,17 +11,18 @@ AI employees draft, build, estimate, triage, and prepare  →  a human approves 
 ```
 
 - **`CLAUDE.md`** — the company's operating brain: identity, roster, system of record, value chain, and the absolute human-in-the-loop gates. Auto-loaded into every session.
-- **`.claude/agents/`** — 23 digital employees, each with a job charter, skills, and escalation rules.
+- **`.claude/agents/`** — 24 digital employees, each with a job charter, skills, and escalation rules; every charter loads its SOP at session start.
 - **`.claude/commands/`** — 26 role skills (`/lead-gen`, `/estimate`, `/proposal`, `/invoice`, `/okrs`, …).
 - **`.claude/workflows/`** — 7 lifecycle workflows that coordinate several employees at once.
 - **`company/`** — the file-based system of record (accounts, leads, opportunities, quotes, POs, projects, invoices, tickets, assets…), created as the business runs. Swappable for a real CRM/ERP via MCP.
-- **`guides/`** — the operating manual: `operating-model.md`, `company-os.md`, `value-chain.md`, `getting-started.md`, `integrations.md`.
+- **`docs/sop/`** — the SOP library: 15 foundation standards (incl. AI-ops: data privacy, bias testing, HITL 30% rule, model deploy/rollback) + a five-part SOP per role. The operating source of truth for every employee.
+- **`guides/`** — narrative guides: `operating-model.md`, `company-os.md`, `value-chain.md`, `getting-started.md`, `integrations.md` (background reading; `docs/sop/` is authoritative).
 
-## The roster (23 AI employees)
+## The roster (24 AI employees)
 
 | Department | Employees |
 |---|---|
-| Leadership | `ceo`, `eng-manager` |
+| Leadership | `ceo`, `eng-manager`, `chief-of-staff` (dispatcher) |
 | People & Finance | `hr`, `finance` |
 | Product & Design | `product-manager`, `project-manager`, `designer`, `tech-writer` |
 | Engineering | `developer`, `code-reviewer`, `tester`, `devops`, `security` |

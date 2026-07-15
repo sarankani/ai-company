@@ -10,3 +10,4 @@ One file per significant, hard-to-reverse decision: `NNNN-short-title.md`. Forma
 | [0004](0004-sla-expiry-escalates-never-auto-approves.md) | SLA expiry escalates — silence never equals consent | Proposed |
 | [0005](0005-approvals-and-questions-as-files.md) | Approvals & questions are Company OS records (files) | Proposed |
 | [0006](0006-authoring-skills-not-dynamic-agent-creation.md) | Authoring skills, not dynamic agent creation | Proposed |
+| [0007](0007-sop-library-as-binding-operating-layer.md) | The SOP library is the binding operating layer | Proposed |
