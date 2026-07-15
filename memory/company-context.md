@@ -6,7 +6,7 @@
 
 - **Saravanan Pitchaikani** (saranpkani@gmail.com) — Founder / CEO / Human Operator. Holds all seats except three handed-over Approver seats; CEO terminal backstop.
 - **Saravanan P** (saravanan@vitetech.in) — Approver: Engineering, Product & Design, Operations (first non-founder seat-holder, 2026-07-13).
-- 23 AI employees per `CLAUDE.md` §2.
+- 24 AI employees per `CLAUDE.md` §2 (chief-of-staff dispatcher added 2026-07-15).
 
 ## Direction (what changed recently)
 
@@ -26,4 +26,4 @@ ICP · rate card / margin floor · quarterly OKRs · regions & compliance. Sales
 
 ## Where things live
 
-Plans `docs/plans/` · specs `docs/specs/` · ADRs `docs/adrs/` · memory here · business records `company/` (org/ + registry live; approvals/ comes with EX-101) · **SOPs `docs/sop/`** (2026-07-15: foundations SOP-000…010 + role SOPs for all 23 AI employees + human seats; agents load foundations + their role SOP; precedence ADRs > CLAUDE.md > foundations > role SOPs).
+Plans `docs/plans/` · specs `docs/specs/` · ADRs `docs/adrs/` · memory here · business records `company/` (org/ + registry live; approvals/ comes with EX-101) · **SOPs `docs/sop/`** (2026-07-15: foundations SOP-000…010 + role SOPs for all 24 AI employees + human seats; agents load foundations + their role SOP; precedence ADRs > CLAUDE.md > foundations > role SOPs).

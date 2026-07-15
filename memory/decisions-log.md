@@ -2,6 +2,10 @@
 
 Append-only, newest first. Format: `## YYYY-MM-DD — decision` + who + why in 1–3 lines. Architectural decisions go to `docs/adrs/` instead.
 
+## 2026-07-15 — chief-of-staff agent created: single company-level dispatcher (no dept/role orchestrators)
+
+**Who:** Saran (decided in chat — "ok create chief-of-staff agent") / tech-writer+ceo lens (executed). Orchestration decision: one company-level dispatcher, NOT per-department or per-role orchestrators (managers already coordinate their pods; deterministic chains stay in the 7 workflow scripts). The `chief-of-staff` routes any incoming request to the owning role/workflow with an SOP-006 brief, tracks it per SOP-005, holds NO gates and does no work itself; repeated hand-sequenced chains become workflow proposals (ADR-0006). Roster is now 24 AI employees. Files: `.claude/agents/chief-of-staff.md`, `docs/sop/roles/chief-of-staff.md` (SOP-R24), CLAUDE.md §2, `company/org/departments.md` leadership row (org change approved by the Founder/CEO in chat, per the Head-proposes-CEO-approves rule). Branch: claude/ai-company-sop-docs-84ojgq.
+
 ## 2026-07-15 — SOP library v1.1: five-part standard, AI-ops SOPs 011–014, charters wired
 
 **Who:** Saran (requested) / tech-writer lens (executed). Every operational SOP now mandates five parts (SOP-000 §2a): Purpose & Scope · RACI · Step-by-Step · Exceptions & Red Flags · KPIs & Metrics — all 24 role SOPs retrofitted to template v1.1. Four AI-ops foundations added: SOP-011 Data Ingestion & Privacy (PII/IP filtering before any pipeline), SOP-012 Model Bias & Fairness Testing (mandatory disaggregated benchmarks), SOP-013 HITL Review (the 30% rule — AI ≤70% repetitive throughput, humans ≥30% QC/edge-cases/final approval; sampling ratios; anomaly freeze), SOP-014 Model Deployment & Rollback (CI/CD benchmark gates; rollback pre-approved within the deploy APR's stated conditions — ADR-0004 intact). All 23 agent charters in .claude/agents/ now load their role SOP + foundations at session start; AI/ML roles additionally bound to 011–014. Branch: claude/ai-company-sop-docs-84ojgq.

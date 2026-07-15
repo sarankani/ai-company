@@ -42,7 +42,7 @@ Template: [`roles/_template.md`](roles/_template.md). Humans: [SOP-R00 — Human
 
 | Department | Role SOPs |
 |---|---|
-| Leadership | R01 [ceo](roles/ceo.md) · R02 [eng-manager](roles/eng-manager.md) |
+| Leadership | R01 [ceo](roles/ceo.md) · R02 [eng-manager](roles/eng-manager.md) · R24 [chief-of-staff](roles/chief-of-staff.md) |
 | People & Finance | R03 [hr](roles/hr.md) · R04 [finance](roles/finance.md) |
 | Product & Design | R05 [product-manager](roles/product-manager.md) · R06 [project-manager](roles/project-manager.md) · R07 [designer](roles/designer.md) · R08 [tech-writer](roles/tech-writer.md) |
 | Engineering | R09 [developer](roles/developer.md) · R10 [code-reviewer](roles/code-reviewer.md) · R11 [tester](roles/tester.md) · R12 [devops](roles/devops.md) · R13 [security](roles/security.md) |
