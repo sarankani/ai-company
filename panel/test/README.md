@@ -38,6 +38,8 @@ Specs are grouped by area, mirroring the retired smoke checks 1:1:
 - `admin.spec.ts` — gated two-step seat change (propose → dual-approve → apply)
 - `audit.spec.ts` — decision ledger, gate/date filters, Head/CEO-only
 - `security.spec.ts` — EX-206 regressions (artifact bypass/traversal, open redirect)
+- `a11y.spec.ts` — accessibility (EX-605): axe-core WCAG 2.1 A/AA scan of every
+  screen (zero critical/serious) + a keyboard-only sign-in → decide path
 
 ### Browser
 

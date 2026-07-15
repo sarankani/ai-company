@@ -3,14 +3,14 @@
    one token set. */
 :root {
   --bg: #f5f8f7; --surface: #ffffff; --ink: #16211f; --muted: #5d6e6b;
-  --line: #d9e2df; --teal: #157a6e; --teal-soft: #e4f1ee;
+  --line: #d9e2df; --teal: #157a6e; --teal-ink: #0f6f63; --teal-soft: #e4f1ee;
   --amber: #a26e12; --amber-ink: #8a5d0d; --amber-soft: #fbf1da;
   --error: #a4262c; --ok: #2e7d46;
 }
 @media (prefers-color-scheme: dark) {
   :root {
     --bg: #101817; --surface: #182220; --ink: #e4ecea; --muted: #8ca09c;
-    --line: #2e3d3a; --teal: #5cb6ac; --teal-soft: #14312c;
+    --line: #2e3d3a; --teal: #5cb6ac; --teal-ink: #6fc4ba; --teal-soft: #14312c;
     --amber: #d9a23f; --amber-ink: #e5b45c; --amber-soft: #33270f;
     --error: #e07a7f; --ok: #6fbf7a;
   }
@@ -35,7 +35,7 @@ a { color: var(--teal); }
   font-family: ui-monospace, Menlo, Consolas, monospace;
 }
 .chip.gate { background: var(--amber-soft); color: var(--amber-ink); border-color: var(--amber); }
-.chip.state { background: var(--teal-soft); color: var(--teal); }
+.chip.state { background: var(--teal-soft); color: var(--teal-ink); }
 .chip.avail { background: var(--surface); }
 .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); }
 main { max-width: 880px; margin: 0 auto; padding: 24px 20px 80px; }
@@ -75,7 +75,7 @@ button {
   background: var(--teal); color: #fff; font-size: 15px; font-weight: 600; cursor: pointer;
 }
 button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
-.notice { margin-top: 12px; padding: 10px 12px; border-radius: 8px; background: var(--teal-soft); color: var(--teal); font-size: 13.5px; }
+.notice { margin-top: 12px; padding: 10px 12px; border-radius: 8px; background: var(--teal-soft); color: var(--teal-ink); font-size: 13.5px; }
 .notice.err { background: var(--amber-soft); color: var(--amber-ink); }
 
 /* --- Item Detail (EX-203) --- */
@@ -171,7 +171,7 @@ table.ledger .detail { color: var(--muted); max-width: 360px; }
 .who-sys { color: var(--muted); }
 .kind { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-family: ui-monospace, Menlo, Consolas, monospace; border: 1px solid var(--line); }
 tr.human .kind { background: var(--amber-soft); color: var(--amber-ink); border-color: var(--amber); }
-tr.system .kind { background: var(--teal-soft); color: var(--teal); }
+tr.system .kind { background: var(--teal-soft); color: var(--teal-ink); }
 
 /* --- Availability + Admin (EX-205) --- */
 .avail-menu { position: relative; }
