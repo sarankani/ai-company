@@ -1,0 +1,636 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Evalyn Operations Playbook — Lead to Support</title>
+<style>
+.viz-root {
+  color-scheme: light;
+  --surface: #fcfcfb; --plane: #f9f9f7;
+  --ink: #0b0b0b; --ink2: #52514e; --muted: #898781;
+  --grid: #e1e0d9; --ring: rgba(11,11,11,.10);
+  --warn: #fab219; --warn-ink: #7a5200; --warn-bg: rgba(250,178,25,.12);
+  --dept-0: #2a78d6;
+  --dept-1: #008300;
+  --dept-2: #e87ba4;
+  --dept-3: #eda100;
+  --dept-4: #1baf7a;
+  --dept-5: #eb6834;
+  --dept-6: #4a3aa7;
+}
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) .viz-root {
+    color-scheme: dark;
+    --surface: #1a1a19; --plane: #0d0d0d;
+    --ink: #ffffff; --ink2: #c3c2b7; --muted: #898781;
+    --grid: #2c2c2a; --ring: rgba(255,255,255,.10);
+    --warn: #fab219; --warn-ink: #fab219; --warn-bg: rgba(250,178,25,.10);
+    --dept-0: #3987e5;
+    --dept-1: #008300;
+    --dept-2: #d55181;
+    --dept-3: #c98500;
+    --dept-4: #199e70;
+    --dept-5: #d95926;
+    --dept-6: #9085e9;
+  }
+}
+:root[data-theme="dark"] .viz-root {
+  color-scheme: dark;
+  --surface: #1a1a19; --plane: #0d0d0d;
+  --ink: #ffffff; --ink2: #c3c2b7; --muted: #898781;
+  --grid: #2c2c2a; --ring: rgba(255,255,255,.10);
+  --warn: #fab219; --warn-ink: #fab219; --warn-bg: rgba(250,178,25,.10);
+    --dept-0: #3987e5;
+    --dept-1: #008300;
+    --dept-2: #d55181;
+    --dept-3: #c98500;
+    --dept-4: #199e70;
+    --dept-5: #d95926;
+    --dept-6: #9085e9;
+}
+.viz-root { font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+  background: var(--plane); color: var(--ink); margin: 0; padding: 24px;
+  min-height: 100vh; }
+.wrap { max-width: 980px; margin: 0 auto; }
+h1 { font-size: 22px; margin: 0 0 4px; }
+.sub { color: var(--ink2); margin: 0 0 16px; }
+.tiles { display: flex; gap: 10px; flex-wrap: wrap; margin: 16px 0; }
+.tile { background: var(--surface); border: 1px solid var(--ring); border-radius: 10px;
+  padding: 10px 16px; min-width: 110px; }
+.tile .v { font-size: 26px; font-weight: 650; }
+.tile .l { color: var(--ink2); font-size: 12px; }
+.legend { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 20px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px;
+  color: var(--ink2); background: var(--surface); border: 1px solid var(--ring);
+  border-radius: 999px; padding: 2px 10px 2px 7px; white-space: nowrap; }
+.chip::before { content: ""; width: 9px; height: 9px; border-radius: 3px;
+  background: var(--c, var(--muted)); }
+.gate-chip { color: var(--warn-ink); border-color: var(--warn); }
+.gate-chip::before { background: var(--warn); border-radius: 1px; transform: rotate(45deg); }
+.phase { margin: 26px 0; }
+.phase-h { display: flex; align-items: baseline; gap: 10px; border-bottom: 2px solid var(--grid);
+  padding-bottom: 6px; margin-bottom: 0; }
+.phase-no { font-size: 13px; font-weight: 700; color: var(--ink2); background: var(--surface);
+  border: 1px solid var(--ring); border-radius: 6px; padding: 1px 8px; }
+.phase-h h2 { font-size: 16px; margin: 0; }
+.phase-meta { margin-left: auto; color: var(--muted); font-size: 12px; }
+.lane { border-left: 2px solid var(--grid); margin-left: 11px; padding: 14px 0 2px 18px;
+  display: grid; gap: 10px; }
+.card { background: var(--surface); border: 1px solid var(--ring); border-radius: 10px;
+  padding: 10px 14px; position: relative; }
+.card::before { content: ""; position: absolute; left: -23.5px; top: 18px; width: 9px; height: 9px;
+  border-radius: 50%; background: var(--grid); }
+.gatecard { border: 1.5px solid var(--warn); background:
+  linear-gradient(var(--warn-bg), var(--warn-bg)), var(--surface); }
+.gatecard::before { background: var(--warn); border-radius: 1px; transform: rotate(45deg); }
+.card-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.tno { font-variant-numeric: tabular-nums; font-weight: 700; font-size: 12px; color: var(--muted);
+  min-width: 22px; }
+.role { font-size: 12px; color: var(--ink2); font-family: ui-monospace, monospace; }
+h3 { font-size: 14px; margin: 6px 0 4px; }
+.gatebar { font-size: 12.5px; font-weight: 650; color: var(--warn-ink); margin: 2px 0 6px; }
+.gatehint { font-size: 12px; color: var(--warn-ink); margin: 0 0 6px; }
+.desc { margin: 0 0 8px; color: var(--ink2); font-size: 13px; }
+.meta { display: flex; gap: 14px; flex-wrap: wrap; font-size: 11.5px; color: var(--muted); }
+.kv b { color: var(--ink2); font-weight: 600; }
+.gates-ref { margin-top: 34px; }
+.gates-ref h2 { font-size: 16px; }
+.tbl { overflow-x: auto; background: var(--surface); border: 1px solid var(--ring);
+  border-radius: 10px; }
+table { border-collapse: collapse; width: 100%; font-size: 12.5px; min-width: 640px; }
+th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--grid);
+  vertical-align: top; }
+th { color: var(--ink2); font-weight: 600; }
+tr:last-child td { border-bottom: 0; }
+code { font-family: ui-monospace, monospace; font-size: 12px; }
+footer { color: var(--muted); font-size: 12px; margin-top: 22px; }
+</style>
+<div class="viz-root"><div class="wrap">
+<h1>Evalyn Operations Playbook — Lead to Support</h1>
+<p class="sub">The end-to-end operating flow as executable tasks: AI employees run every step autonomously
+<em>between</em> the amber rows; each amber row is a hard stop where a named human seat decides. Source:
+<code>EvalynOperationsPlaybookLeadtoSupport.xlsx</code> · generated 2026-07-15.</p>
+<div class="tiles">
+<div class="tile"><div class="v">64</div><div class="l">tasks</div></div>
+<div class="tile"><div class="v">12</div><div class="l">phases</div></div>
+<div class="tile"><div class="v">13</div><div class="l">human gate stops</div></div>
+<div class="tile"><div class="v">7</div><div class="l">departments</div></div>
+</div>
+<div class="legend"><span class="chip" style="--c:var(--dept-0)">Leadership</span><span class="chip" style="--c:var(--dept-1)">People &amp; Finance</span><span class="chip" style="--c:var(--dept-2)">Product &amp; Design</span><span class="chip" style="--c:var(--dept-3)">Engineering</span><span class="chip" style="--c:var(--dept-4)">Sales &amp; Delivery</span><span class="chip" style="--c:var(--dept-5)">Marketing &amp; Support</span><span class="chip" style="--c:var(--dept-6)">Operations</span><span class="chip gate-chip">◆ human gate</span></div>
+<section class="phase">
+<header class="phase-h"><span class="phase-no">1</span>
+<h2>Intake &amp; Lead Generation</h2>
+<span class="phase-meta">8 tasks · 2 human gates</span></header>
+<div class="lane">
+<article class="card">
+<div class="card-top"><span class="tno">1</span><span class="chip" style="--c:var(--dept-0)">Leadership</span><span class="role">chief-of-staff</span></div>
+<h3>Intake &amp; route the demand signal</h3>
+
+<p class="desc">Classify the incoming trigger (campaign, referral, inbound inquiry, Founder ask); check company/registry.md and the board for duplicates; route to sdr with an SOP-006 brief; open the tracking issue and board entry before any work starts.</p>
+<div class="meta"><span class="kv"><b>with</b> sdr, marketing</span><span class="kv"><b>output</b> Routed brief · GitHub issue · board entry</span><span class="kv"><b>ref</b> SOP-R24 §4.1; SOP-005</span></div>
+</article>
+<article class="card">
+<div class="card-top"><span class="tno">2</span><span class="chip" style="--c:var(--dept-0)">Leadership</span><span class="role">ceo</span></div>
+<h3>Verify ICP, rate card &amp; OKR preconditions</h3>
+<div class="gatehint">↑ escalation → Founder/CEO (human) — defines ICP/rate card</div>
+<p class="desc">Confirm the Ideal Customer Profile and rate card are defined before pipeline work begins. If still TBD, escalate to the Founder — /lead-gen and pricing must never run on invented targets (evidence rule).</p>
+<div class="meta"><span class="kv"><b>with</b> sdr, finance</span><span class="kv"><b>output</b> Go/no-go note on the record</span><span class="kv"><b>ref</b> CLAUDE.md §0; SOP-008</span></div>
+</article>
+<article class="card">
+<div class="card-top"><span class="tno">3</span><span class="chip" style="--c:var(--dept-5)">Marketing &amp; Support</span><span class="role">marketing</span></div>
+<h3>Campaign brief for the target segment</h3>
+
+<p class="desc">/campaign-brief: one goal, audience, message, channels, one measurable success metric. Feeds the sdr&#x27;s outreach angle. Every claim backable (honesty bar).</p>
+<div class="meta"><span class="kv"><b>with</b> sdr, social-media</span><span class="kv"><b>output</b> Campaign brief (internal draft)</span><span class="kv"><b>ref</b> SOP-R19 §4.1</span></div>
+</article>
+<article class="card">
+<div class="card-top"><span class="tno">4</span><span class="chip" style="--c:var(--dept-5)">Marketing &amp; Support</span><span class="role">social-media</span></div>
+<h3>Draft supporting social/content touchpoints</h3>
+<div class="gatehint">⏸ stops at <b>external-comms</b> → M&amp;S Approver (human)</div>
+<p class="desc">Platform-tailored post drafts with variants supporting the campaign. Nothing is posted — drafts staged for the gate.</p>
+<div class="meta"><span class="kv"><b>with</b> marketing</span><span class="kv"><b>output</b> Post drafts + calendar slots</span><span class="kv"><b>ref</b> SOP-R20 §4.2; SOP-003</span></div>
+</article>
+<article class="card gatecard">
+<div class="card-top"><span class="tno">5</span><span class="chip" style="--c:var(--dept-5)">Marketing &amp; Support</span><span class="role">HUMAN — M&amp;S Approver</span></div>
+<h3>GATE: approve public campaign content</h3>
+<div class="gatebar">◆ HUMAN GATE — external-comms · decides: M&amp;S Approver (human)</div>
+<p class="desc">Review the exact posts/content against brand voice and the honesty bar; approve, reject with reasons, or delegate. Decision stamped on the APR record; silence never publishes.</p>
+<div class="meta"><span class="kv"><b>with</b> social-media, marketing</span><span class="kv"><b>output</b> APR decision stamp</span><span class="kv"><b>ref</b> SOP-R00 §2; ADR-0004</span></div>
+</article>
+<article class="card">
+<div class="card-top"><span class="tno">6</span><span class="chip" style="--c:var(--dept-4)">Sales &amp; Delivery</span><span class="role">sdr</span></div>
+<h3>Generate lead list against the ICP</h3>
+
+<p class="desc">/lead-gen: research-grounded lead list with a per-lead outreach angle; write company/leads/* records (stage: new). No contact is made at this step.</p>
+<div class="meta"><span class="kv"><b>with</b> marketing</span><span class="kv"><b>output</b> Lead records + registry index</span><span class="kv"><b>ref</b> SOP-R14 §4.1</span></div>
+</article>
+<article class="card">
+<div class="card-top"><span class="tno">7</span><span class="chip" style="--c:var(--dept-4)">Sales &amp; Delivery</span><span class="role">sdr</span></div>
+<h3>Draft personalized first-touch outreach</h3>
+<div class="gatehint">⏸ stops at <b>external-comms (customer-specific)</b> → S&amp;D Approver (human)</div>
+<p class="desc">/sales-outreach: problem-led, honest drafts per lead with a clear next step. Leads stay &#x27;new&#x27; — the stage moves to &#x27;contacted&#x27; only after a human actually sends (with the APR stamp).</p>
+<div class="meta"><span class="kv"><b>with</b> sales</span><span class="kv"><b>output</b> Outreach drafts on lead records</span><span class="kv"><b>ref</b> SOP-R14 §4.3; SOP-003</span></div>
+</article>
+<article class="card gatecard">
+<div class="card-top"><span class="tno">8</span><span class="chip" style="--c:var(--dept-4)">Sales &amp; Delivery</span><span class="role">HUMAN — S&amp;D Approver</span></div>
+<h3>GATE: approve &amp; send outreach</h3>
+<div class="gatebar">◆ HUMAN GATE — external-comms (customer-specific) · decides: S&amp;D Approver (human)</div>
+<p class="desc">Review the exact emails (recipient + text verbatim); on approval the send happens and sdr stamps the lead records &#x27;contacted&#x27; with the APR reference.</p>
+<div class="meta"><span class="kv"><b>with</b> sdr</span><span class="kv"><b>output</b> APR stamp · leads → contacted</span><span class="kv"><b>ref</b> SOP-R00 §2</span></div>
+</article>
+</div></section><section class="phase">
+<header class="phase-h"><span class="phase-no">2</span>
+<h2>Qualification &amp; Opportunity</h2>
+<span class="phase-meta">2 tasks · 0 human gates</span></header>
+<div class="lane">
+<article class="card">
+<div class="card-top"><span class="tno">9</span><span class="chip" style="--c:var(--dept-4)">Sales &amp; Delivery</span><span class="role">sdr</span></div>
+<h3>Qualify responding leads (BANT/MEDDIC)</h3>
+
+<p class="desc">/qualify-lead: structured qualification of every response; disqualify honestly with the reason on the record; qualified leads convert to an opportunity record (stage: discovery) linked to account and contacts.</p>
+<div class="meta"><span class="kv"><b>with</b> sales</span><span class="kv"><b>output</b> Opportunity record (discovery)</span><span class="kv"><b>ref</b> SOP-R14 §4.2</span></div>
+</article>
+<article class="card">
+<div class="card-top"><span class="tno">10</span><span class="chip" style="--c:var(--dept-4)">Sales &amp; Delivery</span><span class="role">sales</span></div>
+<h3>Own the opportunity &amp; prep discovery</h3>
+
+<p class="desc">Take ownership of the opportunity record; prepare the discovery agenda and questions from everything already on the record (never re-derive); meeting invites drafted — a human sends.</p>
+<div class="meta"><span class="kv"><b>with</b> sdr, solutions-architect</span><span class="kv"><b>output</b> Discovery pack on the opportunity</span><span class="kv"><b>ref</b> SOP-R15 §4.1</span></div>
+</article>
+</div></section><section class="phase">
+<header class="phase-h"><span class="phase-no">3</span>
+<h2>Discovery, Scoping &amp; Estimation</h2>
+<span class="phase-meta">5 tasks · 0 human gates</span></header>
+<div class="lane">
+<article class="card">
+<div class="card-top"><span class="tno">11</span><span class="chip" style="--c:var(--dept-4)">Sales &amp; Delivery</span><span class="role">solutions-architect</span></div>
+<h3>Technical discovery &amp; solution scoping</h3>
+
+<p class="desc">Turn the customer&#x27;s need into a scoped solution: requirements, constraints, integration points, delivery approach. Feasibility risks flagged honestly — honesty beats deal-winning.</p>
+<div class="meta"><span class="kv"><b>with</b> sales, developer</span><span class="kv"><b>output</b> Scope document linked to the opportunity</span><span class="kv"><b>ref</b> SOP-R16 §4.1; SOP-008</span></div>
+</article>
+<article class="card">
+<div class="card-top"><span class="tno">12</span><span class="chip" style="--c:var(--dept-4)">Sales &amp; Delivery</span><span class="role">solutions-architect</span></div>
+<h3>Design the HITL automation boundary (AI scope)</h3>
+
+<p class="desc">For AI/automation scope: partition the workflow — ≤70% repetitive-automatable, ≥30% human-retained (QC, edge cases, final approval). The boundary becomes SOW language. If the system affects people, draft the fairness spec at design time.</p>
+<div class="meta"><span class="kv"><b>with</b> product-manager, security</span><span class="kv"><b>output</b> HITL partition + fairness spec in the scope</span><span class="kv"><b>ref</b> SOP-013 §3b; SOP-012 §3.1</span></div>
+</article>
+<article class="card">
+<div class="card-top"><span class="tno">13</span><span class="chip" style="--c:var(--dept-4)">Sales &amp; Delivery</span><span class="role">solutions-architect</span></div>
+<h3>Decomposed effort &amp; cost estimate</h3>
+
+<p class="desc">/estimate: three-point estimates per component with explicit assumptions, buffers and delivery risks. Loaded cost stays TBD until the rate card is set. Estimate record: draft → reviewed.</p>
+<div class="meta"><span class="kv"><b>with</b> developer, eng-manager</span><span class="kv"><b>output</b> Estimate record (reviewed)</span><span class="kv"><b>ref</b> SOP-R16 §4.2</span></div>
+</article>
+<article class="card">
+<div class="card-top"><span class="tno">14</span><span class="chip" style="--c:var(--dept-3)">Engineering</span><span class="role">eng-manager</span></div>
+<h3>Estimate sanity review (cross-team)</h3>
+
+<p class="desc">Review the estimate against real pod capacity and technical risk; challenge optimistic components; confirm the pod could actually staff it alongside current commitments.</p>
+<div class="meta"><span class="kv"><b>with</b> solutions-architect, developer</span><span class="kv"><b>output</b> Reviewed estimate + capacity note</span><span class="kv"><b>ref</b> SOP-R02; SOP-006</span></div>
+</article>
+<article class="card">
+<div class="card-top"><span class="tno">15</span><span class="chip" style="--c:var(--dept-1)">People &amp; Finance</span><span class="role">finance</span></div>
+<h3>Valuation &amp; pricing model (CPQ)</h3>
+
+<p class="desc">/valuation: pricing model, margin-floor check, discount guardrails, value justification. Pricing outputs marked TBD until the human-set rate card exists — never invented. Quote record: draft.</p>
+<div class="meta"><span class="kv"><b>with</b> sales, solutions-architect</span><span class="kv"><b>output</b> Quote record (draft)</span><span class="kv"><b>ref</b> SOP-R04 §4.4; SOP-008</span></div>
+</article>
+</div></section><section class="phase">
+<header class="phase-h"><span class="phase-no">4</span>
+<h2>Proposal &amp; Commitment</h2>
+<span class="phase-meta">6 tasks · 2 human gates</span></header>
+<div class="lane">
+<article class="card">
+<div class="card-top"><span class="tno">16</span><span class="chip" style="--c:var(--dept-4)">Sales &amp; Delivery</span><span class="role">sales</span></div>
+<h3>Draft proposal &amp; SOW</h3>
+
+<p class="desc">/proposal + /sow: customer-scoped proposal and Statement of Work — deliverables, milestones with acceptance criteria, assumptions, change control. Honest on terms; no price or date appears as committed in any draft.</p>
+<div class="meta"><span class="kv"><b>with</b> delivery-manager, solutions-architect</span><span class="kv"><b>output</b> Proposal + SOW records (draft)</span><span class="kv"><b>ref</b> SOP-R15 §4.2</span></div>
+</article>
+<article class="card">
+<div class="card-top"><span class="tno">17</span><span class="chip" style="--c:var(--dept-4)">Sales &amp; Delivery</span><span class="role">delivery-manager</span></div>
+<h3>SOW deliverability review (cross-team)</h3>
+
+<p class="desc">Validate that milestones, acceptance criteria and change control are deliverable as written; flag schedule and resourcing risk before the human prices it.</p>
+<div class="meta"><span class="kv"><b>with</b> sales, eng-manager</span><span class="kv"><b>output</b> Deliverability sign-off on the SOW</span><span class="kv"><b>ref</b> SOP-R17; SOP-006</span></div>
+</article>
+<article class="card">
+<div class="card-top"><span class="tno">18</span><span class="chip" style="--c:var(--dept-0)">Leadership</span><span class="role">ceo</span></div>
+<h3>Internal deal-risk review</h3>
+
+<p class="desc">opportunity-to-proposal workflow&#x27;s risk pass: honesty bar on every claim, strategic fit, margin sanity, walk-away signals. Output is a recommendation — the human decides the deal.</p>
+<div class="meta"><span class="kv"><b>with</b> sales, finance</span><span class="kv"><b>output</b> Deal-risk memo + recommendation</span><span class="kv"><b>ref</b> SOP-R01; SOP-008</span></div>
+</article>
+<article class="card gatecard">
+<div class="card-top"><span class="tno">19</span><span class="chip" style="--c:var(--dept-4)">Sales &amp; Delivery</span><span class="role">HUMAN — S&amp;D Approver</span></div>
+<h3>GATE: price the deal, approve proposal send</h3>
+<div class="gatebar">◆ HUMAN GATE — commitments + external-comms (+ money) · decides: S&amp;D Approver (human); P&amp;F Approver for discount</div>
+<p class="desc">The human sets/approves the price and terms (rate card), then approves the exact action: &#x27;send proposal vN to &lt;named contact&gt;&#x27;. Discounts beyond guardrails additionally need the People &amp; Finance (money) stamp.</p>
+<div class="meta"><span class="kv"><b>with</b> sales, finance</span><span class="kv"><b>output</b> APR stamp · proposal → sent</span><span class="kv"><b>ref</b> SOP-003; routing.md</span></div>
+</article>
+<article class="card">
+<div class="card-top"><span class="tno">20</span><span class="chip" style="--c:var(--dept-4)">Sales &amp; Delivery</span><span class="role">sales</span></div>
+<h3>Negotiation support</h3>
+<div class="gatehint">⏸ stops at <b>commitments</b> → S&amp;D Approver (human) per change</div>
+<p class="desc">Prepare responses to objections and redlines. Every changed price, date or SLA goes back through the commitments gate — a new exact action, never &#x27;covered by&#x27; the old approval. Record history updated per round.</p>
+<div class="meta"><span class="kv"><b>with</b> delivery-manager, finance</span><span class="kv"><b>output</b> Negotiation log on the opportunity</span><span class="kv"><b>ref</b> SOP-R15; SOP-003 §3</span></div>
+</article>
+<article class="card gatecard">
+<div class="card-top"><span class="tno">21</span><span class="chip" style="--c:var(--dept-4)">Sales &amp; Delivery</span><span class="role">HUMAN — S&amp;D Approver</span></div>
+<h3>GATE: approve final terms / signature</h3>
+<div class="gatebar">◆ HUMAN GATE — commitments + money (signature) · decides: S&amp;D Approver (human)</div>
+<p class="desc">Approve the final SOW terms and the signature itself. Signing is always a human act; the stamp lands on the SOW record (proposal → signed).</p>
+<div class="meta"><span class="kv"><b>with</b> sales</span><span class="kv"><b>output</b> APR stamp · SOW → signed</span><span class="kv"><b>ref</b> SOP-R00; SOP-003</span></div>
+</article>
+</div></section><section class="phase">
+<header class="phase-h"><span class="phase-no">5</span>
+<h2>PO &amp; Revenue Booking</h2>
+<span class="phase-meta">3 tasks · 1 human gate</span></header>
+<div class="lane">
+<article class="card">
+<div class="card-top"><span class="tno">22</span><span class="chip" style="--c:var(--dept-4)">Sales &amp; Delivery</span><span class="role">sales</span></div>
+<h3>Capture &amp; verify the customer PO</h3>
+
+<p class="desc">/purchase-order: reconcile the inbound PO against quote and SOW — amount, terms, scope. Discrepancies go back to the customer through gated comms. PO record: received → verified.</p>
+<div class="meta"><span class="kv"><b>with</b> finance</span><span class="kv"><b>output</b> PO record (verified)</span><span class="kv"><b>ref</b> SOP-R15 §4.4</span></div>
+</article>
+<article class="card">
+<div class="card-top"><span class="tno">23</span><span class="chip" style="--c:var(--dept-1)">People &amp; Finance</span><span class="role">finance</span></div>
+<h3>Prepare revenue booking</h3>
+<div class="gatehint">⏸ stops at <b>revenue-booking</b> → P&amp;F Approver (human)</div>
+<p class="desc">Book-ready entry: PO linked to quote/SOW/opportunity, revenue schedule vs milestones. Booking it as committed revenue stops at the gate.</p>
+<div class="meta"><span class="kv"><b>with</b> sales</span><span class="kv"><b>output</b> Booking package on the PO record</span><span class="kv"><b>ref</b> SOP-R04; SOP-003</span></div>
+</article>
+<article class="card gatecard">
+<div class="card-top"><span class="tno">24</span><span class="chip" style="--c:var(--dept-1)">People &amp; Finance</span><span class="role">HUMAN — P&amp;F Approver</span></div>
+<h3>GATE: book PO as committed revenue</h3>
+<div class="gatebar">◆ HUMAN GATE — revenue-booking · decides: P&amp;F Approver (human)</div>
+<p class="desc">Approve the exact booking action; PO → booked. This stamp is what authorizes project setup to begin.</p>
+<div class="meta"><span class="kv"><b>with</b> finance</span><span class="kv"><b>output</b> APR stamp · PO → booked</span><span class="kv"><b>ref</b> SOP-R00</span></div>
+</article>
+</div></section><section class="phase">
+<header class="phase-h"><span class="phase-no">6</span>
+<h2>Project Kickoff</h2>
+<span class="phase-meta">6 tasks · 1 human gate</span></header>
+<div class="lane">
+<article class="card">
+<div class="card-top"><span class="tno">25</span><span class="chip" style="--c:var(--dept-4)">Sales &amp; Delivery</span><span class="role">delivery-manager</span></div>
+<h3>Kickoff pack (project-kickoff workflow)</h3>
+
+<p class="desc">Verify PO vs deal; create project + SOW records; delivery plan and milestones; risk register; kickoff agenda. Project record: kickoff.</p>
+<div class="meta"><span class="kv"><b>with</b> eng-manager, project-manager</span><span class="kv"><b>output</b> Project record + kickoff pack</span><span class="kv"><b>ref</b> SOP-R17 §4.1</span></div>
+</article>
+<article class="card">
+<div class="card-top"><span class="tno">26</span><span class="chip" style="--c:var(--dept-3)">Engineering</span><span class="role">eng-manager</span></div>
+<h3>Resourcing plan for the engineering pod (cross-team)</h3>
+
+<p class="desc">Allocate developer, code-reviewer, tester, devops, security across milestones; balance against other in-flight projects; surface conflicts to the delivery plan.</p>
+<div class="meta"><span class="kv"><b>with</b> delivery-manager</span><span class="kv"><b>output</b> Resourcing plan</span><span class="kv"><b>ref</b> SOP-R02 §4.2</span></div>
+</article>
+<article class="card">
+<div class="card-top"><span class="tno">27</span><span class="chip" style="--c:var(--dept-2)">Product &amp; Design</span><span class="role">project-manager</span></div>
+<h3>Sprint plan &amp; delivery tracking setup</h3>
+
+<p class="desc">Break milestones into sprints and tracked tasks with owners; set up issues, labels and the board per the task-lifecycle protocol — no task will be worked silently.</p>
+<div class="meta"><span class="kv"><b>with</b> delivery-manager, developer</span><span class="kv"><b>output</b> Sprint plan · tracked backlog</span><span class="kv"><b>ref</b> SOP-R06; SOP-005</span></div>
+</article>
+<article class="card gatecard">
+<div class="card-top"><span class="tno">28</span><span class="chip" style="--c:var(--dept-4)">Sales &amp; Delivery</span><span class="role">HUMAN — S&amp;D Approver</span></div>
+<h3>GATE: commit delivery dates &amp; resourcing to the customer</h3>
+<div class="gatebar">◆ HUMAN GATE — commitments + external-comms · decides: S&amp;D Approver (human)</div>
+<p class="desc">Approve the exact dates/SLA committed to the client and the kickoff comms send. Dates become contractual only through this stamp.</p>
+<div class="meta"><span class="kv"><b>with</b> delivery-manager</span><span class="kv"><b>output</b> APR stamp · dates committed · kickoff sent</span><span class="kv"><b>ref</b> SOP-003</span></div>
+</article>
+<article class="card">
+<div class="card-top"><span class="tno">29</span><span class="chip" style="--c:var(--dept-2)">Product &amp; Design</span><span class="role">product-manager</span></div>
+<h3>Product spec (PRD) for the build</h3>
+<div class="gatehint">↑ escalation → P&amp;D Approver (human) — spec sign-off</div>
+<p class="desc">Turn scope into a spec in docs/specs/ with acceptance criteria and out-of-scope stated. A human approves the spec before implementation starts.</p>
+<div class="meta"><span class="kv"><b>with</b> solutions-architect, designer</span><span class="kv"><b>output</b> Spec in docs/specs/</span><span class="kv"><b>ref</b> SOP-R05 §4.1; SOP-010</span></div>
+</article>
+<article class="card">
+<div class="card-top"><span class="tno">30</span><span class="chip" style="--c:var(--dept-2)">Product &amp; Design</span><span class="role">designer</span></div>
+<h3>Design brief, flows &amp; handoff spec</h3>
+
+<p class="desc">/design-brief: problem, user flows, all UI states, accessibility by default; developer handoff spec tied to the PRD&#x27;s acceptance criteria.</p>
+<div class="meta"><span class="kv"><b>with</b> product-manager, developer</span><span class="kv"><b>output</b> Design brief + handoff spec</span><span class="kv"><b>ref</b> SOP-R07 §4.1</span></div>
+</article>
+</div></section><section class="phase">
+<header class="phase-h"><span class="phase-no">7</span>
+<h2>Build &amp; Iterate (per sprint/milestone)</h2>
+<span class="phase-meta">12 tasks · 2 human gates</span></header>
+<div class="lane">
+<article class="card">
+<div class="card-top"><span class="tno">31</span><span class="chip" style="--c:var(--dept-6)">Operations</span><span class="role">procurement</span></div>
+<h3>Procure project resources (if needed)</h3>
+<div class="gatehint">⏸ stops at <b>procurement</b> → Ops Approver (human)</div>
+<p class="desc">procurement-cycle: check the asset register for reclaim FIRST; TCO-based vendor comparison; security/data risk check; draft outbound PO. Approving spend and placing the order are gated.</p>
+<div class="meta"><span class="kv"><b>with</b> security, finance</span><span class="kv"><b>output</b> Vendor comparison + draft PO-out</span><span class="kv"><b>ref</b> SOP-R22 §4.1</span></div>
+</article>
+<article class="card gatecard">
+<div class="card-top"><span class="tno">32</span><span class="chip" style="--c:var(--dept-6)">Operations</span><span class="role">HUMAN — Ops Approver</span></div>
+<h3>GATE: approve spend &amp; place order</h3>
+<div class="gatebar">◆ HUMAN GATE — procurement · decides: Ops Approver (human)</div>
+<p class="desc">Approve the exact purchase (vendor, item, amount); order placed; asset registered on receipt (procured → allocated).</p>
+<div class="meta"><span class="kv"><b>with</b> procurement</span><span class="kv"><b>output</b> APR stamp · PO-out → ordered</span><span class="kv"><b>ref</b> SOP-R00</span></div>
+</article>
+<article class="card">
+<div class="card-top"><span class="tno">33</span><span class="chip" style="--c:var(--dept-3)">Engineering</span><span class="role">developer</span></div>
+<h3>Implement features to spec</h3>
+<div class="gatehint">↑ escalation → —</div>
+<p class="desc">Read spec + surrounding code first; match conventions; small reviewable PRs; tests written with the change (failing test first for bugs); self-review before requesting review. Never merges own work.</p>
+<div class="meta"><span class="kv"><b>with</b> code-reviewer, tester</span><span class="kv"><b>output</b> PRs with tests, linked to issues</span><span class="kv"><b>ref</b> SOP-R09 §4.1</span></div>
+</article>
+<article class="card">
+<div class="card-top"><span class="tno">34</span><span class="chip" style="--c:var(--dept-3)">Engineering</span><span class="role">code-reviewer</span></div>
+<h3>Review every PR (cross-team quality bar)</h3>
+
+<p class="desc">Correctness, security, performance, maintainability. Findings adversarially verified — nothing plausible-but-unconfirmed; verdict + what merge approval needs. The human still holds the merge gate.</p>
+<div class="meta"><span class="kv"><b>with</b> developer, security</span><span class="kv"><b>output</b> Ranked verified findings + verdict</span><span class="kv"><b>ref</b> SOP-R10 §4.1</span></div>
+</article>
+<article class="card">
+<div class="card-top"><span class="tno">35</span><span class="chip" style="--c:var(--dept-3)">Engineering</span><span class="role">tester</span></div>
+<h3>Test strategy &amp; QA per milestone</h3>
+
+<p class="desc">Risk-weighted test plan; close coverage gaps; regression on the exact release candidate; verdict: ready / ready-with-risks / not-ready. Blockers escalate, never soften.</p>
+<div class="meta"><span class="kv"><b>with</b> developer, delivery-manager</span><span class="kv"><b>output</b> Test plan · coverage report · verdict</span><span class="kv"><b>ref</b> SOP-R11 §4.1-4.3</span></div>
+</article>
+<article class="card">
+<div class="card-top"><span class="tno">36</span><span class="chip" style="--c:var(--dept-3)">Engineering</span><span class="role">security</span></div>
+<h3>Security review &amp; threat model (cross-team)</h3>
+
+<p class="desc">Threat-model the design; review changes for exploitable vulnerabilities (verified, not alarmist); review every new dependency; severity never softened for deadlines.</p>
+<div class="meta"><span class="kv"><b>with</b> developer, code-reviewer</span><span class="kv"><b>output</b> Threat model · security verdicts</span><span class="kv"><b>ref</b> SOP-R13 §4.1-4.2</span></div>
+</article>
+<article class="card">
+<div class="card-top"><span class="tno">37</span><span class="chip" style="--c:var(--dept-3)">Engineering</span><span class="role">data-analyst + developer</span></div>
+<h3>AI scope: dataset registration &amp; PII/IP filtering</h3>
+<div class="gatehint">⏸ stops at <b>merge-deploy class (SOP-011 §3.5)</b> → Eng Approver (human) for client/regulated data</div>
+<p class="desc">Before any data enters a training/RAG/analytics pipeline: register provenance, classify every field, filter PII/IP/secrets, verify on a sample (zero leaks tolerated). Client/regulated data ingestion is gated.</p>
+<div class="meta"><span class="kv"><b>with</b> security</span><span class="kv"><b>output</b> Dataset register entry + filter evidence</span><span class="kv"><b>ref</b> SOP-011</span></div>
+</article>
+<article class="card">
+<div class="card-top"><span class="tno">38</span><span class="chip" style="--c:var(--dept-3)">Engineering</span><span class="role">tester + data-analyst</span></div>
+<h3>AI scope: bias &amp; fairness benchmarks</h3>
+<div class="gatehint">↑ escalation → —</div>
+<p class="desc">Disaggregated evals per affected group, adversarial probes, per-group metrics with honest small-n handling. The fairness report is a REQUIRED input to the deploy gate — no report, no deploy request.</p>
+<div class="meta"><span class="kv"><b>with</b> security, product-manager</span><span class="kv"><b>output</b> Fairness report on the project record</span><span class="kv"><b>ref</b> SOP-012 §3</span></div>
+</article>
+<article class="card gatecard">
+<div class="card-top"><span class="tno">39</span><span class="chip" style="--c:var(--dept-3)">Engineering</span><span class="role">HUMAN — Eng Approver</span></div>
+<h3>GATE: merge &amp; deploy (every release)</h3>
+<div class="gatebar">◆ HUMAN GATE — merge-deploy · decides: Eng Approver (human) — currently saravanan-p</div>
+<p class="desc">Decide each merge-deploy APR on the evidence bundle: review verdict, test results, security sign-off, benchmarks (AI scope), and the pinned rollback plan. The approval covers the deploy AND its stated auto-rollback conditions.</p>
+<div class="meta"><span class="kv"><b>with</b> devops, eng-manager</span><span class="kv"><b>output</b> APR stamp · release goes live</span><span class="kv"><b>ref</b> SOP-R00; SOP-014 §3a</span></div>
+</article>
+<article class="card">
+<div class="card-top"><span class="tno">40</span><span class="chip" style="--c:var(--dept-3)">Engineering</span><span class="role">devops</span></div>
+<h3>CI/CD, environments &amp; deploy execution</h3>
+<div class="gatehint">↑ escalation → —</div>
+<p class="desc">Pipelines and benchmark harness; release-readiness checklists; execute approved deploys (stage → canary → full); monitor thresholds from the deploy request. Model/prompt changes are deployments — same pipeline, pinned rollback.</p>
+<div class="meta"><span class="kv"><b>with</b> developer, tester</span><span class="kv"><b>output</b> Deployed release + monitoring live</span><span class="kv"><b>ref</b> SOP-R12; SOP-014 §3b</span></div>
+</article>
+<article class="card">
+<div class="card-top"><span class="tno">41</span><span class="chip" style="--c:var(--dept-2)">Product &amp; Design</span><span class="role">project-manager</span></div>
+<h3>Sprint tracking, standups &amp; risk log (continuous)</h3>
+
+<p class="desc">Keep issues and the board true daily (states before work, not after); dependency and risk tracking; anything blocked &gt;1 cycle escalates with situation + options + recommendation.</p>
+<div class="meta"><span class="kv"><b>with</b> all pod roles</span><span class="kv"><b>output</b> Live board · risk log · escalations</span><span class="kv"><b>ref</b> SOP-R06; SOP-004</span></div>
+</article>
+<article class="card">
+<div class="card-top"><span class="tno">42</span><span class="chip" style="--c:var(--dept-4)">Sales &amp; Delivery</span><span class="role">delivery-manager</span></div>
+<h3>Client status reporting &amp; change control</h3>
+<div class="gatehint">⏸ stops at <b>external-comms · commitments</b> → S&amp;D Approver (human) per send/change</div>
+<p class="desc">Honest milestone status drafts for the client (sends gated). Change requests go through SOW change control — any scope/date/price change re-enters the commitments gate as a new exact action.</p>
+<div class="meta"><span class="kv"><b>with</b> project-manager, sales</span><span class="kv"><b>output</b> Status reports · change-control log</span><span class="kv"><b>ref</b> SOP-R17 §4.2</span></div>
+</article>
+</div></section><section class="phase">
+<header class="phase-h"><span class="phase-no">8</span>
+<h2>UAT, Acceptance &amp; Go-Live</h2>
+<span class="phase-meta">6 tasks · 1 human gate</span></header>
+<div class="lane">
+<article class="card">
+<div class="card-top"><span class="tno">43</span><span class="chip" style="--c:var(--dept-3)">Engineering</span><span class="role">tester</span></div>
+<h3>Pre-UAT regression &amp; release-candidate verdict</h3>
+
+<p class="desc">Full regression on the exact UAT candidate; defect triage with severity and repro; verdict recorded on the milestone record before the client ever sees it.</p>
+<div class="meta"><span class="kv"><b>with</b> developer, delivery-manager</span><span class="kv"><b>output</b> RC verdict on milestone record</span><span class="kv"><b>ref</b> SOP-R11 §4.3</span></div>
+</article>
+<article class="card">
+<div class="card-top"><span class="tno">44</span><span class="chip" style="--c:var(--dept-4)">Sales &amp; Delivery</span><span class="role">delivery-manager</span></div>
+<h3>UAT coordination with the client</h3>
+
+<p class="desc">UAT plan and defect loop (tester/developer). For AI scope: the client&#x27;s humans must actually exercise the HITL review surface before acceptance — an unused HITL surface is a defect.</p>
+<div class="meta"><span class="kv"><b>with</b> tester, developer, support</span><span class="kv"><b>output</b> UAT results + defect log</span><span class="kv"><b>ref</b> SOP-R17 §4.3; SOP-013 §3b</span></div>
+</article>
+<article class="card">
+<div class="card-top"><span class="tno">45</span><span class="chip" style="--c:var(--dept-2)">Product &amp; Design</span><span class="role">tech-writer</span></div>
+<h3>User docs, runbooks &amp; release notes</h3>
+<div class="gatehint">⏸ stops at <b>external-comms (if public)</b> → M&amp;S Approver (human) if public</div>
+<p class="desc">Documentation grounded in the actual build (unknowns TBD); operational runbooks; release notes delivered with the milestone. External publishing is gated.</p>
+<div class="meta"><span class="kv"><b>with</b> developer, support</span><span class="kv"><b>output</b> Docs + runbooks + release notes</span><span class="kv"><b>ref</b> SOP-R08</span></div>
+</article>
+<article class="card">
+<div class="card-top"><span class="tno">46</span><span class="chip" style="--c:var(--dept-4)">Sales &amp; Delivery</span><span class="role">delivery-manager</span></div>
+<h3>Milestone acceptance package (delivery-to-invoice)</h3>
+<div class="gatehint">↑ escalation → —</div>
+<p class="desc">Verify the deliverable against the SOW acceptance criteria; attach QA + security sign-offs; prepare the client acceptance request and the internal acceptance recommendation.</p>
+<div class="meta"><span class="kv"><b>with</b> tester, finance</span><span class="kv"><b>output</b> Acceptance package on the milestone</span><span class="kv"><b>ref</b> SOP-R17 §4.4</span></div>
+</article>
+<article class="card gatecard">
+<div class="card-top"><span class="tno">47</span><span class="chip" style="--c:var(--dept-1)">People &amp; Finance</span><span class="role">HUMAN — P&amp;F Approver</span></div>
+<h3>GATE: mark milestone accepted</h3>
+<div class="gatebar">◆ HUMAN GATE — revenue-booking · decides: P&amp;F Approver (human)</div>
+<p class="desc">Approve the exact action &#x27;mark milestone N accepted&#x27; (revenue-booking gate) — this is what triggers invoicing. Milestone: delivered → accepted.</p>
+<div class="meta"><span class="kv"><b>with</b> delivery-manager, finance</span><span class="kv"><b>output</b> APR stamp · milestone → accepted</span><span class="kv"><b>ref</b> SOP-R00; SOP-003</span></div>
+</article>
+<article class="card">
+<div class="card-top"><span class="tno">48</span><span class="chip" style="--c:var(--dept-3)">Engineering</span><span class="role">devops</span></div>
+<h3>Production go-live &amp; hypercare</h3>
+<div class="gatehint">⏸ stops at <b>merge-deploy</b> → Eng Approver (human) — deploy APR</div>
+<p class="desc">Execute the approved production deploy; monitoring thresholds live from minute one; rollback rehearsed and pinned; degradation or hallucination signals trigger the pre-approved rollback immediately, then the incident process.</p>
+<div class="meta"><span class="kv"><b>with</b> developer, support</span><span class="kv"><b>output</b> Live system + hypercare log</span><span class="kv"><b>ref</b> SOP-R12; SOP-014 §3c; SOP-009</span></div>
+</article>
+</div></section><section class="phase">
+<header class="phase-h"><span class="phase-no">9</span>
+<h2>Invoicing &amp; Collection</h2>
+<span class="phase-meta">4 tasks · 1 human gate</span></header>
+<div class="lane">
+<article class="card">
+<div class="card-top"><span class="tno">49</span><span class="chip" style="--c:var(--dept-1)">People &amp; Finance</span><span class="role">finance</span></div>
+<h3>Generate the invoice</h3>
+
+<p class="desc">/invoice from the accepted milestone, reconciled line-by-line to the PO and SOW. Numbers computed with provenance, never estimated. Invoice record: draft.</p>
+<div class="meta"><span class="kv"><b>with</b> delivery-manager</span><span class="kv"><b>output</b> Invoice record (draft)</span><span class="kv"><b>ref</b> SOP-R04 §4.2</span></div>
+</article>
+<article class="card gatecard">
+<div class="card-top"><span class="tno">50</span><span class="chip" style="--c:var(--dept-1)">People &amp; Finance</span><span class="role">HUMAN — P&amp;F Approver</span></div>
+<h3>GATE: approve &amp; send the invoice</h3>
+<div class="gatebar">◆ HUMAN GATE — money · decides: P&amp;F Approver (human)</div>
+<p class="desc">Approve the exact action &#x27;send invoice INV-N to &lt;named contact&gt;&#x27; (money gate). Invoice → sent.</p>
+<div class="meta"><span class="kv"><b>with</b> finance</span><span class="kv"><b>output</b> APR stamp · invoice → sent</span><span class="kv"><b>ref</b> SOP-R00; SOP-003</span></div>
+</article>
+<article class="card">
+<div class="card-top"><span class="tno">51</span><span class="chip" style="--c:var(--dept-1)">People &amp; Finance</span><span class="role">finance</span></div>
+<h3>Collections tracking</h3>
+<div class="gatehint">⏸ stops at <b>money</b> → P&amp;F Approver (human) per action</div>
+<p class="desc">Track paid/overdue against terms; dunning reminders drafted and staged; every collections action (reminder send, escalation, write-off) is money-gated.</p>
+<div class="meta"><span class="kv"><b>with</b> account-manager</span><span class="kv"><b>output</b> Collection status on the invoice record</span><span class="kv"><b>ref</b> SOP-R04 §4.3</span></div>
+</article>
+<article class="card">
+<div class="card-top"><span class="tno">52</span><span class="chip" style="--c:var(--dept-6)">Operations</span><span class="role">data-analyst</span></div>
+<h3>Project &amp; revenue metrics (cross-team)</h3>
+
+<p class="desc">Compute actual margin, burn vs estimate, cycle times — every figure with query/computation provenance. Feeds the QBR, estimate calibration, and the company scorecard.</p>
+<div class="meta"><span class="kv"><b>with</b> finance, delivery-manager</span><span class="kv"><b>output</b> Verified metrics pack</span><span class="kv"><b>ref</b> SOP-R23; SOP-008</span></div>
+</article>
+</div></section><section class="phase">
+<header class="phase-h"><span class="phase-no">10</span>
+<h2>Support &amp; Operations (steady state)</h2>
+<span class="phase-meta">4 tasks · 1 human gate</span></header>
+<div class="lane">
+<article class="card">
+<div class="card-top"><span class="tno">53</span><span class="chip" style="--c:var(--dept-5)">Marketing &amp; Support</span><span class="role">support</span></div>
+<h3>Ticket intake &amp; triage</h3>
+
+<p class="desc">/ticket-triage: severity, category, reproduction, routing; SLA clocks per priority; customer replies DRAFTED only. Ticket lifecycle: new → triaged → in-progress → resolved → closed in company/tickets/.</p>
+<div class="meta"><span class="kv"><b>with</b> tester, developer</span><span class="kv"><b>output</b> Triaged tickets + draft replies</span><span class="kv"><b>ref</b> SOP-R21 §4.1</span></div>
+</article>
+<article class="card">
+<div class="card-top"><span class="tno">54</span><span class="chip" style="--c:var(--dept-3)">Engineering</span><span class="role">developer</span></div>
+<h3>Defect fixes from tickets (cross-team)</h3>
+<div class="gatehint">⏸ stops at <b>merge-deploy</b> → Eng Approver (human) — merge</div>
+<p class="desc">Reproduce from the ticket, write the failing regression test first, fix through the normal PR → review → merge-gate chain. Fix never promises a date to the customer — dates are commitments-gated.</p>
+<div class="meta"><span class="kv"><b>with</b> support, tester</span><span class="kv"><b>output</b> Fix PR linked to the ticket</span><span class="kv"><b>ref</b> SOP-R09 §4.2</span></div>
+</article>
+<article class="card gatecard">
+<div class="card-top"><span class="tno">55</span><span class="chip" style="--c:var(--dept-4)">Sales &amp; Delivery</span><span class="role">HUMAN — S&amp;D or M&amp;S Approver</span></div>
+<h3>GATE: approve customer replies</h3>
+<div class="gatebar">◆ HUMAN GATE — external-comms · decides: S&amp;D or M&amp;S Approver (human)</div>
+<p class="desc">Customer-specific replies route to the Sales &amp; Delivery Approver; general/public responses to the Marketing &amp; Support Approver (per routing.md). Approve the exact reply text; then it is sent.</p>
+<div class="meta"><span class="kv"><b>with</b> support</span><span class="kv"><b>output</b> APR stamp · reply sent</span><span class="kv"><b>ref</b> routing.md §1; SOP-003</span></div>
+</article>
+<article class="card">
+<div class="card-top"><span class="tno">56</span><span class="chip" style="--c:var(--dept-3)">Engineering</span><span class="role">devops</span></div>
+<h3>Incident response &amp; postmortems</h3>
+<div class="gatehint">⏸ stops at <b>merge-deploy (P0) for prod fixes</b> → (fixes gated: Eng Approver at P0)</div>
+<p class="desc">P0: declare, lead, stabilize within authority; prod-touching fixes gated at the P0 cadence (2h/hourly) — urgency raises priority, never autonomy. Blameless postmortem within 3 business days with corrective actions as tracked tasks.</p>
+<div class="meta"><span class="kv"><b>with</b> security, support, delivery-manager</span><span class="kv"><b>output</b> Incident timeline + postmortem</span><span class="kv"><b>ref</b> SOP-009; SOP-R12 §4.3</span></div>
+</article>
+</div></section><section class="phase">
+<header class="phase-h"><span class="phase-no">11</span>
+<h2>Account Management &amp; Renewal</h2>
+<span class="phase-meta">4 tasks · 1 human gate</span></header>
+<div class="lane">
+<article class="card">
+<div class="card-top"><span class="tno">57</span><span class="chip" style="--c:var(--dept-4)">Sales &amp; Delivery</span><span class="role">account-manager</span></div>
+<h3>Account health monitoring (continuous)</h3>
+
+<p class="desc">Signal-based health on the account record (usage, tickets, sentiment, payment); churn risk escalated the moment it is detected — never discovered at renewal.</p>
+<div class="meta"><span class="kv"><b>with</b> support, data-analyst</span><span class="kv"><b>output</b> Health fields on the account record</span><span class="kv"><b>ref</b> SOP-R18 §4.1</span></div>
+</article>
+<article class="card">
+<div class="card-top"><span class="tno">58</span><span class="chip" style="--c:var(--dept-4)">Sales &amp; Delivery</span><span class="role">account-manager</span></div>
+<h3>QBR preparation</h3>
+<div class="gatehint">⏸ stops at <b>external-comms (customer-specific)</b> → S&amp;D Approver (human) — send/present</div>
+<p class="desc">/qbr: value delivered COMPUTED with data-analyst (never asserted), delivery recap, roadmap, renewal/expansion outlook honestly filtered. Deck drafted; presenting/sending is gated.</p>
+<div class="meta"><span class="kv"><b>with</b> data-analyst, delivery-manager</span><span class="kv"><b>output</b> QBR deck (draft)</span><span class="kv"><b>ref</b> SOP-R18 §4.2</span></div>
+</article>
+<article class="card">
+<div class="card-top"><span class="tno">59</span><span class="chip" style="--c:var(--dept-4)">Sales &amp; Delivery</span><span class="role">account-manager</span></div>
+<h3>Renewal / expansion opportunity</h3>
+<div class="gatehint">↑ escalation → —</div>
+<p class="desc">Create the renewal/expansion opportunity record for sales with the evidence (value delivered, usage). Terms and concessions PREPARED with finance — never committed by the AI.</p>
+<div class="meta"><span class="kv"><b>with</b> sales, finance</span><span class="kv"><b>output</b> Renewal opportunity record</span><span class="kv"><b>ref</b> SOP-R18 §4.3</span></div>
+</article>
+<article class="card gatecard">
+<div class="card-top"><span class="tno">60</span><span class="chip" style="--c:var(--dept-4)">Sales &amp; Delivery</span><span class="role">HUMAN — S&amp;D Approver</span></div>
+<h3>GATE: approve renewal terms &amp; QBR send</h3>
+<div class="gatebar">◆ HUMAN GATE — commitments (+ money) · decides: S&amp;D Approver (human); P&amp;F for concessions</div>
+<p class="desc">Approve the exact renewal terms (commitments; concessions also touch money) and the QBR delivery to the customer. The renewal then cycles back into the proposal→PO chain above.</p>
+<div class="meta"><span class="kv"><b>with</b> account-manager, sales</span><span class="kv"><b>output</b> APR stamps · renewal terms committed</span><span class="kv"><b>ref</b> SOP-R00; SOP-003</span></div>
+</article>
+</div></section><section class="phase">
+<header class="phase-h"><span class="phase-no">12</span>
+<h2>Cross-Cutting Cadence (always on)</h2>
+<span class="phase-meta">4 tasks · 1 human gate</span></header>
+<div class="lane">
+<article class="card">
+<div class="card-top"><span class="tno">61</span><span class="chip" style="--c:var(--dept-0)">Leadership</span><span class="role">chief-of-staff</span></div>
+<h3>Unowned-work sweep &amp; routing (continuous)</h3>
+
+<p class="desc">Sweep the board and registry for owner-less, stale, or silently-worked items; route each with a brief; anything stuck &gt;1 cycle escalates. Nothing in the company waits silently.</p>
+<div class="meta"><span class="kv"><b>with</b> all roles</span><span class="kv"><b>output</b> Zero owner-less tracked items</span><span class="kv"><b>ref</b> SOP-R24 §4.3; SOP-004</span></div>
+</article>
+<article class="card">
+<div class="card-top"><span class="tno">62</span><span class="chip" style="--c:var(--dept-0)">Leadership</span><span class="role">ceo</span></div>
+<h3>Weekly company-standup synthesis</h3>
+
+<p class="desc">company-standup workflow: every department reports in parallel; CEO-level synthesis with risks and THE one decision needed from the Founder this week.</p>
+<div class="meta"><span class="kv"><b>with</b> all departments</span><span class="kv"><b>output</b> Weekly rollup + decision ask</span><span class="kv"><b>ref</b> SOP-R01; company-standup</span></div>
+</article>
+<article class="card gatecard">
+<div class="card-top"><span class="tno">63</span><span class="chip" style="--c:var(--muted)">All departments</span><span class="role">HUMAN — Dept Approvers</span></div>
+<h3>HITL sampling — the 30% rule (continuous)</h3>
+<div class="gatebar">◆ HUMAN GATE — — (gates stay 100% human) · decides: Approver / Head (human)</div>
+<p class="desc">Humans sample ≥10% of repetitive AI output streams and see 100% of high-consequence artifacts; findings feed rework and SOP updates; any escaped defect doubles the stream&#x27;s review ratio. Ratios reduced only by a Head&#x27;s decision.</p>
+<div class="meta"><span class="kv"><b>with</b> data-analyst (findings tracking)</span><span class="kv"><b>output</b> Sample findings log · ratio decisions</span><span class="kv"><b>ref</b> SOP-013 §3a</span></div>
+</article>
+<article class="card">
+<div class="card-top"><span class="tno">64</span><span class="chip" style="--c:var(--muted)">All departments</span><span class="role">every role</span></div>
+<h3>Records, memory &amp; task hygiene (every session)</h3>
+
+<p class="desc">Read the record before acting; stamp every gated stage transition; keep issue states true before the work; bank decisions to memory/ before ending any session that learned something durable.</p>
+<div class="meta"><span class="kv"><b>output</b> Current records · true board · banked memory</span><span class="kv"><b>ref</b> SOP-001; SOP-002; SOP-005</span></div>
+</article>
+</div></section>
+<section class="gates-ref">
+<h2>Gate reference — what is never done autonomously</h2>
+<div class="tbl"><table>
+<tr><th>Gate</th><th>Never done autonomously</th><th>Owning dept</th><th>Approving seat</th><th>Special rule</th></tr>
+<tr><td><code>merge-deploy</code></td><td>Merge to main, deploy, run migrations, touch production data</td><td>Engineering</td><td>Engineering Approver</td><td>—</td></tr><tr><td><code>external-comms</code></td><td>Send customer/prospect email, publish, post publicly</td><td>Marketing &amp; Support</td><td>M&amp;S Approver</td><td>Customer-specific comms → Sales &amp; Delivery Approver</td></tr><tr><td><code>money</code></td><td>Move funds, approve spend, send invoice, quote a discount, sign</td><td>People &amp; Finance</td><td>P&amp;F Approver</td><td>—</td></tr><tr><td><code>commitments</code></td><td>Commit a price, date, SLA, or roadmap promise</td><td>Sales &amp; Delivery</td><td>S&amp;D Approver</td><td>Roadmap promises → Product &amp; Design Approver</td></tr><tr><td><code>people</code></td><td>Extend/reject offer, terminate, finalize rating, change comp</td><td>People &amp; Finance</td><td>P&amp;F Approver + CEO</td><td>DUAL stamp: P&amp;F seat AND the CEO</td></tr><tr><td><code>procurement</code></td><td>Place an order, sign a vendor</td><td>Operations</td><td>Ops Approver</td><td>—</td></tr><tr><td><code>revenue-booking</code></td><td>Mark milestone accepted, book a PO as committed</td><td>People &amp; Finance</td><td>P&amp;F Approver</td><td>—</td></tr><tr><td><code>Priority</code></td><td>Meaning</td><td>First-Response SLA</td><td>Escalation Cadence</td><td></td></tr><tr><td><code>P0</code></td><td>Urgent — prod incident, customer-visible</td><td>2 hours</td><td>every 1 hour (wall-clock)</td><td></td></tr><tr><td><code>P1</code></td><td>Normal — proposal send, invoice, PR merge</td><td>1 business day</td><td>every business day</td><td></td></tr><tr><td><code>P2</code></td><td>Low — internal docs, calendars</td><td>3 business days</td><td>after 3 business days</td><td></td></tr><tr><td><code>Escalation chain</code></td><td>approver → deputy → head → CEO. Unavailable humans skipped immediately; SLA breach moves ONE hop and notifies both; chain terminates at the CEO. Escalation only ever REASSIGNS — silence never equals consent (ADR-0004).</td><td></td><td></td><td></td></tr>
+</table></div>
+</section>
+<footer>Escalation on every gate: Approver → Deputy → Head → CEO (reassigns only — never approves; silence never equals consent, ADR-0004).
+Grounded in docs/sop/, company/org/routing.md, CLAUDE.md §4–5.</footer>
+</div></div>
