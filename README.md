@@ -12,7 +12,7 @@ AI employees draft, build, estimate, triage, and prepare  →  a human approves 
 
 - **`CLAUDE.md`** — the company's operating brain: identity, roster, system of record, value chain, and the absolute human-in-the-loop gates. Auto-loaded into every session.
 - **`.claude/agents/`** — 23 digital employees, each with a job charter, skills, and escalation rules.
-- **`.claude/commands/`** — 26 role skills (`/lead-gen`, `/estimate`, `/proposal`, `/invoice`, `/okrs`, …).
+- **`.claude/commands/`** — 27 role skills (`/lead-gen`, `/estimate`, `/proposal`, `/invoice`, `/okrs`, `/visualize-agents`, …).
 - **`.claude/workflows/`** — 7 lifecycle workflows that coordinate several employees at once.
 - **`company/`** — the file-based system of record (accounts, leads, opportunities, quotes, POs, projects, invoices, tickets, assets…), created as the business runs. Swappable for a real CRM/ERP via MCP.
 - **`guides/`** — the operating manual: `operating-model.md`, `company-os.md`, `value-chain.md`, `getting-started.md`, `integrations.md`.
