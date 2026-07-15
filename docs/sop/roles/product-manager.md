@@ -6,7 +6,7 @@
 | **Department** | `product-design` — Product & Design |
 | **Owner** | product-design Head (human) |
 | **Status** | Active |
-| **Version** | 1.1 (2026-07-15) |
+| **Version** | 1.2 (2026-07-15) |
 | **Loads with** | `docs/sop/README.md` + foundations SOP-001…014 (assumed known; do not restate them) |
 
 > The Product Manager owns "why": it turns evidence of a user problem into a spec the team can build and QA can verify, keeps the backlog ordered by value, and connects shipped work back to outcomes. It decides what to propose building — it never commits a feature, date, or roadmap promise to a customer or the market; a human makes every commitment.
@@ -107,6 +107,47 @@ Draft, don't send; write the APR record and stop; silence never equals consent.
 | `ceo` | OKRs, strategy direction | `data-analyst` | success-metric definition + measurement plan |
 | `designer` | scope questions surfaced by design | `tech-writer` | shipped-feature context for docs/release notes |
 
+### 7.1 Role flow — visual
+
+How work reaches this role, what it produces, and where it stops for a human (generated with `/visualize-agents`; grounded in the agent charter, `company/org/`, and `.claude/workflows/`):
+
+```mermaid
+flowchart LR
+  classDef ai fill:#dbeafe,stroke:#1d4ed8,color:#1e3a8a
+  classDef human fill:#fecaca,stroke:#b91c1c,color:#7f1d1d
+  classDef gate fill:#fef3c7,stroke:#b45309,color:#78350f
+  classDef art fill:#f1f5f9,stroke:#64748b,color:#334155
+  classDef wf fill:#ede9fe,stroke:#6d28d9,color:#4c1d95
+  wf1[[company-standup]]:::wf
+  wf2[[product-launch]]:::wf
+  sup[support]:::ai
+  da[data-analyst]:::ai
+  pm[product-manager]:::ai
+  spec("PRD / spec — docs/specs/prd-NNN"):::art
+  backlog("ranked backlog + cut reasons"):::art
+  promise("drafted roadmap promise — exact wording"):::art
+  g1{"commitments gate — roadmap"}:::gate
+  hA(["Product & Design Approver — human"]):::human
+  hD(["Product & Design Deputy — human"]):::human
+  hH(["Product & Design Head — human"]):::human
+  hC(["CEO — terminal backstop"]):::human
+  des[designer]:::ai
+  em[eng-manager]:::ai
+  pjm[project-manager]:::ai
+
+  sup -->|"tickets, themes, evidence"| pm
+  da -->|"metric readouts"| pm
+  wf1 -->|"product report"| pm
+  wf2 -->|"product readiness lens"| pm
+  pm --> spec
+  spec -->|"approve before implementation — SOP-010 §1"| hA
+  hA -->|"approved spec"| des
+  hA -->|"approved spec"| em
+  pm --> backlog --> pjm
+  pm --> promise --> g1 --> hA
+  hA -. SLA breach .-> hD -. SLA breach .-> hH -. SLA breach .-> hC
+```
+
 ## 8. KPIs & metrics
 
 Computed from records and `data-analyst` datasets, never guessed (SOP-008); unknowns `TBD` and lower the confidence term. Reviewed at the HITL sampling cadence (SOP-013):
@@ -133,4 +174,4 @@ Computed from records and `data-analyst` datasets, never guessed (SOP-008); unkn
 Agent charter `.claude/agents/product-manager.md` · skills: `/spec`, `/metrics-review` (charter), `product-management:*` plugin skills (CLAUDE.md §7) · foundations SOP-003/004/005/008/010 · `docs/specs/` (+ README conventions), `docs/plans/002-execution-plan.md`, `company/org/routing.md`.
 
 ---
-*Changelog: 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*
+*Changelog: 1.2 — added §7.1 role flow diagram (`/visualize-agents`). 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*

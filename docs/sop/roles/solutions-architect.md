@@ -6,7 +6,7 @@
 | **Department** | `sales-delivery` — Sales & Delivery |
 | **Owner** | sales-delivery Head (human) |
 | **Status** | Active |
-| **Version** | 1.1 (2026-07-15) |
+| **Version** | 1.2 (2026-07-15) |
 | **Loads with** | `docs/sop/README.md` + foundations SOP-001…014 (assumed known; do not restate them) |
 
 > The Solutions Architect translates a prospect's need into a solution the company can actually build and an estimate it can actually meet — decomposed, ranged, assumption-explicit, risk-honest. An over-optimistic estimate here becomes a failed, unprofitable project later, so honesty beats deal-winning every time. Its artifacts are internal; anything customer-facing goes out through `sales` and the human gates.
@@ -111,6 +111,53 @@ Never hand `sales` a raw estimate formatted for customer eyes — internal cost 
 | `sales` | confirmed discovery answers | `finance` + `sales` | approved estimate: three-point range, assumptions, buffers, internal cost (rate `TBD`-marked), ranked risks |
 | `sales`/`delivery-manager` | booked PO, kickoff starting | `delivery-manager` | technical brief + SOW technical sections; every estimate assumption restated |
 
+### 7.1 Role flow — visual
+
+How work reaches this role, what it produces, and where it stops for a human (generated with `/visualize-agents`; grounded in the agent charter, `company/org/`, and `.claude/workflows/`):
+
+```mermaid
+flowchart LR
+  classDef ai fill:#dbeafe,stroke:#1d4ed8,color:#1e3a8a
+  classDef human fill:#fecaca,stroke:#b91c1c,color:#7f1d1d
+  classDef gate fill:#fef3c7,stroke:#b45309,color:#78350f
+  classDef art fill:#f1f5f9,stroke:#64748b,color:#334155
+  classDef wf fill:#ede9fe,stroke:#6d28d9,color:#4c1d95
+
+  wf1[[opportunity-to-proposal]]:::wf
+  wf2[[project-kickoff]]:::wf
+  sdr[sdr]:::ai
+  sales[sales]:::ai
+  sa[solutions-architect]:::ai
+  finance[finance]:::ai
+  em[eng-manager]:::ai
+  dm[delivery-manager]:::ai
+  scope("solution scope — components, out-of-scope, HITL boundary, risks"):::art
+  est("estimate — company/estimates/, draft→reviewed→approved"):::art
+  brief("won-deal technical brief + SOW technical sections"):::art
+  g1{commitments gate}:::gate
+  appr(["Sales & Delivery Approver — human"]):::human
+  dep(["Sales & Delivery Deputy — human"]):::human
+  head(["Sales & Delivery Head — human"]):::human
+  ceo(["CEO — terminal backstop"]):::human
+
+  wf1 -.->|"Scope + Estimate + Review phases (as the solutions-architect)"| sa
+  wf2 -.->|"PO vs deal verification / SOW (with delivery-manager)"| sa
+  sales -->|"opportunity at scoping: requirements, unknowns"| sa
+  sdr -.->|"technical unknown blocking qualification"| sa
+  sa --> scope
+  sa -->|"/estimate — decomposed three-point range"| est
+  est -->|"pricing basis for /valuation (internal, no price)"| finance
+  finance -->|"quote → proposal drafted by sales"| sales
+  sales -->|"scope/effort becomes customer-facing (via proposal APRs)"| g1
+  g1 --> appr
+  sa -.->|"feasibility risk flag: situation · options · recommendation"| em
+  sa --> brief
+  brief -->|"feeds project-kickoff"| dm
+  appr -. SLA .-> dep
+  dep -. SLA .-> head
+  head -. SLA .-> ceo
+```
+
 ## 8. KPIs & metrics
 
 Computed from the records, never guessed (SOP-008); unknowns `TBD`. Reviewed at the HITL sampling cadence (SOP-013).
@@ -137,4 +184,4 @@ Computed from the records, never guessed (SOP-008); unknowns `TBD`. Reviewed at 
 Agent charter `.claude/agents/solutions-architect.md` · skills `/estimate` (and input to `/valuation`, run by `finance`+`sales`), `/sow` (technical sections, with `delivery-manager`), `/adr` + `deep-research` (plugin) · workflow `.claude/workflows/opportunity-to-proposal.js` (Scope/Estimate/Review phases) · foundations [SOP-002](../foundations/SOP-002-system-of-record.md), [SOP-003](../foundations/SOP-003-human-approval-gates.md), [SOP-004](../foundations/SOP-004-escalation-and-slas.md), [SOP-008](../foundations/SOP-008-quality-evidence-and-honesty.md), [SOP-012](../foundations/SOP-012-model-bias-and-fairness-testing.md) (fairness spec at design time), [SOP-013](../foundations/SOP-013-human-in-the-loop-review.md) §3b (HITL in client automations) · records `company/estimates/`, `opportunities/`, `registry.md` · `guides/company-os.md` · `docs/adrs/`.
 
 ---
-*Changelog: 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*
+*Changelog: 1.2 — added §7.1 role flow diagram (`/visualize-agents`). 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*

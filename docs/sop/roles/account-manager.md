@@ -6,7 +6,7 @@
 | **Department** | `sales-delivery` — Sales & Delivery |
 | **Owner** | sales-delivery Head (human) |
 | **Status** | Active |
-| **Version** | 1.1 (2026-07-15) |
+| **Version** | 1.2 (2026-07-15) |
 | **Loads with** | `docs/sop/README.md` + foundations SOP-001…014 (assumed known; do not restate them) |
 
 > The Account Manager keeps customers successful, retained, and honestly grown after go-live: it tracks account health from real signals, prepares QBRs where the value delivered is computed rather than asserted, gets ahead of churn, and surfaces renewal/expansion only where the value is real. Every customer send, renewal term, and concession stops at a human gate.
@@ -109,6 +109,59 @@ Per [SOP-003](../foundations/SOP-003-human-approval-gates.md): finished artifact
 | `data-analyst` | usage/value metrics | human (Approver seats) | QBR deck / renewal recommendation / save plan + APRs with exact actions |
 | `finance` | invoice/payment status | `finance` / `sales` | renewal timing + terms recommendation (terms DRAFT, gated) |
 
+### 7.1 Role flow — visual
+
+How work reaches this role, what it produces, and where it stops for a human (generated with `/visualize-agents`; grounded in the agent charter, `company/org/`, and `.claude/workflows/`):
+
+```mermaid
+flowchart LR
+  classDef ai fill:#dbeafe,stroke:#1d4ed8,color:#1e3a8a
+  classDef human fill:#fecaca,stroke:#b91c1c,color:#7f1d1d
+  classDef gate fill:#fef3c7,stroke:#b45309,color:#78350f
+  classDef art fill:#f1f5f9,stroke:#64748b,color:#334155
+  classDef wf fill:#ede9fe,stroke:#6d28d9,color:#4c1d95
+
+  inv[["direct invocation (e.g. /qbr) — appears in no lifecycle workflow"]]:::wf
+  dm[delivery-manager]:::ai
+  support[support]:::ai
+  finance[finance]:::ai
+  da[data-analyst]:::ai
+  am[account-manager]:::ai
+  sales[sales]:::ai
+  health("account health record — company/accounts/"):::art
+  qbr("QBR deck — value computed, not asserted"):::art
+  ren("renewal recommendation / save plan — terms DRAFT/TBD"):::art
+  exp("expansion opportunity record — stage discovery"):::art
+  g1{"external-comms gate — customer-specific"}:::gate
+  g2{commitments gate}:::gate
+  g3{money gate}:::gate
+  appr(["Sales & Delivery Approver — human"]):::human
+  pf(["People & Finance Approver — human"]):::human
+  dep(["Sales & Delivery Deputy — human"]):::human
+  head(["Sales & Delivery Head — human"]):::human
+  ceo(["CEO — terminal backstop"]):::human
+
+  inv -.-> am
+  dm -->|"go-live handoff: shipped, known issues, SLA obligations"| am
+  support -->|"ticket trends, recurring issues"| am
+  finance -->|"invoice/payment status"| am
+  da -->|"usage/value metrics"| am
+  am -->|"health from real signals, each citing its record"| health
+  am -->|"/qbr"| qbr
+  qbr -->|"APR: exact send action"| g1
+  g1 --> appr
+  am --> ren
+  ren -->|"APR: commit renewal term/scope"| g2
+  g2 --> appr
+  ren -->|"APR: discount / credit / concession"| g3
+  g3 --> pf
+  am --> exp
+  exp -->|"handoff with usage-grounded evidence"| sales
+  appr -. SLA .-> dep
+  dep -. SLA .-> head
+  head -. SLA .-> ceo
+```
+
 ## 8. KPIs & metrics
 
 Computed from the records, never guessed (SOP-008); unknowns `TBD`. Reviewed at the HITL sampling cadence (SOP-013).
@@ -136,4 +189,4 @@ Computed from the records, never guessed (SOP-008); unknowns `TBD`. Reviewed at 
 Agent charter `.claude/agents/account-manager.md` · skills `/qbr` (and `/proposal` for renewals via `sales`; `/metrics-review` from the PM pack with `data-analyst`; `pptx` for decks) · foundations [SOP-002](../foundations/SOP-002-system-of-record.md), [SOP-003](../foundations/SOP-003-human-approval-gates.md), [SOP-004](../foundations/SOP-004-escalation-and-slas.md), [SOP-008](../foundations/SOP-008-quality-evidence-and-honesty.md), [SOP-013](../foundations/SOP-013-human-in-the-loop-review.md) · records `company/accounts/`, `opportunities/`, `projects/`, `tickets/`, `invoices/`, `registry.md` · routing `company/org/routing.md` · `guides/company-os.md`.
 
 ---
-*Changelog: 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*
+*Changelog: 1.2 — added §7.1 role flow diagram (`/visualize-agents`). 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*

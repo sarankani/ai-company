@@ -6,7 +6,7 @@
 | **Department** | `sales-delivery` — Sales & Delivery |
 | **Owner** | sales-delivery Head (human) |
 | **Status** | Active |
-| **Version** | 1.1 (2026-07-15) |
+| **Version** | 1.2 (2026-07-15) |
 | **Loads with** | `docs/sop/README.md` + foundations SOP-001…014 (assumed known; do not restate them) |
 
 > The SDR fills the pipeline with well-qualified opportunities, not noise: it sources leads against the ICP, qualifies them hard (a fast documented disqualify is a win), converts qualified leads into opportunity records for `sales`, and drafts first-touch outreach. It never sends anything external — every outbound message stops at the `external-comms` gate for a human to send.
@@ -98,6 +98,50 @@ Per [SOP-003](../foundations/SOP-003-human-approval-gates.md): finished artifact
 | `marketing` | campaign responses / inbound leads | `solutions-architect` | the specific technical unknown blocking qualification |
 | human (gate decision) | sent/approved outreach | human (sales-delivery Approver) | outreach draft + APR with exact send action |
 
+### 7.1 Role flow — visual
+
+How work reaches this role, what it produces, and where it stops for a human (generated with `/visualize-agents`; grounded in the agent charter, `company/org/`, and `.claude/workflows/`):
+
+```mermaid
+flowchart LR
+  classDef ai fill:#dbeafe,stroke:#1d4ed8,color:#1e3a8a
+  classDef human fill:#fecaca,stroke:#b91c1c,color:#7f1d1d
+  classDef gate fill:#fef3c7,stroke:#b45309,color:#78350f
+  classDef art fill:#f1f5f9,stroke:#64748b,color:#334155
+  classDef wf fill:#ede9fe,stroke:#6d28d9,color:#4c1d95
+
+  wf1[[opportunity-to-proposal]]:::wf
+  marketing[marketing]:::ai
+  sdr[sdr]:::ai
+  sales[sales]:::ai
+  sa[solutions-architect]:::ai
+  icp("ICP definition — CLAUDE.md §0"):::art
+  leads("lead records — company/leads/"):::art
+  opp("opportunity record — stage discovery"):::art
+  draft("outreach draft + follow-up sequence"):::art
+  g1{"external-comms gate — customer-specific"}:::gate
+  appr(["Sales & Delivery Approver — human"]):::human
+  dep(["Sales & Delivery Deputy — human"]):::human
+  head(["Sales & Delivery Head — human"]):::human
+  ceo(["CEO — terminal backstop"]):::human
+
+  head -->|"defines the ICP (with the CEO); if TBD → QST, stop"| icp
+  icp --> sdr
+  marketing -->|"inbound leads / campaign responses"| sdr
+  wf1 -.->|"discovery structuring (as the SDR/sales)"| sdr
+  sdr -->|"/lead-gen"| leads
+  sdr -->|"/qualify-lead → QUALIFIED"| opp
+  opp -->|"handoff with qualification notes"| sales
+  sdr -.->|"technical unknown blocking qualification"| sa
+  sdr -->|"/sales-outreach"| draft
+  draft -->|"APR: exact send action"| g1
+  g1 --> appr
+  appr -->|"human sends → lead stage contacted"| leads
+  appr -. SLA .-> dep
+  dep -. SLA .-> head
+  head -. SLA .-> ceo
+```
+
 ## 8. KPIs & metrics
 
 Computed from the records, never guessed (SOP-008); unknowns `TBD`. Reviewed at the HITL sampling cadence (SOP-013).
@@ -124,4 +168,4 @@ Computed from the records, never guessed (SOP-008); unknowns `TBD`. Reviewed at 
 Agent charter `.claude/agents/sdr.md` · skills `/lead-gen`, `/qualify-lead`, `/sales-outreach`, `deep-research` (plugin) · foundations [SOP-002](../foundations/SOP-002-system-of-record.md), [SOP-003](../foundations/SOP-003-human-approval-gates.md), [SOP-004](../foundations/SOP-004-escalation-and-slas.md), [SOP-008](../foundations/SOP-008-quality-evidence-and-honesty.md), [SOP-013](../foundations/SOP-013-human-in-the-loop-review.md) · records `company/leads/`, `company/opportunities/`, `company/registry.md` · routing `company/org/routing.md` · `guides/company-os.md`.
 
 ---
-*Changelog: 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*
+*Changelog: 1.2 — added §7.1 role flow diagram (`/visualize-agents`). 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*
