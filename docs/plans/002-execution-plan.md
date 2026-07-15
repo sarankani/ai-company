@@ -70,6 +70,14 @@ States: `todo` · `in-progress` · `blocked` · `waiting-on-gate` · `in-review`
 | EX-305 | `/hiring-plan` for first Department Approvers (order: by gate volume — measure in EX-109/304) | hr | Saran hire decision | todo |
 | EX-306 | Seat handover runbook + first non-Saran approver live | hr + tech-writer | Saran | todo |
 
+### Governance track — SOP library & orchestration (added 2026-07-15)
+
+| ID | Task | Owner (AI) | Gate / approver | State |
+|---|---|---|---|---|
+| EX-G01 | SOP library v1.1 (foundations 000–014, five-part standard, 24 role SOPs) + charter wiring + chief-of-staff dispatcher | tech-writer + ceo | merge-deploy → saravanan-p (APR-20260715-009); content approved by saran (APR-007/008) | waiting-on-gate — PR #67, issue #68 |
+
+*Process note: this track was opened retroactively (work preceded the issue — SOP-005 deviation, logged in `memory/decisions-log.md`).*
+
 ## 3. Cadence & reporting
 
 - **Weekly:** `company-standup` workflow reports progress against this board; project-manager updates task states and flags `blocked` items with a crisp escalation (situation + options + recommendation).

@@ -4,7 +4,7 @@ Authoritative list of departments, their AI employees, and the gates each depart
 
 | id | Department | AI employees | Gates owned |
 |---|---|---|---|
-| `leadership` | Leadership | ceo, eng-manager | strategy escalations (internal — terminal backstop queue lives here) |
+| `leadership` | Leadership | ceo, eng-manager, chief-of-staff | strategy escalations (internal — terminal backstop queue lives here) |
 | `people-finance` | People & Finance | hr, finance | money (funds, spend, invoices) · people (dual: + CEO) · revenue booking |
 | `product-design` | Product & Design | product-manager, project-manager, designer, tech-writer | roadmap commitments |
 | `engineering` | Engineering | developer, code-reviewer, tester, devops, security | merge / deploy / migrations |

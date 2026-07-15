@@ -8,7 +8,7 @@ Auto-loaded by Claude Code. This is **Evalyn's** operating brain: it tells every
 
 - **Company:** Evalyn
 - **What we do:** An AI-run IT services company — custom software development and delivery, operated end to end (lead → proposal → delivery → invoice → renewal) by AI digital employees with **minimum human resources**.
-- **Operating model:** 23 AI employees do the work; **humans hold the approval gates via per-department seats** (Approver / Deputy / Head, CEO as terminal backstop — see the seat table below). The company's design goal is maximum autonomous throughput between the gates, zero autonomous action at them.
+- **Operating model:** 24 AI employees do the work; **humans hold the approval gates via per-department seats** (Approver / Deputy / Head, CEO as terminal backstop — see the seat table below). The company's design goal is maximum autonomous throughput between the gates, zero autonomous action at them.
 - **Mission / priorities this quarter:** TBD — set via `/okrs` with the `ceo` agent.
 - **Ideal Customer Profile (ICP):** TBD — define before running `/lead-gen` (industry, size, geo, trigger, disqualifiers).
 - **Brand voice:** Direct, warm, technically credible, no hype. Every external claim must be backable (operating principle 4).
@@ -25,11 +25,11 @@ Auto-loaded by Claude Code. This is **Evalyn's** operating brain: it tells every
 
 ## 1. What this is
 
-Evalyn is a full AI company: **23 employee personas** (`.claude/agents/`), their **26 skills** (`.claude/commands/`), **7 lifecycle workflows** (`.claude/workflows/`), and a **Company OS** — a persistent system of record — that together run an IT business from lead to cash to renewal with humans at the gates. Guides in `guides/`: `operating-model.md`, `company-os.md`, `value-chain.md`, `getting-started.md`, `integrations.md`.
+Evalyn is a full AI company: **24 employee personas** (`.claude/agents/`), their **26 skills** (`.claude/commands/`), **7 lifecycle workflows** (`.claude/workflows/`), and a **Company OS** — a persistent system of record — that together run an IT business from lead to cash to renewal with humans at the gates. Guides in `guides/`: `operating-model.md`, `company-os.md`, `value-chain.md`, `getting-started.md`, `integrations.md`.
 
 ## 2. The roster (invoke with *"use the <name> agent…"*)
 
-**Leadership:** `ceo`, `eng-manager` · **People/Finance:** `hr`, `finance` · **Product/Design:** `product-manager`, `project-manager`, `designer`, `tech-writer` · **Engineering:** `developer`, `code-reviewer`, `tester`, `devops`, `security` · **Sales/Delivery:** `sdr`, `sales`, `solutions-architect`, `delivery-manager`, `account-manager` · **Marketing/Support:** `marketing`, `social-media`, `support` · **Operations:** `procurement`, `data-analyst`.
+**Leadership:** `ceo`, `eng-manager`, `chief-of-staff` (dispatcher — routes any incoming request to the owning role/workflow; holds no gates) · **People/Finance:** `hr`, `finance` · **Product/Design:** `product-manager`, `project-manager`, `designer`, `tech-writer` · **Engineering:** `developer`, `code-reviewer`, `tester`, `devops`, `security` · **Sales/Delivery:** `sdr`, `sales`, `solutions-architect`, `delivery-manager`, `account-manager` · **Marketing/Support:** `marketing`, `social-media`, `support` · **Operations:** `procurement`, `data-analyst`.
 
 ## 3. The system of record — READ AND WRITE IT
 
