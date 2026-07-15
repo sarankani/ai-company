@@ -6,6 +6,7 @@ title: Department Approver
 availability: available        # available | busy | ooo
 ooo_until: null                # ISO date when availability = ooo
 roles:
+  - {department: product-design, seat: head}
   # Approver seats handed over from the founder (people-gated change,
   # directed and approved by the Founder-Operator, 2026-07-13)
   - {department: engineering, seat: approver}

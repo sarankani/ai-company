@@ -17,7 +17,6 @@ Index of all records in `company/`. Every employee updates this file when creati
 | id | type | gate | department | state | assignee | sla_due |
 |---|---|---|---|---|---|---|
 | APR-20260715-001 | approval | external-comms | marketing-support | approved | saran | 2026-07-20T05:52:17Z |
-| APR-20260715-004 | approval | people | people-finance | approved | saran | 2026-07-16T09:46:35Z |
 <!-- approvals:end -->
 
 

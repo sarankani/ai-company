@@ -18,7 +18,6 @@ roles:
   - {department: people-finance, seat: deputy}
   - {department: people-finance, seat: head}
   - {department: product-design, seat: deputy}
-  - {department: product-design, seat: head}
   - {department: engineering, seat: deputy}
   - {department: engineering, seat: head}
   - {department: sales-delivery, seat: approver}
