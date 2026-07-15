@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "test:fixtures": "node test/self-check.mjs",
+    "test:e2e": "node test/specs/item-decide.spec.mjs"
   },
   "dependencies": {
     "next": "^15.5.20",
