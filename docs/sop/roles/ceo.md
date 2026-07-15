@@ -6,7 +6,7 @@
 | **Department** | `leadership` — Leadership |
 | **Owner** | leadership Head (human) |
 | **Status** | Active |
-| **Version** | 1.1 (2026-07-15) |
+| **Version** | 1.2 (2026-07-15) |
 | **Loads with** | `docs/sop/README.md` + foundations SOP-001…014 (assumed known; do not restate them) |
 
 > The AI CEO keeps the company pointed at the right things: it drafts strategy and quarterly OKRs, synthesizes the company-wide picture, resolves cross-functional conflicts inside its authority, and prepares board/investor communications. It **recommends; the human Founder/CEO decides strategy** — the `ceo` agent is not the human CEO seat and never stamps a gate, signs, sends, or commits the company to anything.
@@ -112,6 +112,44 @@ Per [SOP-003](../foundations/SOP-003-human-approval-gates.md): finished artifact
 | `finance` | burn/runway/pipeline numbers (or `TBD`) | `marketing` | company narrative for external content (claims backable, per honesty bar) |
 | human Founder/CEO | ratified strategy, gate decisions | `memory/decisions-log.md`, `docs/adrs/` | decision recorded; ADR proposed for hard-to-reverse calls |
 
+### 7.1 Role flow — visual
+
+How work reaches this role, what it produces, and where it stops for a human (generated with `/visualize-agents`; grounded in the agent charter, `company/org/`, and `.claude/workflows/`):
+
+```mermaid
+flowchart LR
+  classDef ai fill:#dbeafe,stroke:#1d4ed8,color:#1e3a8a
+  classDef human fill:#fecaca,stroke:#b91c1c,color:#7f1d1d
+  classDef gate fill:#fef3c7,stroke:#b45309,color:#78350f
+  classDef art fill:#f1f5f9,stroke:#64748b,color:#334155
+  classDef wf fill:#ede9fe,stroke:#6d28d9,color:#4c1d95
+
+  wf1[[company-standup]]:::wf -->|Synthesize phase| ceoA[ceo]:::ai
+  wf2[[product-launch]]:::wf -->|"go/no-go verdict draft"| ceoA
+  em[eng-manager]:::ai -->|status roll-up| ceoA
+  fin[finance]:::ai -->|"burn / runway / pipeline numbers"| ceoA
+
+  ceoA --> okr("OKR proposal / scored review"):::art
+  okr -->|"ratification — strategy call, QST-* if async"| ceoH(["Founder/CEO — human, terminal backstop"]):::human
+  ceoH -->|ratified priorities| pm[product-manager]:::ai
+  ceoH -->|ratified priorities| em
+
+  ceoA --> summ("exec summary — risks, decisions, pending gates"):::art --> ceoH
+  ceoA --> memo("cross-functional decision memo"):::art -->|tactical call| depts[departments in conflict]:::ai
+  memo -.->|strategic deadlock| ceoH
+
+  ceoA --> bu("board / investor update draft"):::art --> g1{external-comms gate}:::gate
+  g1 --> mAppr(["Marketing-Support Approver — human"]):::human
+
+  ceoA -->|people recommendation prep| g2{"people gate — dual stamp"}:::gate
+  g2 --> pfAppr(["People-Finance Approver — human"]):::human
+  g2 --> ceoH
+
+  mAppr -. SLA .-> dep2(["dept Deputy — human"]):::human
+  dep2 -. SLA .-> head2(["dept Head — human"]):::human
+  head2 -. SLA .-> ceoH
+```
+
 ## 8. KPIs & metrics
 
 Computed from records, never guessed (SOP-008); every claim grounded, unknowns marked `TBD` with a plan to measure. Reviewed at the HITL sampling cadence (SOP-013):
@@ -139,4 +177,4 @@ Computed from records, never guessed (SOP-008); every claim grounded, unknowns m
 Agent charter `.claude/agents/ceo.md` · skills `/okrs`, `/board-update` (charter also lists `/strategy-review` — not yet in the skill library, `TBD`) · workflow `.claude/workflows/company-standup.js` · foundations [SOP-003](../foundations/SOP-003-human-approval-gates.md), [SOP-004](../foundations/SOP-004-escalation-and-slas.md), SOP-001/005/008/010 · `company/org/routing.md` · `memory/` · `docs/plans/002-execution-plan.md` · `docs/adrs/`.
 
 ---
-*Changelog: 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*
+*Changelog: 1.2 — added §7.1 role flow diagram (`/visualize-agents`). 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*

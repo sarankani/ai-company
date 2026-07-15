@@ -6,7 +6,7 @@
 | **Department** | `leadership` — Leadership |
 | **Owner** | leadership Head (human) |
 | **Status** | Active |
-| **Version** | 1.1 (2026-07-15) |
+| **Version** | 1.2 (2026-07-15) |
 | **Loads with** | `docs/sop/README.md` + foundations SOP-001…014 (assumed known; do not restate them) |
 
 > The Engineering Manager makes the engineering pod (`developer`, `code-reviewer`, `tester`, `devops`, `security`) ship the right things sustainably: it sequences the work, unblocks daily, balances load, reports risk upward, and prepares — never approves — every `merge-deploy` gate request. It stops for a human at every merge/deploy, every customer date, and every people decision.
@@ -118,6 +118,46 @@ Per [SOP-003](../foundations/SOP-003-human-approval-gates.md): finished artifact
 | `project-manager` | schedule/dependency flags | `project-manager` | updated plan and issue states for delivery tracking |
 | `hr` | people-process needs | `hr` | 1:1 notes and observations — surfaced facts, no decisions |
 
+### 7.1 Role flow — visual
+
+How work reaches this role, what it produces, and where it stops for a human (generated with `/visualize-agents`; grounded in the agent charter, `company/org/`, and `.claude/workflows/`):
+
+```mermaid
+flowchart LR
+  classDef ai fill:#dbeafe,stroke:#1d4ed8,color:#1e3a8a
+  classDef human fill:#fecaca,stroke:#b91c1c,color:#7f1d1d
+  classDef gate fill:#fef3c7,stroke:#b45309,color:#78350f
+  classDef art fill:#f1f5f9,stroke:#64748b,color:#334155
+  classDef wf fill:#ede9fe,stroke:#6d28d9,color:#4c1d95
+
+  wf1[[company-standup]]:::wf -->|engineering lens| em[eng-manager]:::ai
+  wf2[[product-launch]]:::wf -->|engineering-qa readiness| em
+  wf3[[project-kickoff]]:::wf -->|"resourcing plan, with delivery-manager"| em
+  pm[product-manager]:::ai -->|"priorities + specs with acceptance criteria"| em
+
+  em --> plan("sequenced, assigned plan"):::art
+  plan --> dev[developer]:::ai
+  plan --> cr[code-reviewer]:::ai
+  plan --> tst[tester]:::ai
+  plan --> dvo[devops]:::ai
+  plan --> sec[security]:::ai
+  dev & cr & tst & dvo & sec --> ev("readiness evidence — PRs, review verdicts, test results, rollback steps, security review"):::art
+
+  ev --> apr("merge-deploy APR — one exact action"):::art
+  em -->|"verifies §4.4 checklist, prepares"| apr
+  apr --> g1{merge-deploy gate}:::gate
+  g1 --> eAppr(["Engineering Approver — human"]):::human
+  eAppr -->|"approved — execute exact action"| dvo
+
+  em --> roll("status roll-up — on-track / at-risk / blocked / one decision"):::art
+  roll --> ceoA[ceo]:::ai
+  roll -->|scope-affecting risks| pm
+
+  eAppr -. SLA .-> eDep(["Engineering Deputy — human"]):::human
+  eDep -. SLA .-> eHead(["Engineering Head — human"]):::human
+  eHead -. SLA .-> ceoH(["Founder/CEO — human, terminal backstop"]):::human
+```
+
 ## 8. KPIs & metrics
 
 Computed from the board, issues, PRs, and CI — never guessed (SOP-008); unknowns `TBD`. Reviewed at the HITL sampling cadence (SOP-013):
@@ -145,4 +185,4 @@ Computed from the board, issues, PRs, and CI — never guessed (SOP-008); unknow
 Agent charter `.claude/agents/eng-manager.md` · skill `/one-on-one` (charter also lists `/team-report`, `/sprint-plan` and pack skills `code-review`, `deploy-checklist` — not yet in the skill library, `TBD`) · workflow `.claude/workflows/company-standup.js` (engineering lens) · foundations [SOP-003](../foundations/SOP-003-human-approval-gates.md), [SOP-004](../foundations/SOP-004-escalation-and-slas.md), SOP-005/008/009 · `company/org/routing.md` · `docs/plans/002-execution-plan.md` · `company/approvals/`.
 
 ---
-*Changelog: 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*
+*Changelog: 1.2 — added §7.1 role flow diagram (`/visualize-agents`). 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*
