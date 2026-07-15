@@ -2,6 +2,10 @@
 
 Append-only, newest first. Format: `## YYYY-MM-DD — decision` + who + why in 1–3 lines. Architectural decisions go to `docs/adrs/` instead.
 
+## 2026-07-15 — MILESTONE: SOP library merged (PR #67) — APR-009 decided; lives on `sop`, not yet main
+
+**Who:** saran (decided by merging, 20:02 UTC) / tech-writer (stamped). APR-20260715-009 approved — but note: PR #67's base was the **`sop` branch, not `main`** (default branch is main). The full SOP library (foundations 000–014, 24 role SOPs, charter wiring, chief-of-staff) is live on `sop`; agents working from `main` will NOT load it until `sop` is promoted to `main`. EX-G01 done on the board; issue #68 closed with evidence. Open follow-up: Founder to promote `sop` → `main` (or confirm `sop` is intentionally the staging branch).
+
 ## 2026-07-15 — Loop closed on the SOP project: retroactive APRs + issue #68 (SOP-005 deviation logged)
 
 **Who:** Saran (requested "close the loop properly") / tech-writer (executed). The SOP-library work had been done without its own tracked issue or APR records — a deviation from SOP-005 §2.1 (visible state before work) and SOP-003 §2.6 (in-chat approvals still get stamped). Corrected: APR-20260715-007 (adopt SOP library — approved, retroactive) · APR-20260715-008 (chief-of-staff + org change — approved, retroactive) · APR-20260715-009 (merge PR #67 to main — PENDING, assigned saravanan-p, P1). Issue #68 opened as the visible state (waiting-on-gate), board updated (EX-G01). Lesson: even Founder-directed meta-work follows the task lifecycle — the issue comes first next time.
