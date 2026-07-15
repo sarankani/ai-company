@@ -43,21 +43,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: main
-      - name: Debug config presence (booleans only, no secret values)
-        env:
-          HAS_SECRET_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL != '' }}
-          HAS_VAR_WEBHOOK: ${{ vars.SLACK_WEBHOOK_URL != '' }}
-          HAS_VAR_PANEL: ${{ vars.PANEL_BASE_URL != '' }}
-          HAS_SECRET_PANEL: ${{ secrets.PANEL_BASE_URL != '' }}
-          HAS_SECRET_SMTP: ${{ secrets.SMTP_HOST != '' }}
-          HAS_SECRET_BOT: ${{ secrets.SLACK_BOT_TOKEN != '' }}
-        run: |
-          echo "secret SLACK_WEBHOOK_URL present: $HAS_SECRET_WEBHOOK"
-          echo "var    SLACK_WEBHOOK_URL present: $HAS_VAR_WEBHOOK"
-          echo "var    PANEL_BASE_URL     present: $HAS_VAR_PANEL"
-          echo "secret PANEL_BASE_URL     present: $HAS_SECRET_PANEL"
-          echo "secret SMTP_HOST          present: $HAS_SECRET_SMTP"
-          echo "secret SLACK_BOT_TOKEN    present: $HAS_SECRET_BOT"
       - name: Scan, escalate, notify
         env:
           SMTP_HOST: ${{ secrets.SMTP_HOST }}
