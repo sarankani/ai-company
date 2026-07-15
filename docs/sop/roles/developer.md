@@ -6,7 +6,7 @@
 | **Department** | `engineering` — Engineering |
 | **Owner** | Engineering Head (human) |
 | **Status** | Active |
-| **Version** | 1.1 (2026-07-15) |
+| **Version** | 1.2 (2026-07-15) |
 | **Loads with** | `docs/sop/README.md` + foundations SOP-001…014 (assumed known; do not restate them) |
 
 > Turn approved specs and reproduced bugs into correct, tested, maintainable code — delivered as small PRs that are easy to review and hard to break. You implement; you never ship: merging to main, deploying, running migrations, and touching prod data all stop at the `merge-deploy` gate.
@@ -112,6 +112,31 @@ Draft, don't ship: write the APR record per SOP-003 and stop; surface it on the 
 | `security` | Confirmed finding + remediation guidance | `code-reviewer` + `security` | Fix PR; `security` re-verifies before the merge gate |
 | `designer` | Design spec / assets | `code-reviewer` | Implementation faithful to the design; deviations flagged, not silent |
 
+### 7.1 Role flow — visual
+
+How work reaches this role, what it produces, and where it stops for a human (generated with `/visualize-agents`; grounded in the agent charter, `company/org/`, and `.claude/workflows/`):
+
+```mermaid
+flowchart LR
+  classDef ai fill:#dbeafe,stroke:#1d4ed8,color:#1e3a8a
+  classDef human fill:#fecaca,stroke:#b91c1c,color:#7f1d1d
+  classDef gate fill:#fef3c7,stroke:#b45309,color:#78350f
+  classDef art fill:#f1f5f9,stroke:#64748b,color:#334155
+  classDef wf fill:#ede9fe,stroke:#6d28d9,color:#4c1d95
+
+  pm[product-manager]:::ai -->|approved spec| dev
+  bugs[tester / support]:::ai -->|bug + repro| dev
+  em[eng-manager]:::ai -->|refactor request| dev
+  dev[developer]:::ai --> pr("PR + tests, green CI"):::art
+  dev -->|"new dependency (license/security)"| sec[security]:::ai
+  sec -->|review outcome attached| pr
+  pr --> cr[code-reviewer]:::ai
+  cr -->|verdict| g1{merge-deploy gate}:::gate
+  cr -->|approved-PR pointer| qa[tester]:::ai
+  g1 --> appr([Engineering Approver — human]):::human
+  appr -. SLA .-> dep([Deputy]):::human -. SLA .-> head([Head]):::human -. SLA .-> ceoH([CEO — terminal backstop]):::human
+```
+
 ## 8. KPIs & metrics
 
 Computed from CI/PR records, never guessed ([SOP-008](../foundations/SOP-008-quality-evidence-and-honesty.md)); reviewable at the HITL sampling cadence (SOP-013).
@@ -139,4 +164,4 @@ Computed from CI/PR records, never guessed ([SOP-008](../foundations/SOP-008-qua
 Agent charter `.claude/agents/developer.md` · skills: `/refactor-plan`, `code-review`, `test-writer` + `adversarial-verifier` subagents (software pack) · foundations: [SOP-003](../foundations/SOP-003-human-approval-gates.md), [SOP-004](../foundations/SOP-004-escalation-and-slas.md), [SOP-005](../foundations/SOP-005-task-lifecycle.md), [SOP-007](../foundations/SOP-007-security-and-data-protection.md), [SOP-008](../foundations/SOP-008-quality-evidence-and-honesty.md), [SOP-011](../foundations/SOP-011-data-ingestion-and-privacy.md) (data pipelines/filters built through the PR chain), [SOP-013](../foundations/SOP-013-human-in-the-loop-review.md), [SOP-014](../foundations/SOP-014-model-deployment-and-rollback.md) (model/prompt changes are deployments) · records: `docs/specs/`, `docs/adrs/`, `docs/plans/002-execution-plan.md`.
 
 ---
-*Changelog: 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*
+*Changelog: 1.2 — added §7.1 role flow diagram (`/visualize-agents`). 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*

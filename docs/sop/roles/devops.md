@@ -6,7 +6,7 @@
 | **Department** | `engineering` — Engineering |
 | **Owner** | Engineering Head (human) |
 | **Status** | Active |
-| **Version** | 1.1 (2026-07-15) |
+| **Version** | 1.2 (2026-07-15) |
 | **Loads with** | `docs/sop/README.md` + foundations SOP-001…014 (assumed known; do not restate them) |
 
 > Make shipping safe and boring: CI/CD, release readiness, infrastructure, monitoring, and calm incident leadership. You prepare and verify every deploy down to the exact command — and stop: the deploy itself, migrations, prod infra changes, and secret rotations are the `merge-deploy` gate, decided by a human even at P0.
@@ -111,6 +111,32 @@ Draft, don't execute; P0 accelerates the humans, it never removes them; silence 
 | `support` / `tester` | Declared incident (prod/infra) | `security` / `eng-manager` | Resolved incident + live timeline; breach class → lead to `security` |
 | — (self, post-incident) | Resolved incident record | `eng-manager` + task owners | Blameless postmortem with tracked corrective actions, filed ≤ 3 business days |
 
+### 7.1 Role flow — visual
+
+How work reaches this role, what it produces, and where it stops for a human (generated with `/visualize-agents`; grounded in the agent charter, `company/org/`, and `.claude/workflows/`):
+
+```mermaid
+flowchart LR
+  classDef ai fill:#dbeafe,stroke:#1d4ed8,color:#1e3a8a
+  classDef human fill:#fecaca,stroke:#b91c1c,color:#7f1d1d
+  classDef gate fill:#fef3c7,stroke:#b45309,color:#78350f
+  classDef art fill:#f1f5f9,stroke:#64748b,color:#334155
+  classDef wf fill:#ede9fe,stroke:#6d28d9,color:#4c1d95
+
+  wf1[[product-launch]]:::wf -->|engineering-qa readiness lens| do
+  qa[tester]:::ai -->|go/no-go + evidence| do
+  dev[developer / code-reviewer]:::ai -->|"merged-ready PRs, migration notes"| do
+  inc[support / tester]:::ai -->|"declared incident (prod/infra)"| do
+  do[devops]:::ai --> ready("readiness verdict + checklist + verified rollback"):::art
+  ready -->|"APR: exact deploy action + rollback plan"| g1{merge-deploy gate}:::gate
+  do -->|"P0 containment APR (prod-touching)"| g1
+  g1 --> appr([Engineering Approver — human]):::human
+  appr -->|approved APR| dply("executed deploy + bake-window watch"):::art
+  appr -. SLA .-> dep([Deputy]):::human -. SLA .-> head([Head]):::human -. SLA .-> ceoH([CEO — terminal backstop]):::human
+  do --> post("blameless postmortem + tracked corrective actions"):::art
+  do -->|breach/exposure discovered — incident lead transfers| sec[security]:::ai
+```
+
 ## 8. KPIs & metrics
 
 Computed from pipeline and incident records, never recalled ([SOP-008](../foundations/SOP-008-quality-evidence-and-honesty.md)); reviewable at the HITL sampling cadence (SOP-013). Unknowns marked `TBD` and treated as blockers.
@@ -138,4 +164,4 @@ Computed from pipeline and incident records, never recalled ([SOP-008](../founda
 Agent charter `.claude/agents/devops.md` · skills: `deploy-readiness` workflow, `/incident`, `/postmortem` (software pack) · runbooks: `docs/runbooks/` (`panel-deploy.md`, `project-board-setup.md`, `ex-208-acceptance-test.md`) · foundations: [SOP-003](../foundations/SOP-003-human-approval-gates.md), [SOP-004](../foundations/SOP-004-escalation-and-slas.md), [SOP-007](../foundations/SOP-007-security-and-data-protection.md), [SOP-009](../foundations/SOP-009-incident-management.md), [SOP-013](../foundations/SOP-013-human-in-the-loop-review.md) (monitoring feeds/HITL queues), [SOP-014](../foundations/SOP-014-model-deployment-and-rollback.md) (owns the deploy/rollback pipeline; rollback pre-approval semantics) · peers: SOP-R11 (`tester`), SOP-R13 (`security`).
 
 ---
-*Changelog: 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*
+*Changelog: 1.2 — added §7.1 role flow diagram (`/visualize-agents`). 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*

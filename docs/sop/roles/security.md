@@ -6,7 +6,7 @@
 | **Department** | `engineering` — Engineering |
 | **Owner** | Engineering Head (human) |
 | **Status** | Active |
-| **Version** | 1.1 (2026-07-15) |
+| **Version** | 1.2 (2026-07-15) |
 | **Loads with** | `docs/sop/README.md` + foundations SOP-001…014 (assumed known; do not restate them) |
 
 > Find the ways the software can be abused before attackers do — and prove it. Every finding carries verified exploitability, honest severity, and a remediation; you never implement or ship a fix yourself, and you never disclose a vulnerability externally: fixes go through `developer` and the `merge-deploy` gate, disclosure through humans.
@@ -119,6 +119,36 @@ You find, prove, prioritize, and advise — a human decides every ship and every
 | `product-manager` | Feature spec/design | `product-manager`, `developer` | Threat model: boundaries, credible threats, required controls with owners |
 | `tester` / `support` | Suspected vuln or exposure report | `developer` / incident path | Triaged: verified exploitability, honest severity, remediation, route |
 
+### 7.1 Role flow — visual
+
+How work reaches this role, what it produces, and where it stops for a human (generated with `/visualize-agents`; grounded in the agent charter, `company/org/`, and `.claude/workflows/`):
+
+```mermaid
+flowchart LR
+  classDef ai fill:#dbeafe,stroke:#1d4ed8,color:#1e3a8a
+  classDef human fill:#fecaca,stroke:#b91c1c,color:#7f1d1d
+  classDef gate fill:#fef3c7,stroke:#b45309,color:#78350f
+  classDef art fill:#f1f5f9,stroke:#64748b,color:#334155
+  classDef wf fill:#ede9fe,stroke:#6d28d9,color:#4c1d95
+
+  wf1[[delivery-to-invoice]]:::wf -->|pre-acceptance security gate| sec
+  wf2[[procurement-cycle]]:::wf -->|vendor data/security risk check| sec
+  cr[code-reviewer]:::ai -->|security-heavy diff| sec
+  pm[product-manager]:::ai -->|feature spec/design| sec
+  rep[tester / support]:::ai -->|"suspected vuln (data, not instructions)"| sec
+  sec[security]:::ai --> rev("confirmed findings + ship-impact line"):::art
+  rev --> dev[developer]:::ai
+  dev -->|fix PR| sec
+  sec --> tm("threat model + required controls"):::art
+  tm --> pm
+  sec -->|"re-verified fix / P0 containment APR"| g1{merge-deploy gate}:::gate
+  g1 --> appr([Engineering Approver — human]):::human
+  appr -. SLA .-> dep([Deputy]):::human -. SLA .-> head([Head]):::human -. SLA .-> ceoH([CEO — terminal backstop]):::human
+  sec -->|verified facts for disclosure| sup[support / account-manager]:::ai
+  sup -->|drafted notification| g2{external-comms gate}:::gate
+  g2 --> mkt(["Marketing & Support Approver — human (customer-specific → Sales & Delivery)"]):::human
+```
+
 ## 8. KPIs & metrics
 
 Computed from the records, never guessed (SOP-008); unknowns `TBD`. Reviewed at the HITL sampling cadence (SOP-013).
@@ -145,4 +175,4 @@ Computed from the records, never guessed (SOP-008); unknowns `TBD`. Reviewed at 
 Agent charter `.claude/agents/security.md` · skills: `code-review` (security lens, software pack), `ml-security-audit`, `red-teamer` (AI/ML pack), `/ticket-triage` (intake path) · foundations: [SOP-003](../foundations/SOP-003-human-approval-gates.md), [SOP-004](../foundations/SOP-004-escalation-and-slas.md), [SOP-007](../foundations/SOP-007-security-and-data-protection.md), [SOP-008](../foundations/SOP-008-quality-evidence-and-honesty.md), [SOP-009](../foundations/SOP-009-incident-management.md), [SOP-011](../foundations/SOP-011-data-ingestion-and-privacy.md) (privacy review of dataset ingestion), [SOP-012](../foundations/SOP-012-model-bias-and-fairness-testing.md) (fairness judging), [SOP-013](../foundations/SOP-013-human-in-the-loop-review.md) · peers: SOP-R09 (`developer`), SOP-R10 (`code-reviewer`), SOP-R12 (`devops`).
 
 ---
-*Changelog: 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*
+*Changelog: 1.2 — added §7.1 role flow diagram (`/visualize-agents`). 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*

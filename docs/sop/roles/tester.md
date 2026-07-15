@@ -6,7 +6,7 @@
 | **Department** | `engineering` — Engineering |
 | **Owner** | Engineering Head (human) |
 | **Status** | Active |
-| **Version** | 1.1 (2026-07-15) |
+| **Version** | 1.2 (2026-07-15) |
 | **Loads with** | `docs/sop/README.md` + foundations SOP-001…014 (assumed known; do not restate them) |
 
 > Protect the user from broken software: risk-weighted test strategy, tests that can actually fail, reproduced bugs, and an evidence-backed go/no-go before every release. Your sign-off is advisory — a human makes the release call at the `merge-deploy` gate; you make that call a thirty-second read.
@@ -108,6 +108,34 @@ Your release sign-off is advisory input to the gate, never the decision. Draft, 
 | `support` | Ticket triaged via `/ticket-triage` | `developer` / `devops` / `security` | Reproduced bug: steps, expected vs actual, environment, severity |
 | `devops` | Release candidate (commit + build) | `eng-manager`, `devops` | Go/no-go: ready / ready-with-risks / not-ready + linked evidence |
 
+### 7.1 Role flow — visual
+
+How work reaches this role, what it produces, and where it stops for a human (generated with `/visualize-agents`; grounded in the agent charter, `company/org/`, and `.claude/workflows/`):
+
+```mermaid
+flowchart LR
+  classDef ai fill:#dbeafe,stroke:#1d4ed8,color:#1e3a8a
+  classDef human fill:#fecaca,stroke:#b91c1c,color:#7f1d1d
+  classDef gate fill:#fef3c7,stroke:#b45309,color:#78350f
+  classDef art fill:#f1f5f9,stroke:#64748b,color:#334155
+  classDef wf fill:#ede9fe,stroke:#6d28d9,color:#4c1d95
+
+  wf1[[delivery-to-invoice]]:::wf -->|milestone QA gate| qa
+  wf2[[product-launch]]:::wf -->|engineering-qa readiness lens| qa
+  pm[product-manager]:::ai -->|approved spec| qa
+  sup[support]:::ai -->|"ticket via /ticket-triage"| qa
+  do[devops]:::ai -->|release candidate| qa
+  qa[tester]:::ai --> plan("test plan: risks, cases, exclusions"):::art
+  plan --> dev[developer]:::ai
+  qa --> bug("reproduced bug: repro + severity + route"):::art
+  bug -->|code defect| dev
+  bug -->|security or data exposure| sec[security]:::ai
+  qa --> gng("go/no-go: ready / ready-with-risks / not-ready"):::art
+  gng -->|"evidence attached to release APR by devops/eng-manager"| g1{merge-deploy gate}:::gate
+  g1 --> appr([Engineering Approver — human]):::human
+  appr -. SLA .-> dep([Deputy]):::human -. SLA .-> head([Head]):::human -. SLA .-> ceoH([CEO — terminal backstop]):::human
+```
+
 ## 8. KPIs & metrics
 
 Computed from actual runs, never guessed ([SOP-008](../foundations/SOP-008-quality-evidence-and-honesty.md)); reviewable at the HITL sampling cadence (SOP-013).
@@ -135,4 +163,4 @@ Computed from actual runs, never guessed ([SOP-008](../foundations/SOP-008-quali
 Agent charter `.claude/agents/tester.md` · skills: `/test-strategy`, `test-gap` workflow, `test-writer` subagent (software pack), `/ticket-triage` (`.claude/commands/ticket-triage.md`) · foundations: [SOP-003](../foundations/SOP-003-human-approval-gates.md), [SOP-004](../foundations/SOP-004-escalation-and-slas.md), [SOP-007](../foundations/SOP-007-security-and-data-protection.md), [SOP-008](../foundations/SOP-008-quality-evidence-and-honesty.md), [SOP-009](../foundations/SOP-009-incident-management.md), [SOP-012](../foundations/SOP-012-model-bias-and-fairness-testing.md) (owns disaggregated fairness benchmarks), [SOP-013](../foundations/SOP-013-human-in-the-loop-review.md), [SOP-014](../foundations/SOP-014-model-deployment-and-rollback.md) (benchmark suites are deploy criteria) · peers: SOP-R09 (`developer`), SOP-R12 (`devops`).
 
 ---
-*Changelog: 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*
+*Changelog: 1.2 — added §7.1 role flow diagram (`/visualize-agents`). 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*
