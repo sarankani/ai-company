@@ -6,6 +6,7 @@ under `panel/**`:
 | Check | Job name | Gate |
 |---|---|---|
 | Type-check & build | `Type-check & build` | build must pass |
+| **Panel unit tests (Vitest)** | `Panel unit tests (Vitest)` | unit suite + coverage threshold (EX-604) |
 | **Panel E2E (Playwright)** | `Panel E2E (Playwright)` | e2e suite must pass (EX-603) |
 | Dependency audit | `Dependency audit` | no high/critical advisories |
 | Secret scan | `Secret scan` | no leaked secrets |
@@ -21,13 +22,14 @@ workflow make itself required). This runbook is that step.
 3. Enable **"Require status checks to pass before merging"**.
 4. In the search box add these checks by their job names:
    - `Type-check & build`
+   - `Panel unit tests (Vitest)`
    - `Panel E2E (Playwright)`
    - `Dependency audit`
    - `Secret scan`
 5. (Recommended) Enable **"Require branches to be up to date before merging"**.
 6. Save.
 
-After this, a panel PR cannot be merged until all four are green. A failing
+After this, a panel PR cannot be merged until all five are green. A failing
 e2e run attaches the Playwright HTML report + traces as a PR artifact
 (`playwright-report`) for debugging.
 

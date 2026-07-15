@@ -6,3 +6,6 @@ next-env.d.ts
 # Playwright (EX-602)
 playwright-report/
 test-results/
+
+# Vitest coverage (EX-604)
+coverage/
