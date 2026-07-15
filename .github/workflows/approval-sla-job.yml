@@ -10,14 +10,13 @@ name: Approval SLA & escalation job
 # NOTIFY_FROM. Without them the job still routes/escalates and logs what
 # it would have sent.
 #
-# Slack (EX-303): SLACK_WEBHOOK_URL (repo variable) posts gate events to a
-# channel with a deep link. To DM approvers individually instead, add a
-# `slack_id` to each company/org/humans/*.md AND make the prod-environment
-# SLACK_BOT_TOKEN available by adding `environment: production` to the scan
-# job below — but note that if the production environment has required-
-# reviewer protection, this SCHEDULED heartbeat would be gated, so prefer a
-# repo-level secret (or no protection) for an automated job. Slack down or
-# unconfigured never blocks routing — email still delivers (UC3).
+# Slack (EX-303): SLACK_WEBHOOK_URL (repository secret, or variable) posts
+# gate events to a channel with a deep link. IMPORTANT: this is a GitHub
+# Action — it reads GitHub repo secrets/variables, NOT Vercel env vars; a
+# webhook added only in Vercel is invisible here. To DM approvers individually
+# instead, add a `slack_id` to each company/org/humans/*.md and a repo secret
+# SLACK_BOT_TOKEN. Slack down or unconfigured never blocks routing — email
+# still delivers (UC3).
 
 on:
   schedule:
@@ -34,15 +33,12 @@ concurrency:
 jobs:
   scan:
     runs-on: ubuntu-latest
-    # Enter the `production` environment so this job can read the Slack config
-    # the Founder stored there — the prod-environment SLACK_BOT_TOKEN (secret)
-    # and SLACK_WEBHOOK_URL / PANEL_BASE_URL (environment variables). At repo
-    # scope these resolve to empty. ⚠️ The `production` environment must have
-    # NO required-reviewer/deployment protection rules, or this SCHEDULED
-    # heartbeat will be gated (wait for approval every 15 min). If you need
-    # protection on that environment, move the Slack config to repo-level
-    # (Actions secret + variable) and drop this line instead.
-    environment: production
+    # SMTP + Slack config lives as ENVIRONMENT secrets under the `prod`
+    # environment (not `production` — that name was wrong and resolved empty).
+    # The job must enter `prod` to read them. `prod` has "No restriction" on
+    # deployment branches and no required reviewers, so this 15-min heartbeat
+    # is not gated.
+    environment: prod
     steps:
       - uses: actions/checkout@v4
         with:
@@ -54,11 +50,11 @@ jobs:
           SMTP_USER: ${{ secrets.SMTP_USER }}
           SMTP_PASS: ${{ secrets.SMTP_PASS }}
           NOTIFY_FROM: ${{ secrets.NOTIFY_FROM }}
-          # Slack config, read from the `production` environment (above):
-          # webhook posts to the channel; PANEL_BASE_URL makes deep links land
-          # on the panel item.
-          SLACK_WEBHOOK_URL: ${{ vars.SLACK_WEBHOOK_URL }}
-          PANEL_BASE_URL: ${{ vars.PANEL_BASE_URL }}
+          # Slack: webhook posts to the channel. Read from a secret OR a
+          # variable (a webhook URL is a credential, so a secret is preferred).
+          # PANEL_BASE_URL makes deep links land on the panel item.
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL || vars.SLACK_WEBHOOK_URL }}
+          PANEL_BASE_URL: ${{ vars.PANEL_BASE_URL || secrets.PANEL_BASE_URL }}
           # Bot token DMs approvers who have a `slack_id` in humans/*.md;
           # otherwise the webhook channel post is used.
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
