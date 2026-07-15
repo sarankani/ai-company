@@ -2,6 +2,10 @@
 
 Append-only, newest first. Format: `## YYYY-MM-DD — decision` + who + why in 1–3 lines. Architectural decisions go to `docs/adrs/` instead.
 
+## 2026-07-14 — PANEL LIVE ON VERCEL — production dogfooding confirmed
+
+**Who:** Founder (deployed + using the live panel). The Control Panel is deployed to Vercel and working: the Founder toggled availability and approved a gate (APR-20260714-014, PR #50) **on the live app**, which committed straight to main via the GitHub API (production GitHubWriter). First real in-production use of the approval loop. Two follow-up polish items requested: (1) stop Vercel preview builds on the working branch — added `git.deploymentEnabled` in vercel.json (only main/production deploys on merge); (2) email magic-link base URL now auto-resolves to Vercel's production domain (VERCEL_PROJECT_PRODUCTION_URL) when PANEL_BASE_URL isn't set, with PANEL_BASE_URL still overriding for a custom domain. This effectively meets EX-208's spirit — a human approving an AI delivery through the deployed panel, no git/CLI.
+
 ## 2026-07-14 — Vercel deploy fix #2: pin framework=nextjs via vercel.json
 
 **Who:** developer / Founder (Vercel deploy). After the standalone fix (PR #49), the "No Output Directory named public" error persisted — second cause: the project's Framework Preset was "Other", so Vercel ran the build but looked for static output instead of using the Next builder. Fixed deterministically with `panel/vercel.json` `{"framework": "nextjs"}` (overrides the dashboard preset). Root Directory must still be `panel`. VERCEL=1 is auto-set by Vercel — no need to set it manually.

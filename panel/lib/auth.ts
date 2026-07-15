@@ -69,6 +69,16 @@ export function verifySession(cookie: string | undefined): string | null {
   return String(p.h);
 }
 
+/** Canonical base URL for magic links. Prefer an explicit PANEL_BASE_URL
+ * (set this for a custom domain); otherwise fall back to Vercel's stable
+ * production domain so email links resolve without extra config; else dev. */
+export function panelBaseUrl(): string {
+  if (process.env.PANEL_BASE_URL) return process.env.PANEL_BASE_URL.replace(/\/$/, "");
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL)
+    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+  return "http://localhost:3000";
+}
+
 export async function deliverLink(email: string, url: string): Promise<"sent" | "logged"> {
   const host = process.env.SMTP_HOST;
   if (!host) {
