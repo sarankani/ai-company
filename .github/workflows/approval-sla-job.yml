@@ -10,14 +10,13 @@ name: Approval SLA & escalation job
 # NOTIFY_FROM. Without them the job still routes/escalates and logs what
 # it would have sent.
 #
-# Slack (EX-303): SLACK_WEBHOOK_URL (repo variable) posts gate events to a
-# channel with a deep link. To DM approvers individually instead, add a
-# `slack_id` to each company/org/humans/*.md AND make the prod-environment
-# SLACK_BOT_TOKEN available by adding `environment: production` to the scan
-# job below — but note that if the production environment has required-
-# reviewer protection, this SCHEDULED heartbeat would be gated, so prefer a
-# repo-level secret (or no protection) for an automated job. Slack down or
-# unconfigured never blocks routing — email still delivers (UC3).
+# Slack (EX-303): SLACK_WEBHOOK_URL (repository secret, or variable) posts
+# gate events to a channel with a deep link. IMPORTANT: this is a GitHub
+# Action — it reads GitHub repo secrets/variables, NOT Vercel env vars; a
+# webhook added only in Vercel is invisible here. To DM approvers individually
+# instead, add a `slack_id` to each company/org/humans/*.md and a repo secret
+# SLACK_BOT_TOKEN. Slack down or unconfigured never blocks routing — email
+# still delivers (UC3).
 
 on:
   schedule:
@@ -34,11 +33,13 @@ concurrency:
 jobs:
   scan:
     runs-on: ubuntu-latest
-    # The Slack/SMTP config lives in the `production` environment, so the job
-    # must enter it to read those secrets (at repo scope they're empty).
-    # ⚠️ That environment must have NO required-reviewer protection, or this
-    # scheduled heartbeat will be gated (wait for approval every 15 min).
-    environment: production
+    # Config (SMTP + Slack) is read from REPOSITORY-level secrets/variables.
+    # A 2026-07-15 debug run proved the `production` environment is empty, so
+    # this job does NOT enter an environment (which also removes any risk of a
+    # required-reviewer rule gating this 15-min heartbeat). Add the webhook as
+    # a repository secret: Settings → Secrets and variables → Actions →
+    # "Repository secrets" → New → name SLACK_WEBHOOK_URL. (A repo *variable*
+    # of the same name also works via the `|| vars.*` fallback below.)
     steps:
       - uses: actions/checkout@v4
         with:
