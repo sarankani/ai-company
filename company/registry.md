@@ -18,6 +18,7 @@ Index of all records in `company/`. Every employee updates this file when creati
 |---|---|---|---|---|---|---|
 | APR-20260715-001 | approval | external-comms | marketing-support | pending | saran | 2026-07-20T05:52:17Z |
 | APR-20260715-002 | approval | external-comms | marketing-support | pending | saran | 2026-07-20T05:52:17Z |
+| APR-20260715-003 | approval | merge-deploy | engineering | pending | saravanan-p | 2026-07-16T05:54:07Z |
 | QST-20260715-001 | question | external-comms | marketing-support | pending | saran | 2026-07-20T05:52:17Z |
 <!-- approvals:end -->
 
