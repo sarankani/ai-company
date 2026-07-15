@@ -33,13 +33,12 @@ concurrency:
 jobs:
   scan:
     runs-on: ubuntu-latest
-    # Config (SMTP + Slack) is read from REPOSITORY-level secrets/variables.
-    # A 2026-07-15 debug run proved the `production` environment is empty, so
-    # this job does NOT enter an environment (which also removes any risk of a
-    # required-reviewer rule gating this 15-min heartbeat). Add the webhook as
-    # a repository secret: Settings → Secrets and variables → Actions →
-    # "Repository secrets" → New → name SLACK_WEBHOOK_URL. (A repo *variable*
-    # of the same name also works via the `|| vars.*` fallback below.)
+    # SMTP + Slack config lives as ENVIRONMENT secrets under the `prod`
+    # environment (not `production` — that name was wrong and resolved empty).
+    # The job must enter `prod` to read them. `prod` has "No restriction" on
+    # deployment branches and no required reviewers, so this 15-min heartbeat
+    # is not gated.
+    environment: prod
     steps:
       - uses: actions/checkout@v4
         with:
