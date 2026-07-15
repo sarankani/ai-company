@@ -34,9 +34,11 @@ concurrency:
 jobs:
   scan:
     runs-on: ubuntu-latest
-    # All notification config now lives in REPOSITORY secrets/variables, so no
-    # `environment:` is needed (and none is used — that keeps this scheduled
-    # heartbeat from ever being gated by environment protection rules).
+    # The Slack/SMTP config lives in the `production` environment, so the job
+    # must enter it to read those secrets (at repo scope they're empty).
+    # ⚠️ That environment must have NO required-reviewer protection, or this
+    # scheduled heartbeat will be gated (wait for approval every 15 min).
+    environment: production
     steps:
       - uses: actions/checkout@v4
         with:
