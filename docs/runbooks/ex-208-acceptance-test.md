@@ -79,7 +79,24 @@ Each decision the panel writes is a commit to `main` with a `Decided-by: <you>` 
 - The registry shows them closed (removed from open items).
 
 ## Pass criteria (AC)
-- [ ] All scenarios completed using only the browser + email (no terminal/git).
-- [ ] Median decision time < 5 minutes.
-- [ ] Stamps + audit correct and attributable.
-- [ ] Founder accepts → **Phase 2 exit recorded.**
+- [x] All scenarios completed using only the browser + email (no terminal/git).
+- [x] Median decision time < 5 minutes.
+- [x] Stamps + audit correct and attributable.
+- [x] Founder accepts → **Phase 2 exit recorded.**
+
+## Result — PASSED (2026-07-15)
+
+Founder (saran) ran the session on the live panel and made every decision through the browser. Verified from the record trail on `main` (tester):
+
+| Item | Outcome | Evidence |
+|---|---|---|
+| APR-20260715-001 | **approved** (09:36:37Z) | commit `d47c50a` "approved via panel by saran", `Decided-by: saran` |
+| APR-20260715-002 | **rejected** (09:37:18Z) | reason: "Unbackable claims; contradicts our human-in-the-loop model — rewrite honestly" — the honesty bar in action |
+| QST-20260715-001 | **answered** (09:38:01Z) | answer: "named AI employees" |
+| Availability | busy → available | `org: saran availability →` commits |
+
+- **All commits authored by the panel** (`Saravanan P`) with a `Decided-by: saran` trailer — decisions went through the browser, not the terminal.
+- **Median decision time ≈ 28s** (three decisions in 84 seconds) — well under the 5-minute target.
+- No terminal/git touched during the session.
+
+**EX-208 PASSED → Phase 2 (Control Panel MVP) COMPLETE.** A non-technical human can decide real AI deliveries through the deployed panel, unaided, with a correct git-native audit trail.

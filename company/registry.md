@@ -16,10 +16,9 @@ Index of all records in `company/`. Every employee updates this file when creati
 <!-- approvals:begin -->
 | id | type | gate | department | state | assignee | sla_due |
 |---|---|---|---|---|---|---|
-| APR-20260714-015 | approval | merge-deploy | engineering | approved | saravanan-p | 2026-07-15T18:44:12Z |
 | APR-20260715-001 | approval | external-comms | marketing-support | approved | saran | 2026-07-20T05:52:17Z |
-| APR-20260715-003 | approval | merge-deploy | engineering | pending | saravanan-p | 2026-07-16T05:54:07Z |
 | APR-20260715-004 | approval | people | people-finance | pending | saran | 2026-07-16T09:46:35Z |
+| APR-20260715-005 | approval | merge-deploy | engineering | pending | saravanan-p | 2026-07-20T09:47:46Z |
 <!-- approvals:end -->
 
 
