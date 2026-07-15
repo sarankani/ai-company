@@ -21,7 +21,7 @@ type Fixture = Awaited<ReturnType<typeof createFixture>>;
 export const test = base.extend<{ _reset: void }, { fx: Fixture }>({
   // one isolated clone + panel server per worker
   fx: [
-    async ({}, use) => {
+    async ({}, use: (fx: Fixture) => Promise<void>) => {
       const fx = await createFixture();
       await fx.startPanel();
       await fx.snapshot(); // pristine baseline reset() returns to
@@ -32,7 +32,7 @@ export const test = base.extend<{ _reset: void }, { fx: Fixture }>({
   ],
   // auto: restore the clone to the pristine baseline after each test
   _reset: [
-    async ({ fx }, use) => {
+    async ({ fx }: { fx: Fixture }, use: () => Promise<void>) => {
       await use();
       await fx.reset();
     },
