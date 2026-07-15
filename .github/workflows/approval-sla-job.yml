@@ -34,15 +34,9 @@ concurrency:
 jobs:
   scan:
     runs-on: ubuntu-latest
-    # Enter the `production` environment so this job can read the Slack config
-    # the Founder stored there — the prod-environment SLACK_BOT_TOKEN (secret)
-    # and SLACK_WEBHOOK_URL / PANEL_BASE_URL (environment variables). At repo
-    # scope these resolve to empty. ⚠️ The `production` environment must have
-    # NO required-reviewer/deployment protection rules, or this SCHEDULED
-    # heartbeat will be gated (wait for approval every 15 min). If you need
-    # protection on that environment, move the Slack config to repo-level
-    # (Actions secret + variable) and drop this line instead.
-    environment: production
+    # All notification config now lives in REPOSITORY secrets/variables, so no
+    # `environment:` is needed (and none is used — that keeps this scheduled
+    # heartbeat from ever being gated by environment protection rules).
     steps:
       - uses: actions/checkout@v4
         with:
@@ -54,11 +48,11 @@ jobs:
           SMTP_USER: ${{ secrets.SMTP_USER }}
           SMTP_PASS: ${{ secrets.SMTP_PASS }}
           NOTIFY_FROM: ${{ secrets.NOTIFY_FROM }}
-          # Slack config, read from the `production` environment (above):
-          # webhook posts to the channel; PANEL_BASE_URL makes deep links land
-          # on the panel item.
-          SLACK_WEBHOOK_URL: ${{ vars.SLACK_WEBHOOK_URL }}
-          PANEL_BASE_URL: ${{ vars.PANEL_BASE_URL }}
+          # Slack: webhook posts to the channel. Read from a secret OR a
+          # variable (a webhook URL is a credential, so a secret is preferred).
+          # PANEL_BASE_URL makes deep links land on the panel item.
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL || vars.SLACK_WEBHOOK_URL }}
+          PANEL_BASE_URL: ${{ vars.PANEL_BASE_URL || secrets.PANEL_BASE_URL }}
           # Bot token DMs approvers who have a `slack_id` in humans/*.md;
           # otherwise the webhook channel post is used.
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
