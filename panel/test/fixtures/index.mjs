@@ -31,15 +31,20 @@ import { execFile, spawn, spawnSync } from "child_process";
 import { promisify } from "util";
 import { randomBytes } from "crypto";
 import { createServer } from "net";
-import { fileURLToPath } from "url";
 import os from "os";
 import path from "path";
 
 const run = promisify(execFile);
-const HERE = path.dirname(fileURLToPath(import.meta.url));
-/** The real panel checkout (fixtures live at panel/test/fixtures/). */
-const PANEL_DIR = path.resolve(HERE, "..", "..");
 const IS_WIN = process.platform === "win32";
+
+/**
+ * Resolve the repo root (git toplevel) from the current working directory.
+ * Avoids `import.meta.url`, which breaks when a test runner (Playwright)
+ * transpiles this ESM module to CJS.
+ */
+async function repoToplevel() {
+  return (await run("git", ["rev-parse", "--show-toplevel"], { cwd: process.cwd() })).stdout.trim();
+}
 
 /**
  * Resolve a working Python 3 interpreter once. On Windows `python3` is usually
@@ -104,10 +109,12 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 class Fixture {
   /** @param {string} dir absolute path to the temp clone (…/repo)
-   *  @param {string} [tmpRoot] the mkdtemp root to remove on teardown */
-  constructor(dir, tmpRoot) {
+   *  @param {string} tmpRoot the mkdtemp root to remove on teardown
+   *  @param {string} panelDir the real panel checkout (cwd for `next dev`) */
+  constructor(dir, tmpRoot, panelDir) {
     this.dir = dir;
     this.tmpRoot = tmpRoot ?? dir;
+    this.panelDir = panelDir;
     /** @type {import("child_process").ChildProcess|null} */
     this.proc = null;
     this.baseUrl = null;
@@ -301,9 +308,9 @@ class Fixture {
     // the same everywhere with no shell. On POSIX, detach so we can signal the
     // whole process group (next forks workers); on Windows we kill the tree
     // with taskkill in teardown instead.
-    const nextCli = path.join(PANEL_DIR, "node_modules", "next", "dist", "bin", "next");
+    const nextCli = path.join(this.panelDir, "node_modules", "next", "dist", "bin", "next");
     this.proc = spawn(process.execPath, [nextCli, "dev", "--port", String(this.port)], {
-      cwd: PANEL_DIR,
+      cwd: this.panelDir,
       env,
       detached: !IS_WIN,
       windowsHide: true,
@@ -445,9 +452,9 @@ class Fixture {
  * @returns {Promise<Fixture>}
  */
 export async function createFixture(opts = {}) {
-  const source =
-    opts.sourceRepo ??
-    (await run("git", ["rev-parse", "--show-toplevel"], { cwd: PANEL_DIR })).stdout.trim();
+  const root = await repoToplevel();
+  const source = opts.sourceRepo ?? root;
+  const panelDir = opts.panelDir ?? path.join(root, "panel");
   const tmp = await fs.mkdtemp(path.join(os.tmpdir(), "evalyn-fx-"));
   const dir = path.join(tmp, "repo");
   // local clone of the current HEAD; --no-hardlinks keeps the temp copy fully
@@ -458,7 +465,7 @@ export async function createFixture(opts = {}) {
   await gitIn(dir, ["config", "user.email", "fixtures@evalyn.local"]);
   await gitIn(dir, ["config", "user.name", "Evalyn Fixtures"]);
   await gitIn(dir, ["config", "commit.gpgsign", "false"]);
-  const fx = new Fixture(dir, tmp);
+  const fx = new Fixture(dir, tmp, panelDir);
   await fx.snapshot(); // default baseline = the pristine clone
   return fx;
 }

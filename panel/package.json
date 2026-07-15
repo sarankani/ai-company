@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "test:fixtures": "node test/self-check.mjs",
-    "test:e2e": "node test/specs/item-decide.spec.mjs"
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "next": "^15.5.20",
@@ -16,6 +16,7 @@
     "react-dom": "19.0.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.61.1",
     "@types/node": "^22",
     "@types/nodemailer": "^8.0.1",
     "@types/react": "^19",

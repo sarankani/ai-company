@@ -2,3 +2,7 @@ node_modules/
 .next/
 next-env.d.ts
 *.tsbuildinfo
+
+# Playwright (EX-602)
+playwright-report/
+test-results/
