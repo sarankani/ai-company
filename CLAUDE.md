@@ -40,6 +40,7 @@ State lives in `company/` (or the connected CRM/ERP via MCP). Entities: `account
 - **`docs/plans/`** — numbered plans for significant changes (Draft → Approved → Done); nothing significant starts without one.
 - **`docs/specs/`** — PRDs and tech specs; approved by a human before implementation.
 - **`docs/adrs/`** — Architecture Decision Records for hard-to-reverse decisions; AI proposes, a human accepts; supersede, never rewrite.
+- **`docs/sop/`** — the SOP library: foundations SOP-000…014 (binding on all employees) + one role SOP per employee; every agent charter loads the foundations plus its role SOP at session start. Precedence on conflict: **ADRs > CLAUDE.md > foundations > role SOPs > guides**.
 - **`company/org/`** — the routing source of truth: departments & their gates, the humans registry with seats and availability, `routing.md` (gate→department map, SLA table, escalation chain). Resolve every gate from these files; never hardcode an approver.
 - **`/memory`** — cross-session memory. **At session start:** read `memory/company-context.md`, skim recent `memory/decisions-log.md`. **Before ending a session** that decided something, changed direction, or learned a durable fact: update `company-context.md` (snapshot, edit in place) and/or append to `decisions-log.md`; add new terms to `glossary.md`.
 - Active execution board: `docs/plans/002-execution-plan.md` — update task states as work moves.

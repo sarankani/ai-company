@@ -1,6 +1,6 @@
 # Company context — snapshot
 
-*Last updated: 2026-07-13*
+*Last updated: 2026-07-16*
 
 ## Who
 
@@ -26,4 +26,4 @@ ICP · rate card / margin floor · quarterly OKRs · regions & compliance. Sales
 
 ## Where things live
 
-Plans `docs/plans/` · specs `docs/specs/` · ADRs `docs/adrs/` · memory here · business records `company/` (org/ + registry live; approvals/ comes with EX-101) · **SOPs `docs/sop/`** (2026-07-15: foundations SOP-000…010 + role SOPs for all 24 AI employees + human seats; agents load foundations + their role SOP; precedence ADRs > CLAUDE.md > foundations > role SOPs).
+Plans `docs/plans/` · specs `docs/specs/` · ADRs `docs/adrs/` · memory here · business records `company/` (org/ + registry live; approvals/ comes with EX-101) · **SOPs `docs/sop/`** — live on main (foundations SOP-000…014 + role SOPs for all 24 AI employees + human seats; agents load foundations + their role SOP; precedence ADRs > CLAUDE.md > foundations > role SOPs > guides). Staged via PR #67 → the `sop` branch, merged to main via PR #69; the `sop` branch was a one-time staging step, not an ongoing convention.
