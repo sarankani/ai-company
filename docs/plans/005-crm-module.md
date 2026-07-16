@@ -10,7 +10,7 @@
 
 The panel runs the company's governance (approvals, routing, audit) but none of its **business**. The 16 business-record types in `guides/company-os.md` — the actual CRM the value chain runs on — were never materialized: no storage, no screens, no records. AI employees can't coordinate lead→cash work through records that don't exist, and humans have no place to see the pipeline.
 
-Saran's decisions (2026-07-16): build the **full lifecycle** (all 16 entity types) inside the existing panel; add a **member role** so every registered human can log in and use the CRM; store business records in a **real database** (Postgres) — approvals and org stay git-native (ADR-0008 partially supersedes ADR-0002).
+Saran's decisions (2026-07-16): build the **full lifecycle** (all 16 entity types) inside the existing panel; give members **RBAC as a role × department matrix** (`crm-viewer`/`crm-editor` grants per department; seat-holders get editor on their department implicitly, CEO everywhere; no grant = hidden — Tech Spec 002 §4.1); store business records in a **real database** (Postgres) — approvals and org stay git-native (ADR-0008 partially supersedes ADR-0002).
 
 ## 2. Goal & definition of done
 
@@ -49,14 +49,14 @@ Template: **US** user story · **AC** acceptance criteria · **OS** out of scope
 - **AC:** `panel/lib/crm/{schema,db,lifecycles,ids,store}.ts` + drizzle migration; all 16 lifecycles encoded with gates mapped to real `GATE_DEPT` keys; every mutation writes an activity row transactionally; PGlite/pg/Neon drivers selected by `DATABASE_URL`; seed script.
 - **OS:** UI, API routes, gate wiring.
 
-### EX-703 — Read UI + member role
-- **US:** As any registered human (member included), I want to sign in and see the company's records — pipeline, projects, invoices — without touching git.
-- **AC:** `/crm` overview, `/crm/[type]` filterable lists, `/crm/[type]/[id]` detail with timeline and related records; CRM nav for all humans; `authorized()` excludes `member` seats (members can never decide approvals); `/audit`, `/admin` unchanged.
+### EX-703 — Read UI + member RBAC
+- **US:** As any registered human, I want to sign in and see the company's records my grants allow — pipeline, projects, invoices — without touching git.
+- **AC:** `/crm` overview, `/crm/[type]` filterable lists, `/crm/[type]/[id]` detail with timeline and related records; CRM nav for all humans with any grant; RBAC matrix enforced server-side on every list/detail/search (no grant = hidden); `authorized()` grants decide rights only to chain/ceo seats — `crm-*` grants never decide approvals; `/audit`, `/admin` unchanged.
 - **OS:** writes (EX-704), Kanban/search (EX-707).
 
 ### EX-704 — Human writes
-- **US:** As a member, I want to create and work records from the panel so the CRM is operable by people, not just agents.
-- **AC:** new-record form per type; edit fields/title/owner/summary; comments; links; ungated stage transitions with validation; `?err=` error surfacing; all writes attributed + logged.
+- **US:** As a member with editor grants, I want to create and work records from the panel so the CRM is operable by people, not just agents.
+- **AC:** new-record form per type; edit fields/title/owner/summary; comments; links; ungated stage transitions with validation; all writes require `crm-editor` (or implicit seat/ceo editor) on the type's department — viewers get read-only UI and server-side rejection; `?err=` error surfacing; all writes attributed + logged.
 - **OS:** gated transitions (EX-706).
 
 ### EX-705 — Agent API + CLI
@@ -81,7 +81,7 @@ Template: **US** user story · **AC** acceptance criteria · **OS** out of scope
 
 ## 5. Risks
 
-1. **A member gaining decide rights** — the `authorized()` guard change is load-bearing; covered by unit + e2e security tests (EX-703, EX-708).
+1. **A member gaining decide rights** — the `authorized()` guard change (chain/ceo seats only) is load-bearing; covered by unit + e2e security tests (EX-703, EX-708). RBAC is additionally enforced server-side per request, never only in the UI.
 2. **Gate bypass via direct DB access** — mitigated: the store is the only write path in code; `CRM_AGENT_TOKEN` holders can still only move stages through the transition endpoint, which enforces gates. Raw SQL access is an ops-level secret like `GITHUB_TOKEN` today.
 3. **Two audit systems drift** — every gate interaction is logged on both sides (APR record ↔ `crm_activities` gate entries) with cross-referencing ids.
 4. **Vercel serverless + Postgres connection limits** — Neon HTTP driver is per-request, no pooling needed.

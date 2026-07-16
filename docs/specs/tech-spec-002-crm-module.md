@@ -79,15 +79,28 @@ Postgres everywhere, Drizzle ORM, one migration set (drizzle-kit). Driver select
 
 ## 4. Access model
 
-### 4.1 Humans — `member` role
+### 4.1 Humans — member RBAC (role × department matrix)
 
-- `company/org/humans/<id>.md` gains role entries `- {department: "-", seat: "member"}`. The existing parser handles this without change; magic-link login already works for any registered email.
-- **Guard change (security):** `authorized()` in `panel/lib/org.ts` must exclude `seat === "member"` — otherwise a member listed with a real department would gain approval-decide rights. Members can view/edit CRM records; approvals, `/audit`, `/admin` stay seat-holder-gated exactly as today.
-- New members are added from `/admin` via the existing two-step people-gate pattern (propose → dual-stamp APR → apply commits the humans file).
+Every entity type has one **owning department**, declared in the lifecycle map: accounts, contacts, leads, opportunities, estimates, quotes, proposals, projects, sows, milestones → `sales-delivery`; pos, invoices → `people-finance`; tickets → `marketing-support`; vendors, purchase-orders-out, assets → `operations`.
+
+A human's **CRM access level per department** is computed from their `roles` in `company/org/humans/<id>.md`:
+
+| Grant | Effect |
+|---|---|
+| `- {department: <d>, seat: crm-viewer}` | read records of `<d>`'s entity types |
+| `- {department: <d>, seat: crm-editor}` | + create/edit/comment/link/transition them |
+| approver/deputy/head seat in `<d>` | implicit `crm-editor` on `<d>` |
+| `ceo` seat | implicit `crm-editor` everywhere |
+| no grant for `<d>` | `<d>`'s record types are **hidden** (lists, detail, search) |
+
+Resolved by `crmAccess(human, type)` in `panel/lib/crm/rbac.ts` → `"none" | "view" | "edit"`. The existing frontmatter parser handles `crm-*` seats with zero changes; magic-link login already works for any registered email.
+
+- **Guard change (security):** `authorized()` in `panel/lib/org.ts` must grant approval-decide rights only to chain seats — `ceo` or `approver|deputy|head` in the item's department. `crm-viewer`/`crm-editor` grants never confer decide rights, `/audit`, or `/admin` access.
+- New members are added from `/admin` via the existing two-step people-gate pattern (propose with their dept×role grants → dual-stamp APR → apply commits the humans file).
 
 ### 4.2 AI employees — API + CLI
 
-All writes flow through `panel/lib/crm/store.ts` (validation, ids, activities, gates — one write path). Routes under `/api/crm/*` authenticate via `requireCrmActor()`: a valid session cookie (human) **or** `Authorization: Bearer $CRM_AGENT_TOKEN` + `X-Agent-Id: <employee>` (constant-time compare). `panel/middleware.ts` passes `/api/crm` through to in-route auth. A zero-dependency CLI `scripts/crm.mjs` (repo root) wraps the API for agent sessions: `create · get · list · update · move · link · comment · search`.
+All writes flow through `panel/lib/crm/store.ts` (validation, ids, activities, gates — one write path). Routes under `/api/crm/*` authenticate via `requireCrmActor()`: a valid session cookie (human — RBAC matrix applies per §4.1) **or** `Authorization: Bearer $CRM_AGENT_TOKEN` + `X-Agent-Id: <employee>` (constant-time compare; agents act as editors — the gates, not RBAC, protect the critical transitions). `panel/middleware.ts` passes `/api/crm` through to in-route auth. A zero-dependency CLI `scripts/crm.mjs` (repo root) wraps the API for agent sessions: `create · get · list · update · move · link · comment · search`.
 
 | Route | Methods |
 |---|---|
