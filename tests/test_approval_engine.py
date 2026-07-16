@@ -140,6 +140,18 @@ class EngineTest(unittest.TestCase):
             ae.main(["decide", p.stem, "--by", "saravanan-p", "--outcome", "approved"])
         self.assertEqual(self.data(p)["state"], "pending")
 
+    def test_crm_grants_never_authorize(self):
+        # Tech Spec 002 §4.1: crm-viewer/crm-editor are record-access grants,
+        # not decision seats — a member with a grant IN the department must
+        # still be refused (lockstep with panel/lib/org.ts authorized()).
+        humans = {"m": {"id": "m", "roles": [
+            {"department": "people-finance", "seat": "crm-editor"},
+            {"department": "people-finance", "seat": "crm-viewer"},
+        ]}}
+        self.assertFalse(ae.authorized(humans, "m", "people-finance"))
+        chain = {"a": {"id": "a", "roles": [{"department": "people-finance", "seat": "approver"}]}}
+        self.assertTrue(ae.authorized(chain, "a", "people-finance"))
+
     def test_reject_requires_reason(self):
         p = self.new()
         with self.assertRaises(SystemExit):

@@ -38,6 +38,10 @@ test("core authenticated screens have no critical/serious a11y violations", asyn
     ["board", `${fx.baseUrl}/board/engineering`],
     ["admin", `${fx.baseUrl}/admin`],
     ["audit", `${fx.baseUrl}/audit`],
+    ["crm", `${fx.baseUrl}/crm`],
+    ["crm-list", `${fx.baseUrl}/crm/leads`],
+    ["crm-pipeline", `${fx.baseUrl}/crm/pipeline`],
+    ["crm-notifications", `${fx.baseUrl}/crm/notifications`],
   ];
   const failures: string[] = [];
   for (const [name, url] of screens) {

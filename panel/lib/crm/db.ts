@@ -31,7 +31,13 @@ async function connect(): Promise<CrmDb> {
     const { PGlite } = await import("@electric-sql/pglite");
     const { drizzle } = await import("drizzle-orm/pglite");
     const client = target === "memory" ? new PGlite() : new PGlite(target);
-    return drizzle(client, { schema }) as unknown as CrmDb;
+    const db = drizzle(client, { schema }) as unknown as CrmDb;
+    // PGlite is the zero-setup path (dev default, unit + e2e fixtures) —
+    // auto-apply migrations so `npm run dev` and test clones just work.
+    // Real Postgres stays explicit: run `npm run db:migrate` deliberately.
+    const { migrateCrmDb } = await import("./migrate");
+    await migrateCrmDb(db);
+    return db;
   }
   const { Pool } = await import("pg");
   const { drizzle } = await import("drizzle-orm/node-postgres");

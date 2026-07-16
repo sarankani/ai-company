@@ -25,4 +25,4 @@ Index of all records in `company/`. Every employee updates this file when creati
 
 ## Business records
 
-*None yet — created as the business runs (leads, opportunities, projects, invoices, …). Schemas: `guides/company-os.md`.*
+Business records (leads, opportunities, projects, invoices, … — all 16 types) live in the **CRM database** (ADR-0008), not in this repo. Browse them at the panel's **`/crm`**; AI employees read/write via `scripts/crm.mjs` or the panel's `/api/crm`. Schemas & lifecycles: `guides/company-os.md` · `panel/lib/crm/lifecycles.ts`. This registry indexes governance records (approvals/questions/org) only.
