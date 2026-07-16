@@ -34,6 +34,9 @@ Epic: [E7 #78](https://github.com/sarankani/ai-company/issues/78)
 | EX-706 | Gate integration (APR-linked transitions) | developer | merge via loop | EX-702, EX-704 | EX-708 | [#84](https://github.com/sarankani/ai-company/issues/84) |
 | EX-707 | Pipeline Kanban, global search, admin add-member | developer | merge via loop | EX-703, EX-704 | EX-708 | [#85](https://github.com/sarankani/ai-company/issues/85) |
 | EX-708 | Tests (Vitest + Playwright), CI, deploy readiness | tester + devops | merge + Saran deploy gate | EX-703…707 | phase exit | [#86](https://github.com/sarankani/ai-company/issues/86) |
+| EX-709 | Realtime notifications — bell UI, Supabase push, agent feed | developer | merge via loop | EX-702 | EX-708 | [#87](https://github.com/sarankani/ai-company/issues/87) |
+
+> **Stack amendment (Saran, 2026-07-16):** production Postgres is **Supabase** (not Neon), so the same platform provides Supabase Realtime for live human/AI notifications (`crm_notifications` table; ADR-0008 updated).
 
 ## 4. Task register
 

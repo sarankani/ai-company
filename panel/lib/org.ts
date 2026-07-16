@@ -51,9 +51,16 @@ export async function humanById(id: string): Promise<Human | null> {
   return humans.find((h) => h.id === id) ?? null;
 }
 
-/** A human may decide an item if they hold any seat in its department, or the ceo seat. */
+/** Seats that carry decision authority — the escalation chain + ceo.
+ * CRM grants (crm-viewer/crm-editor, Tech Spec 002 §4.1) are NOT here:
+ * they confer record access, never the right to decide an approval. */
+const DECIDE_SEATS = new Set(["approver", "deputy", "head"]);
+
+/** A human may decide an item if they hold a chain seat in its department, or the ceo seat. */
 export function authorized(h: Human, department: string): boolean {
-  return h.roles.some((r) => r.seat === "ceo" || r.department === department);
+  return h.roles.some(
+    (r) => r.seat === "ceo" || (r.department === department && DECIDE_SEATS.has(r.seat)),
+  );
 }
 
 export function isCeoSeat(h: Human): boolean {

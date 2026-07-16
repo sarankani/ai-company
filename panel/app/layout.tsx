@@ -2,6 +2,7 @@ import "./globals.css";
 import { cookies } from "next/headers";
 import { verifySession } from "@/lib/auth";
 import { humanById } from "@/lib/org";
+import { hasAnyCrmAccess } from "@/lib/crm/rbac";
 import { setAvailabilityAction } from "./org-actions";
 
 export const metadata = { title: "Evalyn Control Panel" };
@@ -20,6 +21,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <nav className="topnav">
               <a href="/inbox">Inbox</a>
               <a href="/dashboard">Dashboard</a>
+              {hasAnyCrmAccess(human) && <a href="/crm">CRM</a>}
               {human.roles.some((r) => r.seat === "head" || r.seat === "ceo") && (
                 <>
                   <a href="/audit">Ledger</a>

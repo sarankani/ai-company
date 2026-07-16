@@ -69,13 +69,14 @@ Stages and transitions per `guides/company-os.md` §"entities & their lifecycles
 | invoices `draft → sent` | money |
 | purchase-orders-out `approved → ordered` | procurement |
 
-## 3. Storage & drivers
+## 3. Storage, drivers & realtime
 
-Postgres everywhere, Drizzle ORM, one migration set (drizzle-kit). Driver selected in `panel/lib/crm/db.ts` from `DATABASE_URL`:
+Postgres everywhere, Drizzle ORM, forward-only SQL migrations in `panel/drizzle/*.sql` applied by `panel/lib/crm/migrate.ts` (tracked in `crm_migrations`). Driver selected in `panel/lib/crm/db.ts` from `DATABASE_URL`:
 
-- `pglite://<dir>` or `pglite://memory` → PGlite (in-process; unit + e2e tests, zero services)
-- Neon URL (or `DB_DRIVER=neon`) → `@neondatabase/serverless` HTTP driver (Vercel)
-- anything else → `pg` node-postgres (Docker/local)
+- `pglite://<dir>` or `pglite://memory` → PGlite (in-process; unit + e2e tests, and the zero-setup default when `DATABASE_URL` is unset)
+- `postgres://…` → `pg` node-postgres Pool — **production is Supabase Postgres** (use the pooled/supavisor connection string on Vercel)
+
+**Realtime notifications (Supabase):** every notable mutation queues rows in `crm_notifications` (recipient = human id or AI-employee id) in the same transaction — record assigned, stage moved, gate requested/decided, comment added. The panel bell reads unread counts server-side; when `NEXT_PUBLIC_SUPABASE_URL` + `NEXT_PUBLIC_SUPABASE_ANON_KEY` are set, a client subscription to Postgres-changes INSERTs on `crm_notifications` updates the bell live (enable the table in the `supabase_realtime` publication). Without Supabase config the bell degrades to refresh-on-navigation. AI employees consume the same feed via `GET /api/crm/notifications` / `scripts/crm.mjs notifications`.
 
 ## 4. Access model
 
@@ -139,8 +140,9 @@ Reuses the panel's existing plain-CSS system (`.rows`, `.chip`, `.card`, `.tiles
 
 | Var | Purpose |
 |---|---|
-| `DATABASE_URL` | Neon (prod) / Postgres (Docker/dev) / `pglite://…` (tests) |
+| `DATABASE_URL` | Supabase Postgres (prod, pooled) / any Postgres (Docker/dev) / `pglite://…` (tests) / unset = local PGlite |
 | `CRM_AGENT_TOKEN` | bearer token for AI-employee API access |
 | `PANEL_URL` | CLI target (defaults `http://localhost:3000`) |
+| `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` | optional — enables live notification push in the panel |
 
 All existing panel env vars unchanged.
