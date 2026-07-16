@@ -11,3 +11,4 @@ One file per significant, hard-to-reverse decision: `NNNN-short-title.md`. Forma
 | [0005](0005-approvals-and-questions-as-files.md) | Approvals & questions are Company OS records (files) | Proposed |
 | [0006](0006-authoring-skills-not-dynamic-agent-creation.md) | Authoring skills, not dynamic agent creation | Proposed |
 | [0007](0007-sop-library-as-binding-operating-layer.md) | The SOP library as the binding operating layer | Proposed |
+| [0008](0008-database-for-crm-business-records.md) | A relational database is the source of truth for CRM business records (partially supersedes 0002) | Proposed |
