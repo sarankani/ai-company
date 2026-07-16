@@ -9,22 +9,30 @@
     "test:fixtures": "node test/self-check.mjs",
     "test:e2e": "playwright test",
     "test:unit": "vitest run",
-    "test:unit:cov": "vitest run --coverage"
+    "test:unit:cov": "vitest run --coverage",
+    "db:migrate": "tsx scripts/db-migrate.ts",
+    "db:seed": "tsx scripts/crm-seed.ts"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.110.7",
+    "drizzle-orm": "^0.44.7",
     "next": "^15.5.20",
     "nodemailer": "^9.0.3",
+    "pg": "^8.16.3",
     "react": "19.0.0",
     "react-dom": "19.0.0"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.12.1",
+    "@electric-sql/pglite": "^0.3.14",
     "@playwright/test": "^1.61.1",
     "@types/node": "^22",
     "@types/nodemailer": "^8.0.1",
+    "@types/pg": "^8.15.4",
     "@types/react": "^19",
     "@vitest/coverage-v8": "^4.1.10",
     "playwright": "^1.61.1",
+    "tsx": "^4.20.3",
     "typescript": "^5",
     "vitest": "^4.1.10"
   }
