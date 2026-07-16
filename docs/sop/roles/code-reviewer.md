@@ -6,7 +6,7 @@
 | **Department** | `engineering` — Engineering |
 | **Owner** | Engineering Head (human) |
 | **Status** | Active |
-| **Version** | 1.1 (2026-07-15) |
+| **Version** | 1.2 (2026-07-15) |
 | **Loads with** | `docs/sop/README.md` + foundations SOP-001…014 (assumed known; do not restate them) |
 
 > Catch real defects before they merge — verified findings, ranked by severity, with zero plausible-but-unconfirmed noise. You produce the verdict that makes the human's merge decision fast and safe; the merge itself is theirs (`merge-deploy` gate), never yours.
@@ -100,6 +100,31 @@ Your "approve" is advice; only the human seat decides. If you're ever the one wh
 | `security` | Security verdict on a flagged diff | merge gate requester | Combined merge-readiness note listing everything the human approval still needs |
 | — | — | `tester` | Approved-PR pointer + risk notes: which behaviors most need QA attention |
 
+### 7.1 Role flow — visual
+
+How work reaches this role, what it produces, and where it stops for a human (generated with `/visualize-agents`; grounded in the agent charter, `company/org/`, and `.claude/workflows/`):
+
+```mermaid
+flowchart LR
+  classDef ai fill:#dbeafe,stroke:#1d4ed8,color:#1e3a8a
+  classDef human fill:#fecaca,stroke:#b91c1c,color:#7f1d1d
+  classDef gate fill:#fef3c7,stroke:#b45309,color:#78350f
+  classDef art fill:#f1f5f9,stroke:#64748b,color:#334155
+  classDef wf fill:#ede9fe,stroke:#6d28d9,color:#4c1d95
+
+  dev[developer]:::ai -->|"PR: diff, description, green CI, self-reviewed"| cr
+  cr[code-reviewer]:::ai --> rev("review: confirmed, ranked findings"):::art
+  rev -->|blocking findings| dev
+  dev -->|fix commits| cr
+  cr -->|security-heavy diff| sec[security]:::ai
+  sec -->|security verdict| vd
+  cr --> vd("verdict + merge-readiness note"):::art
+  cr -->|approved-PR pointer + risk notes| qa[tester]:::ai
+  vd -->|"input to the gate, never the decision"| g1{merge-deploy gate}:::gate
+  g1 --> appr([Engineering Approver — human]):::human
+  appr -. SLA .-> dep([Deputy]):::human -. SLA .-> head([Head]):::human -. SLA .-> ceoH([CEO — terminal backstop]):::human
+```
+
 ## 8. KPIs & metrics
 
 Computed from PR records, never guessed ([SOP-008](../foundations/SOP-008-quality-evidence-and-honesty.md)); reviewable at the HITL sampling cadence (SOP-013).
@@ -126,4 +151,4 @@ Computed from PR records, never guessed ([SOP-008](../foundations/SOP-008-qualit
 Agent charter `.claude/agents/code-reviewer.md` · skills: `code-review` command, `adversarial-verifier` subagent (software pack) · foundations: [SOP-003](../foundations/SOP-003-human-approval-gates.md), [SOP-004](../foundations/SOP-004-escalation-and-slas.md), [SOP-007](../foundations/SOP-007-security-and-data-protection.md), [SOP-008](../foundations/SOP-008-quality-evidence-and-honesty.md), [SOP-013](../foundations/SOP-013-human-in-the-loop-review.md), [SOP-014](../foundations/SOP-014-model-deployment-and-rollback.md) (prompt/model-config diffs reviewed like code) · peers: SOP-R09 (`developer`), SOP-R11 (`tester`), SOP-R13 (`security`).
 
 ---
-*Changelog: 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*
+*Changelog: 1.2 — added §7.1 role flow diagram (`/visualize-agents`). 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*

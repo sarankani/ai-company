@@ -6,7 +6,7 @@
 | **Department** | `operations` — Operations |
 | **Owner** | operations Head (human) |
 | **Status** | Active |
-| **Version** | 1.1 (2026-07-15) |
+| **Version** | 1.2 (2026-07-15) |
 | **Loads with** | `docs/sop/README.md` + foundations SOP-001…014 (assumed known; do not restate them) |
 
 > Procurement gets the company what it needs to deliver — tools, licenses, cloud, hardware, subcontractors — at the right total cost and terms, and keeps an accurate register of what the company owns, who uses it, and when it renews. It sources, compares, and drafts; **a human approves every spend, signs every vendor, and places every order** (`procurement` gate).
@@ -109,6 +109,37 @@ Per [SOP-003](../foundations/SOP-003-human-approval-gates.md): finished artifact
 | `delivery-manager` / project close | project-end notice | `finance` | received-PO + asset cost data for the vendor invoice; waste report with quantified savings |
 | `hr` (onboarding/offboarding) | joiner/leaver notice | budget owner | allocation/reclaim proposal: assets to assign or recover, saving stated |
 
+### 7.1 Role flow — visual
+
+How work reaches this role, what it produces, and where it stops for a human (generated with `/visualize-agents`; grounded in the agent charter, `company/org/`, and `.claude/workflows/`):
+
+```mermaid
+flowchart LR
+  classDef ai fill:#dbeafe,stroke:#1d4ed8,color:#1e3a8a
+  classDef human fill:#fecaca,stroke:#b91c1c,color:#7f1d1d
+  classDef gate fill:#fef3c7,stroke:#b45309,color:#78350f
+  classDef art fill:#f1f5f9,stroke:#64748b,color:#334155
+  classDef wf fill:#ede9fe,stroke:#6d28d9,color:#4c1d95
+
+  wf1[[procurement-cycle]]:::wf --> proc[procurement]:::ai
+  req["requesting role (any AI employee)"]:::ai -->|need statement| proc
+  proc -->|"reclaim check first, then ≥3 options on TCO"| cmp("vendor comparison + draft PO (purchase-orders-out/)"):::art
+  proc -->|data-touching vendor| sec[security]:::ai
+  sec -->|"risk finding (verbatim)"| cmp
+  proc -->|new vendor onboarding| vend("vendor record + agreement package (vendors/)"):::art
+  proc -->|"/asset-register audit"| reg("asset register + waste/renewal report (assets/)"):::art
+  cmp --> g1{procurement gate}:::gate
+  vend --> g1
+  reg -->|renewal spend| g1
+  g1 -->|"APR — exact verbatim action"| opsA(["Operations Approver — human"]):::human
+  opsA -->|"approved: human places order / signs"| rcv("received PO + registered assets (assets/)"):::art
+  rcv -->|need fulfilled| req
+  rcv -->|"cost data for vendor invoice (money gate)"| fin[finance]:::ai
+  opsA -. "SLA lapse — reassigns, never approves" .-> opsD(["Operations Deputy — human"]):::human
+  opsD -. SLA .-> opsH(["Operations Head — human"]):::human
+  opsH -. SLA .-> ceoH(["CEO — terminal backstop (human)"]):::human
+```
+
 ## 8. KPIs & metrics
 
 Computed, never guessed (SOP-008); reviewed at the HITL sampling cadence (SOP-013). Prices and terms trace to research or a quote; unknowns are `TBD`, never plausible fillers.
@@ -136,4 +167,4 @@ Computed, never guessed (SOP-008); reviewed at the HITL sampling cadence (SOP-01
 Agent charter `.claude/agents/procurement.md` · skills `/procurement-request`, `/asset-register` · workflow `.claude/workflows/procurement-cycle.js` · foundations [SOP-002](../foundations/SOP-002-system-of-record.md), [SOP-003](../foundations/SOP-003-human-approval-gates.md), [SOP-004](../foundations/SOP-004-escalation-and-slas.md), [SOP-006](../foundations/SOP-006-handoffs-and-communication.md), [SOP-007](../foundations/SOP-007-security-and-data-protection.md), [SOP-008](../foundations/SOP-008-quality-evidence-and-honesty.md), [SOP-013](../foundations/SOP-013-human-in-the-loop-review.md) · records `company/vendors/`, `company/purchase-orders-out/`, `company/assets/` · lifecycles in `guides/company-os.md`.
 
 ---
-*Changelog: 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*
+*Changelog: 1.2 — added §7.1 role flow diagram (`/visualize-agents`). 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*

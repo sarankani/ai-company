@@ -6,7 +6,7 @@
 | **Department** | `sales-delivery` — Sales & Delivery |
 | **Owner** | sales-delivery Head (human) |
 | **Status** | Active |
-| **Version** | 1.1 (2026-07-15) |
+| **Version** | 1.2 (2026-07-15) |
 | **Loads with** | `docs/sop/README.md` + foundations SOP-001…014 (assumed known; do not restate them) |
 
 > The AE turns qualified opportunities into honestly-won deals: it preps discovery, drives the opportunity-to-proposal chain, drafts proposals and SOWs the company can actually deliver, keeps the pipeline records truthful, and captures inbound POs. It drafts everything and commits nothing — every customer-facing send, price, discount, date, and signature is a human's decision at a gate.
@@ -113,6 +113,60 @@ Per [SOP-003](../foundations/SOP-003-human-approval-gates.md): finished artifact
 | customer (via human) | inbound PO | `people-finance` (gate) → `delivery-manager` | verified PO with full reconciliation; on booking, kickoff trigger with links to quote/SOW/estimate |
 | `account-manager` | renewal/expansion opportunities | `delivery-manager`, `account-manager` | won-deal context: what was promised, to whom, and the signed scope |
 
+### 7.1 Role flow — visual
+
+How work reaches this role, what it produces, and where it stops for a human (generated with `/visualize-agents`; grounded in the agent charter, `company/org/`, and `.claude/workflows/`):
+
+```mermaid
+flowchart LR
+  classDef ai fill:#dbeafe,stroke:#1d4ed8,color:#1e3a8a
+  classDef human fill:#fecaca,stroke:#b91c1c,color:#7f1d1d
+  classDef gate fill:#fef3c7,stroke:#b45309,color:#78350f
+  classDef art fill:#f1f5f9,stroke:#64748b,color:#334155
+  classDef wf fill:#ede9fe,stroke:#6d28d9,color:#4c1d95
+
+  wf1[[opportunity-to-proposal]]:::wf
+  wf2[[company-standup]]:::wf
+  wf3[[product-launch]]:::wf
+  sdr[sdr]:::ai
+  sales[sales]:::ai
+  sa[solutions-architect]:::ai
+  finance[finance]:::ai
+  dm[delivery-manager]:::ai
+  brief("discovery brief in the opportunity record"):::art
+  prop("proposal / SOW draft — pricing DRAFT/TBD"):::art
+  po("verified PO record — company/pos/"):::art
+  g1{commitments gate}:::gate
+  g2{"external-comms gate — customer-specific"}:::gate
+  g3{revenue-booking gate}:::gate
+  appr(["Sales & Delivery Approver — human"]):::human
+  pf(["People & Finance Approver — human"]):::human
+  dep(["Sales & Delivery Deputy — human"]):::human
+  head(["Sales & Delivery Head — human"]):::human
+  ceo(["CEO — terminal backstop"]):::human
+
+  wf1 -.->|"discovery · valuation (with finance) · proposal assembly (with delivery-manager)"| sales
+  wf2 -.->|"go-to-market report (with marketing)"| sales
+  wf3 -.->|"sales-enablement lens"| sales
+  sdr -->|"qualified opportunity (stage discovery)"| sales
+  sales --> brief
+  brief -->|"opportunity → scoping"| sa
+  sa -->|"approved estimate"| finance
+  finance -->|"quote (price build-up)"| sales
+  sales --> prop
+  prop -->|"APR: commit price/dates/SLA terms"| g1
+  prop -->|"APR: exact send action"| g2
+  g1 --> appr
+  g2 --> appr
+  sales -->|"/purchase-order — reconcile vs quote/SOW"| po
+  po -->|"APR: book as committed revenue"| g3
+  g3 --> pf
+  pf -->|"booked → opportunity won, kickoff trigger"| dm
+  appr -. SLA .-> dep
+  dep -. SLA .-> head
+  head -. SLA .-> ceo
+```
+
 ## 8. KPIs & metrics
 
 Computed from the records, never guessed (SOP-008); unknowns `TBD`. Reviewed at the HITL sampling cadence (SOP-013).
@@ -139,4 +193,4 @@ Computed from the records, never guessed (SOP-008); unknowns `TBD`. Reviewed at 
 Agent charter `.claude/agents/sales.md` · skills `/sales-outreach`, `/proposal`, `/sow`, `/purchase-order` (and `/valuation` jointly with `finance`) · workflow `.claude/workflows/opportunity-to-proposal.js` · foundations [SOP-002](../foundations/SOP-002-system-of-record.md), [SOP-003](../foundations/SOP-003-human-approval-gates.md), [SOP-004](../foundations/SOP-004-escalation-and-slas.md), [SOP-008](../foundations/SOP-008-quality-evidence-and-honesty.md), [SOP-013](../foundations/SOP-013-human-in-the-loop-review.md) · records `company/opportunities/`, `proposals/`, `quotes/`, `pos/`, `registry.md` · routing `company/org/routing.md` · `guides/company-os.md`.
 
 ---
-*Changelog: 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*
+*Changelog: 1.2 — added §7.1 role flow diagram (`/visualize-agents`). 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*

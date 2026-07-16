@@ -25,7 +25,7 @@ Auto-loaded by Claude Code. This is **Evalyn's** operating brain: it tells every
 
 ## 1. What this is
 
-Evalyn is a full AI company: **24 employee personas** (`.claude/agents/`), their **26 skills** (`.claude/commands/`), **7 lifecycle workflows** (`.claude/workflows/`), and a **Company OS** — a persistent system of record — that together run an IT business from lead to cash to renewal with humans at the gates. Guides in `guides/`: `operating-model.md`, `company-os.md`, `value-chain.md`, `getting-started.md`, `integrations.md`.
+Evalyn is a full AI company: **24 employee personas** (`.claude/agents/`), their **27 skills** (`.claude/commands/`), **7 lifecycle workflows** (`.claude/workflows/`), and a **Company OS** — a persistent system of record — that together run an IT business from lead to cash to renewal with humans at the gates. Guides in `guides/`: `operating-model.md`, `company-os.md`, `value-chain.md`, `getting-started.md`, `integrations.md`.
 
 ## 2. The roster (invoke with *"use the <name> agent…"*)
 

@@ -6,7 +6,7 @@
 | **Department** | `product-design` — Product & Design |
 | **Owner** | product-design Head (human) |
 | **Status** | Active |
-| **Version** | 1.1 (2026-07-15) |
+| **Version** | 1.2 (2026-07-15) |
 | **Loads with** | `docs/sop/README.md` + foundations SOP-001…014 (assumed known; do not restate them) |
 
 > The Product Designer turns an approved product problem into an experience people can actually use — every flow, every state, accessible by default, consistent with the design system, with final copy and a handoff spec engineers build from without guessing. It stops for a human before any design is treated as final for build, and routes anything that changes product scope back to `product-manager`.
@@ -106,6 +106,46 @@ This role rarely hits the seven gates directly — its hard stop is sign-off. Dr
 | `support` (via `product-manager`) | usability complaints as evidence | `tech-writer` | UI copy decisions + terminology for docs |
 | design plugin skills | critique/accessibility findings | `product-manager` | scope questions + design-debt items for prioritization |
 
+### 7.1 Role flow — visual
+
+How work reaches this role, what it produces, and where it stops for a human (generated with `/visualize-agents`; grounded in the agent charter, `company/org/`, and `.claude/workflows/`):
+
+```mermaid
+flowchart LR
+  classDef ai fill:#dbeafe,stroke:#1d4ed8,color:#1e3a8a
+  classDef human fill:#fecaca,stroke:#b91c1c,color:#7f1d1d
+  classDef gate fill:#fef3c7,stroke:#b45309,color:#78350f
+  classDef art fill:#f1f5f9,stroke:#64748b,color:#334155
+  classDef wf fill:#ede9fe,stroke:#6d28d9,color:#4c1d95
+  pm[product-manager]:::ai
+  spec("approved PRD — docs/specs/prd-NNN"):::art
+  dsg[designer]:::ai
+  brief("design brief — every state, AA, final copy"):::art
+  handoff("handoff spec + built-UI review"):::art
+  asset("design asset for a customer / the market"):::art
+  g1{"external-comms gate"}:::gate
+  hA(["Product & Design Approver — human"]):::human
+  hD(["Product & Design Deputy — human"]):::human
+  hH(["Product & Design Head — human"]):::human
+  hC(["CEO — terminal backstop"]):::human
+  hMS(["Marketing & Support Approver — human"]):::human
+  dev[developer]:::ai
+  tst[tester]:::ai
+  tw[tech-writer]:::ai
+
+  pm --> spec
+  spec -->|"invoked directly, no lifecycle workflow"| dsg
+  dsg --> brief
+  brief -->|"human sign-off before build — QST, not a 7-gate item"| hA
+  hA -->|"signed off"| handoff
+  handoff --> dev
+  handoff -->|"expected states to verify"| tst
+  dsg -->|"scope questions"| pm
+  dsg -->|"UI terminology, final copy"| tw
+  dsg -->|"rare"| asset --> g1 --> hMS
+  hA -. SLA breach .-> hD -. SLA breach .-> hH -. SLA breach .-> hC
+```
+
 ## 8. KPIs & metrics
 
 Computed from records, never guessed (SOP-008); reviewable at the HITL sampling cadence (SOP-013). Unknowns (pending user evidence, unconfirmed constraints) marked `TBD`, never designed over silently.
@@ -132,4 +172,4 @@ Computed from records, never guessed (SOP-008); reviewable at the HITL sampling 
 Agent charter `.claude/agents/designer.md` · skills: `/design-brief` (`.claude/commands/design-brief.md`); design plugin's `design-critique`, `accessibility-review`, `design-system`, `design-handoff`, `ux-copy` where available · foundations SOP-003/004/006/008/010/013 · `docs/specs/` (e.g. `design-brief-001-control-panel.md`), `design/briefs/`.
 
 ---
-*Changelog: 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*
+*Changelog: 1.2 — added §7.1 role flow diagram (`/visualize-agents`). 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*

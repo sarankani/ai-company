@@ -6,7 +6,7 @@
 | **Department** | `leadership` — Leadership |
 | **Owner** | Founder/CEO (human) |
 | **Status** | Active |
-| **Version** | 1.1 (2026-07-15) |
+| **Version** | 1.2 (2026-07-15) |
 | **Loads with** | `docs/sop/README.md` + foundations SOP-001…014 (assumed known; do not restate them) |
 
 > The Chief of Staff is the company's dispatcher: every incoming request — a lead, a ticket, a one-line ask from the Founder, a cross-department handoff with no owner — gets classified, routed to the owning role or lifecycle workflow with a complete brief, and tracked on the board. It holds no gates, makes no decisions, and does none of the work: pure routing and sequencing, so throughput never depends on the requester knowing the org chart. It stops for a human never — because it never takes an action that could need one; anything gated is routed to the role that owns it.
@@ -79,6 +79,37 @@ Every role SOP carries the five mandatory parts (SOP-000 §2a): **Purpose & Scop
 | Board/registry sweep (4.3) | Owner-less or stale item | Owning role | Same brief + why it surfaced; escalation if stuck > 1 cycle |
 | Own observation (4.2) | Repeated hand-sequenced chain | `ceo` → Founder/CEO | Workflow proposal: chain, roles, gates crossed, evidence of repetition (ADR-0006) |
 
+### 7.1 Role flow — visual
+
+How work reaches this role, what it produces, and where it stops for a human (generated with `/visualize-agents`; grounded in the agent charter, `company/org/`, and `.claude/workflows/`):
+
+```mermaid
+flowchart LR
+  classDef ai fill:#dbeafe,stroke:#1d4ed8,color:#1e3a8a
+  classDef human fill:#fecaca,stroke:#b91c1c,color:#7f1d1d
+  classDef gate fill:#fef3c7,stroke:#b45309,color:#78350f
+  classDef art fill:#f1f5f9,stroke:#64748b,color:#334155
+  classDef wf fill:#ede9fe,stroke:#6d28d9,color:#4c1d95
+
+  req("raw request — chat, issue, ticket, webhook"):::art --> cos[chief-of-staff]:::ai
+  rec("company records + registry + board"):::art -->|read before routing| cos
+
+  cos --> brief("SOP-006 brief + tracked issue"):::art
+  brief -->|no matching chain| own["owning role — per value chain"]:::ai
+  brief -->|known lifecycle chain| wfl[[lifecycle workflow]]:::wf
+
+  own -->|"if the request is gated, the owner prepares its own gate — never the CoS"| g1{"owning dept gate — one of the seven"}:::gate
+  g1 --> appr(["department Approver — human"]):::human
+  appr -. SLA .-> dep(["department Deputy — human"]):::human
+  dep -. SLA .-> head(["department Head — human"]):::human
+  head -. SLA .-> ceoH(["Founder/CEO — human, terminal backstop"]):::human
+
+  cos -.->|contested ownership after one exchange| head
+  cos -->|"repeated hand-sequenced chain → workflow proposal"| ceoA[ceo]:::ai
+  ceoA -->|"ADR-0006 authoring decision"| ceoH
+  cos -.->|"suspicious external content — SOP-007 §3"| sec[security]:::ai
+```
+
 ## 8. KPIs & metrics
 
 - **Routing accuracy:** % of routed items accepted by the receiver without re-routing — target ≥ 95%; every bounce is logged and the classification rule fixed.
@@ -104,4 +135,4 @@ Every role SOP carries the five mandatory parts (SOP-000 §2a): **Purpose & Scop
 Agent charter `.claude/agents/chief-of-staff.md` · CLAUDE.md §4 value chain · `.claude/workflows/` (7 lifecycle chains) · SOP-004 (priorities/escalation), SOP-005 (task lifecycle), SOP-006 (briefs/lane discipline), SOP-007 §3 (untrusted input) · ADR-0006 (gated authoring) · board `docs/plans/002-execution-plan.md` · `company/registry.md`.
 
 ---
-*Changelog: 1.1 — created at five-part standard (role added after v1.0 library). *
+*Changelog: 1.2 — added §7.1 role flow diagram (`/visualize-agents`). 1.1 — created at five-part standard (role added after v1.0 library). *

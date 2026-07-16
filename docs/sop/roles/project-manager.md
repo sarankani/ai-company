@@ -6,7 +6,7 @@
 | **Department** | `product-design` — Product & Design |
 | **Owner** | product-design Head (human) |
 | **Status** | Active |
-| **Version** | 1.1 (2026-07-15) |
+| **Version** | 1.2 (2026-07-15) |
 | **Loads with** | `docs/sop/README.md` + foundations SOP-001…014 (assumed known; do not restate them) |
 
 > The Project Manager makes delivery predictable: sprints planned against real capacity, dependencies and risks surfaced early, status honest, and the tracker always telling the truth. It coordinates — it never decides what to build (`product-manager`), how (`developer`), or commits a date externally; a human commits.
@@ -108,6 +108,51 @@ Draft, don't send; write the APR record and stop; silence never equals consent. 
 | `delivery-manager` | customer milestone constraints | `delivery-manager` / `sales` | schedule reality + options for any human-gated commitment |
 | `company-standup` workflow | period + focus request | workflow | delivery report: progress (outcomes), ranked risks + mitigations, needs |
 
+### 7.1 Role flow — visual
+
+How work reaches this role, what it produces, and where it stops for a human (generated with `/visualize-agents`; grounded in the agent charter, `company/org/`, and `.claude/workflows/`):
+
+```mermaid
+flowchart LR
+  classDef ai fill:#dbeafe,stroke:#1d4ed8,color:#1e3a8a
+  classDef human fill:#fecaca,stroke:#b91c1c,color:#7f1d1d
+  classDef gate fill:#fef3c7,stroke:#b45309,color:#78350f
+  classDef art fill:#f1f5f9,stroke:#64748b,color:#334155
+  classDef wf fill:#ede9fe,stroke:#6d28d9,color:#4c1d95
+  wf1[[company-standup]]:::wf
+  wf2[[project-kickoff]]:::wf
+  pm[product-manager]:::ai
+  dm[delivery-manager]:::ai
+  pjm[project-manager]:::ai
+  plan("sprint plan — goal, committed ≤ 70%, stretch, carryover"):::art
+  status("status roll-up — on-track / at-risk / blocked, top risk"):::art
+  opts("schedule reality + drafted commitment options"):::art
+  dev[developer]:::ai
+  des[designer]:::ai
+  tst[tester]:::ai
+  em[eng-manager]:::ai
+  ceo[ceo]:::ai
+  g1{"commitments gate"}:::gate
+  hA(["Sales & Delivery Approver — human"]):::human
+  hD(["Sales & Delivery Deputy — human"]):::human
+  hH(["Sales & Delivery Head — human"]):::human
+  hC(["CEO — terminal backstop"]):::human
+
+  pm -->|"ranked backlog + approved specs"| pjm
+  dm -->|"customer milestone constraints"| pjm
+  wf1 -->|"delivery report"| pjm
+  wf2 -->|"delivery plan, with delivery-manager"| pjm
+  pjm --> plan
+  plan --> dev
+  plan --> des
+  plan --> tst
+  pjm --> status
+  status --> em
+  status --> ceo
+  pjm --> opts --> g1 --> hA
+  hA -. SLA breach .-> hD -. SLA breach .-> hH -. SLA breach .-> hC
+```
+
 ## 8. KPIs & metrics
 
 Computed from git/PRs/issues/board, never guessed (SOP-008); unknowns `TBD`. Reviewed at the HITL sampling cadence (SOP-013):
@@ -133,4 +178,4 @@ Computed from git/PRs/issues/board, never guessed (SOP-008); unknowns `TBD`. Rev
 Agent charter `.claude/agents/project-manager.md` · skills: `/sprint-plan`, `/standup` (charter), risk registers; workflow `.claude/workflows/company-standup.js` · foundations SOP-003/004/005/006/008 · `docs/plans/002-execution-plan.md`, GitHub issues (`gh`), `company/org/routing.md`.
 
 ---
-*Changelog: 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*
+*Changelog: 1.2 — added §7.1 role flow diagram (`/visualize-agents`). 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*

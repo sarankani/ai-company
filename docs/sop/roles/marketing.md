@@ -6,7 +6,7 @@
 | **Department** | `marketing-support` — Marketing & Support |
 | **Owner** | marketing-support Head (human) |
 | **Status** | Active |
-| **Version** | 1.1 (2026-07-15) |
+| **Version** | 1.2 (2026-07-15) |
 | **Loads with** | `docs/sop/README.md` + foundations SOP-001…014 (assumed known; do not restate them) |
 
 > Marketing makes the right people aware of Evalyn and understand why it matters — truthfully, on-brand (direct, warm, technically credible, no hype), and always toward one measurable goal per campaign. Everything drafted here is stage-only: nothing goes public and no money moves without a human's stamp at the `external-comms` or `money` gate.
@@ -108,6 +108,45 @@ Draft, don't send. Write the APR per SOP-003 §2 and stop; silence never equals 
 | `data-analyst` | campaign/content performance | `tech-writer` | SEO/content brief: intent, angle, evidenced key points, CTA |
 | `product-launch` workflow | launch scope + date | `data-analyst` | measurement plan: metric, target, tracking method |
 
+### 7.1 Role flow — visual
+
+How work reaches this role, what it produces, and where it stops for a human (generated with `/visualize-agents`; grounded in the agent charter, `company/org/`, and `.claude/workflows/`):
+
+```mermaid
+flowchart LR
+  classDef ai fill:#dbeafe,stroke:#1d4ed8,color:#1e3a8a
+  classDef human fill:#fecaca,stroke:#b91c1c,color:#7f1d1d
+  classDef gate fill:#fef3c7,stroke:#b45309,color:#78350f
+  classDef art fill:#f1f5f9,stroke:#64748b,color:#334155
+  classDef wf fill:#ede9fe,stroke:#6d28d9,color:#4c1d95
+
+  wf1[["product-launch workflow"]]:::wf -- marketing readiness lens --> mk
+  wf2[["company-standup workflow"]]:::wf -- go-to-market report --> mk
+  pm[product-manager]:::ai -- "PRD, verified claims" --> mk[marketing]:::ai
+  ceo[ceo]:::ai -- "goal / OKR, demand request" --> mk
+
+  mk --> brief("campaign brief — marketing/campaigns/"):::art
+  mk --> cal("content calendar + per-slot briefs"):::art
+  mk --> seo("SEO/content brief — marketing/seo/"):::art
+
+  cal -- social slots --> sm[social-media]:::ai
+  seo -- long-form drafting --> tw[tech-writer]:::ai
+  brief -- enablement message --> sales[sales]:::ai
+  brief -- measurement plan --> da[data-analyst]:::ai
+
+  brief -- each publish --> g1{"external-comms gate"}:::gate
+  cal -- each publish --> g1
+  g1 --> msA(["Marketing & Support Approver — human"]):::human
+  brief -- spend line --> g2{"money gate"}:::gate
+  g2 --> pfA(["People & Finance Approver — human"]):::human
+
+  msA -. SLA .-> msD(["Marketing & Support Deputy — human"]):::human
+  msD -. SLA .-> msH(["Marketing & Support Head — human"]):::human
+  msH -. SLA .-> ceoH(["CEO — terminal backstop, human"]):::human
+```
+
+Escalation (dotted) only reassigns the decision — it never approves; silence never equals consent (ADR-0004).
+
 ## 8. KPIs & metrics
 
 Computed, never guessed (SOP-008); reviewed at the HITL sampling cadence (SOP-013). Every claim grounded; unknowns marked `TBD`.
@@ -135,4 +174,4 @@ Computed, never guessed (SOP-008); reviewed at the HITL sampling cadence (SOP-01
 Agent charter `.claude/agents/marketing.md` · skills `/campaign-brief`, `/content-calendar` (`/seo-brief`: charter-named, no command file yet — §4.4) · workflow `.claude/workflows/product-launch.js` · foundations [SOP-003](../foundations/SOP-003-human-approval-gates.md), [SOP-004](../foundations/SOP-004-escalation-and-slas.md), [SOP-006](../foundations/SOP-006-handoffs-and-communication.md), [SOP-007](../foundations/SOP-007-security-and-data-protection.md), [SOP-008](../foundations/SOP-008-quality-evidence-and-honesty.md), [SOP-013](../foundations/SOP-013-human-in-the-loop-review.md) · records `marketing/campaigns/`, `marketing/calendar-<period>.md` · routing `company/org/routing.md`.
 
 ---
-*Changelog: 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*
+*Changelog: 1.2 — added §7.1 role flow diagram (`/visualize-agents`). 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*

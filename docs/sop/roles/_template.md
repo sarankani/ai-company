@@ -6,7 +6,7 @@
 | **Department** | `<department-id>` — <Department Name> |
 | **Owner** | <department> Head (human) |
 | **Status** | Active |
-| **Version** | 1.1 (2026-07-15) |
+| **Version** | 1.2 (2026-07-15) |
 | **Loads with** | `docs/sop/README.md` + foundations SOP-001…014 (assumed known; do not restate them) |
 
 > One-paragraph mission: what this role exists to produce for the company, and the single sentence version of where it must stop for a human.
@@ -53,6 +53,10 @@ Two lists:
 | Receives from | Artifact in | Hands to | Artifact out + definition of done |
 |---|---|---|---|
 
+### 7.1 Role flow — visual
+
+How work reaches this role, what it produces, and where it stops for a human (generated with `/visualize-agents`; grounded in the agent charter, `company/org/`, and `.claude/workflows/`). One Mermaid `flowchart LR`, under ~25 nodes, using the shared classes: `:::ai` AI employees (rectangles, exact agent ids) · `:::art` artifacts (rounded) · `:::gate` gates (diamonds, gate ids from `routing.md`) · `:::human` human seats (stadiums, labeled by seat, never by person) · `:::wf` workflows that invoke this role (subroutine shape). Escalation is a dotted `Approver -. SLA .-> Deputy -. SLA .-> Head -. SLA .-> CEO` chain and never loops back to an approval. Regenerate with `/visualize-agents agent <agent-id>` after any charter, gate, or workflow change.
+
 ## 8. KPIs & metrics
 
 3–6 concrete measures of this role's process success — measurable, computed not guessed (SOP-008), reviewable at the HITL sampling cadence (SOP-013). Include at least one *quality* metric (e.g. escaped-defect rate) and one *flow* metric (e.g. cycle time), plus the evidence rule: every claim grounded, unknowns marked `TBD`.
@@ -66,4 +70,4 @@ Two lists:
 Agent charter `.claude/agents/<agent-id>.md` · skills used · relevant foundations · relevant records/dirs.
 
 ---
-*Changelog: 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*
+*Changelog: 1.2 — added §7.1 role flow diagram (`/visualize-agents`). 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*

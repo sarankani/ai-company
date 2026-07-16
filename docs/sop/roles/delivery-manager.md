@@ -6,7 +6,7 @@
 | **Department** | `sales-delivery` — Sales & Delivery |
 | **Owner** | sales-delivery Head (human) |
 | **Status** | Active |
-| **Version** | 1.1 (2026-07-15) |
+| **Version** | 1.2 (2026-07-15) |
 | **Loads with** | `docs/sop/README.md` + foundations SOP-001…014 (assumed known; do not restate them) |
 
 > The Delivery Manager owns the won deal until it is delivered and accepted: SOW, kickoff, milestone schedule, client status, change control, and the bridge from delivery to billing. It prepares everything and commits nothing — dates and resourcing to the client are `commitments`-gated, marking a milestone accepted is `revenue-booking`-gated, and every client-facing send is a human's.
@@ -105,6 +105,61 @@ Per [SOP-003](../foundations/SOP-003-human-approval-gates.md): finished artifact
 | `tester` / `security` | QA + security gate results | `support`, `account-manager` | go-live handoff: what shipped, known issues, SLA obligations, contacts |
 | client (via human) | sign-offs, change requests | `sales`/`finance` | priced, formal change orders |
 
+### 7.1 Role flow — visual
+
+How work reaches this role, what it produces, and where it stops for a human (generated with `/visualize-agents`; grounded in the agent charter, `company/org/`, and `.claude/workflows/`):
+
+```mermaid
+flowchart LR
+  classDef ai fill:#dbeafe,stroke:#1d4ed8,color:#1e3a8a
+  classDef human fill:#fecaca,stroke:#b91c1c,color:#7f1d1d
+  classDef gate fill:#fef3c7,stroke:#b45309,color:#78350f
+  classDef art fill:#f1f5f9,stroke:#64748b,color:#334155
+  classDef wf fill:#ede9fe,stroke:#6d28d9,color:#4c1d95
+
+  wf1[[project-kickoff]]:::wf
+  wf2[[delivery-to-invoice]]:::wf
+  sales[sales]:::ai
+  sa[solutions-architect]:::ai
+  dm[delivery-manager]:::ai
+  em[eng-manager]:::ai
+  finance[finance]:::ai
+  support[support]:::ai
+  am[account-manager]:::ai
+  pack("kickoff pack — SOW + resourcing + plan + risk register"):::art
+  status("client status draft / formal change order"):::art
+  acc("milestone acceptance package — criterion → evidence"):::art
+  g1{commitments gate}:::gate
+  g2{"external-comms gate — customer-specific"}:::gate
+  g3{revenue-booking gate}:::gate
+  appr(["Sales & Delivery Approver — human"]):::human
+  pf(["People & Finance Approver — human"]):::human
+  dep(["Sales & Delivery Deputy — human"]):::human
+  head(["Sales & Delivery Head — human"]):::human
+  ceo(["CEO — terminal backstop"]):::human
+
+  sales -->|"booked PO (revenue-booking stamped)"| dm
+  sa -->|"technical brief + estimate assumptions"| dm
+  wf1 -.->|"Verify PO vs deal → SOW → plan"| dm
+  wf2 -.->|"acceptance verification + QA/security gates"| dm
+  dm --> pack
+  pack -->|"APR: commit dates + resourcing"| g1
+  g1 --> appr
+  appr -->|"approved → project in-delivery"| em
+  dm --> status
+  status -->|"APR: exact send action; revised dates = new commitments"| g2
+  g2 --> appr
+  dm --> acc
+  acc -->|"APR: mark milestone accepted"| g3
+  g3 --> pf
+  pf -->|"accepted → invoice trigger (/invoice)"| finance
+  dm -->|"go-live handoff: shipped, known issues, SLA obligations"| support
+  dm -->|"account relationship at go-live"| am
+  appr -. SLA .-> dep
+  dep -. SLA .-> head
+  head -. SLA .-> ceo
+```
+
 ## 8. KPIs & metrics
 
 Computed from the records, never guessed (SOP-008); unknowns `TBD`. Reviewed at the HITL sampling cadence (SOP-013).
@@ -132,4 +187,4 @@ Computed from the records, never guessed (SOP-008); unknowns `TBD`. Reviewed at 
 Agent charter `.claude/agents/delivery-manager.md` · skills `/sow` (and input to `finance`'s `/invoice`; charter also lists `/kickoff` and `/sprint-plan` — not in the local skill library, provided by the workflow / software pack) · workflows `.claude/workflows/project-kickoff.js`, `.claude/workflows/delivery-to-invoice.js` · foundations [SOP-002](../foundations/SOP-002-system-of-record.md), [SOP-003](../foundations/SOP-003-human-approval-gates.md), [SOP-004](../foundations/SOP-004-escalation-and-slas.md), [SOP-008](../foundations/SOP-008-quality-evidence-and-honesty.md), [SOP-013](../foundations/SOP-013-human-in-the-loop-review.md) §3b (HITL verified at UAT) · records `company/projects/`, `sows/`, `milestones/`, `pos/`, `registry.md` · routing `company/org/routing.md` · `guides/company-os.md`.
 
 ---
-*Changelog: 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*
+*Changelog: 1.2 — added §7.1 role flow diagram (`/visualize-agents`). 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*

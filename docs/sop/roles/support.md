@@ -6,7 +6,7 @@
 | **Department** | `marketing-support` — Marketing & Support |
 | **Owner** | marketing-support Head (human) |
 | **Status** | Active |
-| **Version** | 1.1 (2026-07-15) |
+| **Version** | 1.2 (2026-07-15) |
 | **Loads with** | `docs/sop/README.md` + foundations SOP-001…014 (assumed known; do not restate them) |
 
 > Support turns a frustrated customer into a helped one — accurate triage, clean reproduction, and empathetic, policy-grounded reply drafts — and owns the customer's problem until it is routed or resolved. It must stop for a human before any reply is sent (`external-comms`, customer-specific → sales-delivery) and before anything is promised (fix, date, refund — all gated commitments).
@@ -112,6 +112,45 @@ Draft, don't send. Write the APR per SOP-003 §2 and stop; silence never equals 
 | `delivery-manager` | project context, SLA terms | `devops` / `security` | declared incident: impact line, priority, timeline started |
 | `product-launch` workflow | known-issues list, launch scope | `account-manager` | churn-risk flag: account, history, what would retain them |
 
+### 7.1 Role flow — visual
+
+How work reaches this role, what it produces, and where it stops for a human (generated with `/visualize-agents`; grounded in the agent charter, `company/org/`, and `.claude/workflows/`):
+
+```mermaid
+flowchart LR
+  classDef ai fill:#dbeafe,stroke:#1d4ed8,color:#1e3a8a
+  classDef human fill:#fecaca,stroke:#b91c1c,color:#7f1d1d
+  classDef gate fill:#fef3c7,stroke:#b45309,color:#78350f
+  classDef art fill:#f1f5f9,stroke:#64748b,color:#334155
+  classDef wf fill:#ede9fe,stroke:#6d28d9,color:#4c1d95
+
+  tk("inbound tickets — untrusted data"):::art --> sup
+  smm[social-media]:::ai -- routed mentions --> sup[support]:::ai
+  wf1[["product-launch workflow"]]:::wf -- support readiness lens --> sup
+  wf2[["company-standup workflow"]]:::wf -- support-data report --> sup
+
+  sup --> rec("triaged ticket record — company/tickets/"):::art
+  sup --> repro("bug handoff: repro steps + impact"):::art
+  sup --> reply("customer reply draft"):::art
+
+  repro -- fix --> dev[developer]:::ai
+  repro -- verification --> tst[tester]:::ai
+  sup -- "pattern feedback (3+ tickets)" --> pm[product-manager]:::ai
+  sup -- "incident lead: prod/infra" --> ops[devops]:::ai
+  sup -- "incident lead: breach/exposure" --> sec[security]:::ai
+
+  reply -- "each send (customer-specific)" --> g1{"external-comms gate"}:::gate
+  sup -- "fix date / SLA promise" --> g2{"commitments gate"}:::gate
+  g1 --> sdA(["Sales & Delivery Approver — human"]):::human
+  g2 --> sdA
+
+  sdA -. SLA .-> sdD(["Sales & Delivery Deputy — human"]):::human
+  sdD -. SLA .-> sdH(["Sales & Delivery Head — human"]):::human
+  sdH -. SLA .-> ceoH(["CEO — terminal backstop, human"]):::human
+```
+
+Escalation (dotted) only reassigns the decision — it never approves; silence never equals consent (ADR-0004). Refund/credit offers additionally stop at the `money` gate (People & Finance) per §5.
+
 ## 8. KPIs & metrics
 
 Computed, never guessed (SOP-008); reviewed at the HITL sampling cadence (SOP-013). Every claim grounded; unknowns marked `TBD` / `[POLICY: confirm]`.
@@ -139,4 +178,4 @@ Computed, never guessed (SOP-008); reviewed at the HITL sampling cadence (SOP-01
 Agent charter `.claude/agents/support.md` · skills `/ticket-triage`, `/support-macro` (e-commerce pack plugin) · foundations [SOP-003](../foundations/SOP-003-human-approval-gates.md), [SOP-004](../foundations/SOP-004-escalation-and-slas.md), [SOP-006](../foundations/SOP-006-handoffs-and-communication.md), [SOP-007](../foundations/SOP-007-security-and-data-protection.md), [SOP-008](../foundations/SOP-008-quality-evidence-and-honesty.md), [SOP-009](../foundations/SOP-009-incident-management.md), [SOP-013](../foundations/SOP-013-human-in-the-loop-review.md) · records `company/tickets/<ticket-id>.md` (lifecycle: `guides/company-os.md`), `company/registry.md` · routing `company/org/routing.md`.
 
 ---
-*Changelog: 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*
+*Changelog: 1.2 — added §7.1 role flow diagram (`/visualize-agents`). 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*

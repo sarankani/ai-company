@@ -6,7 +6,7 @@
 | **Department** | `operations` — Operations |
 | **Owner** | operations Head (human) |
 | **Status** | Active |
-| **Version** | 1.1 (2026-07-15) |
+| **Version** | 1.2 (2026-07-15) |
 | **Loads with** | `docs/sop/README.md` + foundations SOP-001…014 (assumed known; do not restate them) |
 
 > The Data Analyst turns product and business data into numbers the company can trust and a clear "so what". Every figure it reports is computed and reproducible — a wrong number here misleads real decisions. Its work is **advisory**: it recommends, humans and owning roles decide; and it never touches production data or shares metrics externally without the gate.
@@ -109,6 +109,39 @@ Per [SOP-003](../foundations/SOP-003-human-approval-gates.md): finished artifact
 | any role / human | spike-drop question | metric's owning role | investigation memo: fact/inference/assumption labeled, root cause or ranked hypotheses, recommended action |
 | own analyses | data-quality defects found | `developer` / `devops` | defect flag: symptom, affected metrics/period, reproduction query |
 
+### 7.1 Role flow — visual
+
+How work reaches this role, what it produces, and where it stops for a human (generated with `/visualize-agents`; grounded in the agent charter, `company/org/`, and `.claude/workflows/`):
+
+```mermaid
+flowchart LR
+  classDef ai fill:#dbeafe,stroke:#1d4ed8,color:#1e3a8a
+  classDef human fill:#fecaca,stroke:#b91c1c,color:#7f1d1d
+  classDef gate fill:#fef3c7,stroke:#b45309,color:#78350f
+  classDef art fill:#f1f5f9,stroke:#64748b,color:#334155
+  classDef wf fill:#ede9fe,stroke:#6d28d9,color:#4c1d95
+
+  wf1[[company-standup]]:::wf -->|support-data report| da[data-analyst]:::ai
+  ceo[ceo]:::ai -->|"OKR/KR list + targets"| da
+  pm[product-manager]:::ai -->|metrics-review request| da
+  am[account-manager]:::ai -->|QBR data request| da
+  da -->|computed with code| ans("verified answer / scorecard / QBR pack — provenance + caveats"):::art
+  ans -->|"advisory — requester decides"| ceo
+  ans --> pm
+  ans --> am
+  da -->|spike-drop question| memo("investigation memo (fact / inference / assumption)"):::art
+  memo -.->|"serious finding — same day"| opsA(["Operations Approver — human"]):::human
+  da -->|data-quality defect flag| dev["developer / devops"]:::ai
+  da --> script("prod-data query/backfill script + rollback note"):::art
+  script --> g1{merge-deploy gate}:::gate
+  g1 -->|"APR — exact verbatim action"| engA(["Engineering Approver — human"]):::human
+  ans -->|any external share| g2{external-comms gate}:::gate
+  g2 -->|"drafts route via marketing / account-manager"| msA(["Marketing & Support Approver — human"]):::human
+  opsA -. "SLA lapse — reassigns, never approves" .-> opsD(["Operations Deputy — human"]):::human
+  opsD -. SLA .-> opsH(["Operations Head — human"]):::human
+  opsH -. SLA .-> ceoH(["CEO — terminal backstop (human)"]):::human
+```
+
 ## 8. KPIs & metrics
 
 Computed, never guessed (SOP-008); reviewed at the HITL sampling cadence (SOP-013). Every claim grounded; unknown targets and unset OKRs stay `TBD`.
@@ -136,4 +169,4 @@ Computed, never guessed (SOP-008); reviewed at the HITL sampling cadence (SOP-01
 Agent charter `.claude/agents/data-analyst.md` · skills: `dataviz` (charts), PM pack `/metrics-review` (consumer of this role's inputs), AI/ML pack `data-validator` (re-verification) · foundations [SOP-003](../foundations/SOP-003-human-approval-gates.md), [SOP-004](../foundations/SOP-004-escalation-and-slas.md), [SOP-006](../foundations/SOP-006-handoffs-and-communication.md), [SOP-007](../foundations/SOP-007-security-and-data-protection.md), [SOP-008](../foundations/SOP-008-quality-evidence-and-honesty.md), [SOP-011](../foundations/SOP-011-data-ingestion-and-privacy.md) (dataset classification & provenance — this role is Responsible; PII minimization in analyses), [SOP-013](../foundations/SOP-013-human-in-the-loop-review.md) · records `company/registry.md` + entity dirs · served skills `/okrs` (`ceo`), `/qbr` (`account-manager`).
 
 ---
-*Changelog: 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*
+*Changelog: 1.2 — added §7.1 role flow diagram (`/visualize-agents`). 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*

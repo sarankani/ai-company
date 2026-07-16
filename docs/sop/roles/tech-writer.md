@@ -6,7 +6,7 @@
 | **Department** | `product-design` — Product & Design |
 | **Owner** | product-design Head (human) |
 | **Status** | Active |
-| **Version** | 1.1 (2026-07-15) |
+| **Version** | 1.2 (2026-07-15) |
 | **Loads with** | `docs/sop/README.md` + foundations SOP-001…014 (assumed known; do not restate them) |
 
 > The Technical Writer makes the product understandable — to users, developers, and future maintainers — by documenting what *actually is*, verified against code and behavior, with unknowns marked `TBD` rather than invented. Docs that drift from reality are worse than none. Everything it writes for an external audience is drafted and staged; a human publishes.
@@ -105,6 +105,52 @@ Draft and stage, a human publishes. Flag in the APR anything that could disclose
 | `designer` | UI terminology, final UX copy | `devops` / `tester` | executable runbooks they own and operate |
 | `delivery-manager` | milestone deliverable needing client docs | `product-manager` / `designer` | flagged product-confusion findings with examples |
 
+### 7.1 Role flow — visual
+
+How work reaches this role, what it produces, and where it stops for a human (generated with `/visualize-agents`; grounded in the agent charter, `company/org/`, and `.claude/workflows/`):
+
+```mermaid
+flowchart LR
+  classDef ai fill:#dbeafe,stroke:#1d4ed8,color:#1e3a8a
+  classDef human fill:#fecaca,stroke:#b91c1c,color:#7f1d1d
+  classDef gate fill:#fef3c7,stroke:#b45309,color:#78350f
+  classDef art fill:#f1f5f9,stroke:#64748b,color:#334155
+  classDef wf fill:#ede9fe,stroke:#6d28d9,color:#4c1d95
+  wf1[[product-launch]]:::wf
+  dev[developer]:::ai
+  tst[tester]:::ai
+  pm[product-manager]:::ai
+  tw[tech-writer]:::ai
+  doc("verified feature doc / guide — example-backed"):::art
+  notes("staged release notes"):::art
+  runbook("runbook — docs/runbooks/*.md"):::art
+  g1{"external-comms gate"}:::gate
+  g2{"merge-deploy gate"}:::gate
+  hEng(["Engineering Approver — human"]):::human
+  hMS(["Marketing & Support Approver — human"]):::human
+  hSD(["Sales & Delivery Approver — human"]):::human
+  hD(["Marketing & Support Deputy — human"]):::human
+  hH(["Marketing & Support Head — human"]):::human
+  hC(["CEO — terminal backstop"]):::human
+  mkt[marketing]:::ai
+  sup[support]:::ai
+  do[devops]:::ai
+
+  dev -->|"merged PRs, shipped behavior"| tw
+  tst -->|"verified behavior"| tw
+  pm -->|"spec context, audience"| tw
+  wf1 -->|"docs readiness lens"| tw
+  tw --> doc --> g2 --> hEng
+  hEng -->|"merged docs"| sup
+  tw --> notes --> g1
+  g1 --> hMS
+  g1 -->|"customer-specific"| hSD
+  hMS -->|"approved for send"| mkt
+  hMS -->|"approved for send"| sup
+  tw --> runbook -->|"dry run confirmed by operator"| do
+  hMS -. SLA breach .-> hD -. SLA breach .-> hH -. SLA breach .-> hC
+```
+
 ## 8. KPIs & metrics
 
 Computed from records, never guessed (SOP-008); reviewable at the HITL sampling cadence (SOP-013).
@@ -131,4 +177,4 @@ Computed from records, never guessed (SOP-008); reviewable at the HITL sampling 
 Agent charter `.claude/agents/tech-writer.md` · skills: engineering pack `/documentation`, release-note drafting from merged PRs/specs (charter; CLAUDE.md §7 plugin skills) · foundations SOP-003/004/005/008/010/013 · `docs/runbooks/`, `docs/specs/`, `memory/glossary.md`, `company/org/routing.md`.
 
 ---
-*Changelog: 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*
+*Changelog: 1.2 — added §7.1 role flow diagram (`/visualize-agents`). 1.1 — five mandatory parts (RACI, exceptions & red flags, KPIs) per SOP-000 §2a. 1.0 — initial.*
