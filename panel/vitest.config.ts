@@ -24,7 +24,7 @@ export default defineConfig({
         "lib/stats.ts",
         "lib/format.ts",
       ],
-      reporter: ["text-summary", "html"],
+      reporter: ["text-summary", "json-summary", "html"],
       thresholds: { lines: 80, functions: 80, statements: 80, branches: 75 },
     },
   },

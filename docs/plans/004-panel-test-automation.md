@@ -1,6 +1,6 @@
 # Plan 004 — Phase 6: Panel Test Automation & Quality
 
-- **Status:** Draft — proposed 2026-07-15 (Founder requested panel automation testing)
+- **Status:** Active — EX-601…605 merged (PRs #63/#64/#65/#66/#70/#73); EX-606 delivers the coverage gate + quality summary + regression proof (`docs/runbooks/ex-606-regression-proof.md`). **Phase exit pending one Founder action:** turn on the required-checks branch-protection rule (`docs/runbooks/panel-required-checks.md`).
 - **Epic:** E6 — Panel Test Automation & Quality
 - **Owner:** tester (lead) + developer + devops · Saran (gates)
 - **Related:** `panel/` · `panel/e2e/smoke.mjs` · `.github/workflows/panel-ci.yml` · Tech Spec 001 §8 · Design Brief 001 (a11y)
