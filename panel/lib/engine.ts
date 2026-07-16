@@ -379,6 +379,22 @@ export function parseSeatChange(body: string): SeatChange | null {
   return department && seat && from && to ? { department, seat, from, to } : null;
 }
 
+// ---------- add-member proposals (Tech Spec 002 §4.1: CRM grants) ----------
+
+export interface MemberGrant { department: string; seat: string }
+export interface AddMember { id: string; name: string; email: string; title: string; grants: MemberGrant[] }
+
+export function parseAddMember(body: string): AddMember | null {
+  const sec = body.match(/## Proposed change\n([\s\S]*?)(?=\n## |$)/);
+  if (!sec) return null;
+  const get = (k: string) => sec[1].match(new RegExp(`^- ${k}: (.+)$`, "m"))?.[1]?.trim();
+  if (get("change") !== "add-member") return null;
+  const id = get("id"), name = get("name"), email = get("email"), title = get("title") ?? "";
+  const grants = [...sec[1].matchAll(/^- grant: ([a-z-]+):(crm-viewer|crm-editor)$/gm)]
+    .map((m) => ({ department: m[1], seat: m[2] }));
+  return id && name && email && grants.length ? { id, name, email, title, grants } : null;
+}
+
 // ---------- registry (lockstep with rebuild_registry) ----------
 
 const BEGIN = "<!-- approvals:begin -->";

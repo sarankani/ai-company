@@ -38,7 +38,10 @@ export default async function CrmTypeList({
     <main className="wide">
       <div className="crumbs">
         <span><Link href="/crm">CRM</Link> / {lc.plural}</span>
-        <span className="muted">{access === "edit" ? "editor" : "viewer"}</span>
+        <span className="muted">
+          {type === "opportunities" && <><Link href="/crm/pipeline">pipeline view</Link> · </>}
+          {access === "edit" ? "editor" : "viewer"}
+        </span>
       </div>
       <h1>{lc.plural}</h1>
       <p className="asof">{records.length} record{records.length === 1 ? "" : "s"}{stage ? ` · stage: ${stage}` : ""}{q ? ` · “${q}”` : ""}</p>

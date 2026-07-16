@@ -4,8 +4,11 @@ import { redirect } from "next/navigation";
 import { verifySession } from "@/lib/auth";
 import { loadRecords } from "@/lib/records";
 import { humanById, loadHumans, loadDepartments, isCeoSeat } from "@/lib/org";
-import { parseSeatChange, canView, CHAIN } from "@/lib/engine";
-import { proposeSeatChangeAction, applySeatChangeAction } from "./actions";
+import { parseSeatChange, parseAddMember, canView, CHAIN } from "@/lib/engine";
+import {
+  proposeSeatChangeAction, applySeatChangeAction,
+  proposeAddMemberAction, applyAddMemberAction,
+} from "./actions";
 
 /** People & Routing admin (EX-205, Design Brief §4.5) — Head/CEO only.
  * Seat change is a visualized two-step: propose (Head) → decide on the item
@@ -43,6 +46,11 @@ export default async function Admin({
     .filter((r) => canView(me, r))
     .map((r) => ({ r, change: parseSeatChange(r.body) }))
     .filter((x) => x.change)
+    .sort((a, b) => b.r.id.localeCompare(a.r.id));
+  const memberAdds = records
+    .filter((r) => canView(me, r))
+    .map((r) => ({ r, member: parseAddMember(r.body) }))
+    .filter((x) => x.member)
     .sort((a, b) => b.r.id.localeCompare(a.r.id));
   const canSeeSeatChanges = me.roles.some((r) => r.seat === "ceo" || r.department === "people-finance");
 
@@ -116,6 +124,58 @@ export default async function Admin({
           </select>
         </div>
         <input type="text" name="why" placeholder="Why (lands in the record summary)" aria-label="Reason" />
+        <button type="submit">Propose — creates the gated record</button>
+      </form>
+
+      <div className="section-label">Members &amp; CRM grants (two-step, people-gated)</div>
+      {memberAdds.length ? (
+        <div className="rows">
+          {memberAdds.map(({ r, member }) => (
+            <div key={r.id} className="row">
+              <Link href={`/item/${r.id}`} className="mono">{r.id}</Link>
+              <span className="action">
+                add member {member!.id} ({member!.email}) · {member!.grants.map((g) => `${g.department}:${g.seat.replace("crm-", "")}`).join(", ")}
+              </span>
+              {r.state === "pending" && <span className="chip sla">awaiting dual approval — decide on the item</span>}
+              {r.state === "approved" && !r.execution?.executed_at && (
+                isCeoSeat(me) ? (
+                  <form action={applyAddMemberAction} className="inline-form">
+                    <input type="hidden" name="id" value={r.id} />
+                    <button type="submit" className="apply">Apply now — exactly once</button>
+                  </form>
+                ) : (
+                  <span className="chip state">approved — awaiting CEO apply</span>
+                )
+              )}
+              {r.execution?.executed_at ? <span className="chip state">added {String(r.execution.executed_at).slice(0, 10)}</span> : null}
+              {r.state === "rejected" && <span className="chip state">rejected</span>}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="empty">No member additions proposed yet.</div>
+      )}
+
+      <div className="section-label">Propose a new member (CRM access only — no approval authority)</div>
+      <form action={proposeAddMemberAction} className="propose card-flat">
+        <div className="prow">
+          <input type="text" name="id" placeholder="id (kebab-case)" aria-label="Member id" required pattern="[a-z0-9][a-z0-9-]{1,29}" />
+          <input type="text" name="name" placeholder="Full name" aria-label="Full name" required />
+          <input type="email" name="email" placeholder="Email (their login)" aria-label="Email" required />
+          <input type="text" name="title" placeholder="Title (optional)" aria-label="Title" />
+        </div>
+        <div className="prow grants" role="group" aria-label="CRM grants per department">
+          {departments.map((d) => (
+            <label key={d.id} className="grant">
+              <span>{d.name}</span>
+              <select name={`grant:${d.id}`} defaultValue="" aria-label={`${d.name} grant`}>
+                <option value="">no access</option>
+                <option value="crm-viewer">viewer</option>
+                <option value="crm-editor">editor</option>
+              </select>
+            </label>
+          ))}
+        </div>
         <button type="submit">Propose — creates the gated record</button>
       </form>
 
