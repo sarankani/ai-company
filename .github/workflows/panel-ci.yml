@@ -74,6 +74,15 @@ jobs:
         run: node -v && python3 --version
       - name: Run e2e suite
         run: npm run test:e2e
+      - name: Quality summary (e2e + a11y)
+        if: always()
+        run: |
+          {
+            echo "## Panel quality — e2e + a11y"
+            echo "- Playwright suite (\`test/specs/*.spec.ts\`) over an isolated clone"
+            echo "- Accessibility: axe-core WCAG 2.1 A/AA scan (zero critical/serious) + keyboard-only path"
+            echo "- Result: \`${{ job.status }}\` — full report/traces attached as an artifact on failure"
+          } >> "$GITHUB_STEP_SUMMARY"
       - name: Upload Playwright report + traces on failure
         if: failure()
         uses: actions/upload-artifact@v4
@@ -103,6 +112,19 @@ jobs:
       # the runner). --coverage enforces the thresholds in vitest.config.ts.
       - name: Unit tests + coverage
         run: npm run test:unit:cov
+      - name: Quality summary (unit)
+        if: always()
+        run: |
+          {
+            echo "## Panel quality — unit"
+            if [ -f coverage/coverage-summary.json ]; then
+              cov=$(node -p "Math.round(require('./coverage/coverage-summary.json').total.lines.pct)")
+              echo "- Vitest over \`lib/\` + TS↔Python parity"
+              echo "- Line coverage: **${cov}%** (threshold enforced in vitest.config.ts)"
+            else
+              echo "- Vitest run did not produce a coverage summary (tests likely failed above)."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
 
   dependency-audit:
     name: Dependency audit
