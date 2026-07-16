@@ -1,6 +1,6 @@
 # Plan 005 — Company CRM in the Control Panel
 
-- **Status:** Draft — awaiting Saran (ADR-0008 acceptance is the gate to start building)
+- **Status:** In review — EX-701…709 built and verified on `claude/company-crm-control-panel-mfa1wz` (179 unit + 31 e2e + 32 engine tests green, prod build green). Awaiting: ADR-0008 acceptance, merge, Supabase provisioning + deploy authorization.
 - **Epic:** E7 — Company CRM in the Control Panel
 - **Owner:** developer (lead) · product-manager (scope) · Saran (gates)
 - **Related:** [Tech Spec 002](../specs/tech-spec-002-crm-module.md) · [ADR-0008](../adrs/0008-database-for-crm-business-records.md) · `guides/company-os.md` · `panel/`
