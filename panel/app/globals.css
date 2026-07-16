@@ -18,7 +18,7 @@
 * { box-sizing: border-box; }
 body {
   margin: 0; background: var(--bg); color: var(--ink);
-  font-family: system-ui, "Segoe UI", Roboto, sans-serif; line-height: 1.5;
+  font-family: var(--font-inter, Inter), system-ui, "Segoe UI", Roboto, sans-serif; line-height: 1.5;
 }
 a { color: var(--teal); }
 .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
