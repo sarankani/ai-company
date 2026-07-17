@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.110.7",
-    "drizzle-orm": "^0.44.7",
+    "drizzle-orm": "^0.45.2",
     "next": "^15.5.20",
     "nodemailer": "^9.0.3",
     "pg": "^8.16.3",

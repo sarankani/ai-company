@@ -37,7 +37,9 @@ export default async function Pipeline() {
       <h1>Opportunity pipeline</h1>
       <p className="asof">{opps.length} opportunit{opps.length === 1 ? "y" : "ies"} · move stages from a card's detail page</p>
 
-      <div className="kanban">
+      {/* horizontally scrollable → must be keyboard-focusable (axe:
+          scrollable-region-focusable) */}
+      <div className="kanban" tabIndex={0} role="region" aria-label="Pipeline stages">
         {lc.stages.map((stage) => {
           const cards = byStage.get(stage) ?? [];
           const total = cards.reduce((s, c) => s + (value(c) ?? 0), 0);
