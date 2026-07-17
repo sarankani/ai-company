@@ -197,6 +197,19 @@ describe("update + filters + misc branches", () => {
     expect((await listCrmRecords("leads", { owner: "nobody-x" }, ceo))).toHaveLength(0);
   });
 
+  it("REGRESSION: a q filter never escapes the type filter (OR precedence / RBAC leak)", async () => {
+    // an invoice whose TITLE matches the query must not surface in a leads
+    // list — before the parenthesization fix, `type = 'leads' AND id ILIKE q
+    // OR title ILIKE q` returned it (and leaked hidden types to viewers)
+    await createCrmRecord("invoices", { title: "Precedence probe invoice" }, agent("finance"));
+    const leads = await listCrmRecords("leads", { q: "precedence probe" }, viewer);
+    expect(leads).toHaveLength(0);
+    const invoices = await listCrmRecords("invoices", { q: "precedence probe" }, ceo);
+    expect(invoices).toHaveLength(1);
+    // combined filters stay conjunctive alongside q
+    expect(await listCrmRecords("invoices", { q: "precedence probe", stage: "paid" }, ceo)).toHaveLength(0);
+  });
+
   it("misc guards: empty search/comment, missing records, transitions on unknown ids", async () => {
     expect(await searchCrm("   ", ceo)).toEqual([]);
     expect(await getCrmRecord("LEAD-19990101-009", ceo)).toBeNull();

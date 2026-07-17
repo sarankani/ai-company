@@ -160,8 +160,12 @@ export async function listCrmRecords(
   if (filters.stage) conds.push(eq(crmRecords.stage, filters.stage));
   if (filters.owner) conds.push(eq(crmRecords.owner, filters.owner));
   if (filters.account) conds.push(eq(crmRecords.accountId, filters.account));
-  if (filters.q?.trim())
-    conds.push(sql`${crmRecords.id} ILIKE ${"%" + filters.q.trim() + "%"} OR ${crmRecords.title} ILIKE ${"%" + filters.q.trim() + "%"}`);
+  if (filters.q?.trim()) {
+    const like = "%" + filters.q.trim() + "%";
+    // parenthesized: a bare OR would escape the type/stage conditions and
+    // leak rows of types outside the caller's RBAC scope
+    conds.push(sql`(${crmRecords.id} ILIKE ${like} OR ${crmRecords.title} ILIKE ${like})`);
+  }
   return db.select().from(crmRecords).where(and(...conds))
     .orderBy(desc(crmRecords.updatedAt)).limit(limit);
 }
