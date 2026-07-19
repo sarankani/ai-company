@@ -18,7 +18,7 @@
 * { box-sizing: border-box; }
 body {
   margin: 0; background: var(--bg); color: var(--ink);
-  font-family: system-ui, "Segoe UI", Roboto, sans-serif; line-height: 1.5;
+  font-family: var(--font-inter, Inter), system-ui, "Segoe UI", Roboto, sans-serif; line-height: 1.5;
 }
 a { color: var(--teal); }
 .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
@@ -204,3 +204,43 @@ tr.system .kind { background: var(--teal-soft); color: var(--teal-ink); }
 .propose select { flex: 1 1 160px; }
 .propose input[type="text"] { width: 100%; }
 .propose button { width: auto; padding: 9px 16px; font-size: 14px; }
+
+/* CRM (EX-703/704) */
+.crm-search { display: flex; gap: 8px; align-items: center; }
+.crm-search input[type="search"] {
+  padding: 7px 10px; border: 1px solid var(--line); border-radius: 8px;
+  background: var(--surface); color: var(--ink); min-width: 220px;
+}
+.crm-form label { display: block; font-size: 13px; color: var(--muted); margin-top: 10px; }
+.crm-form input, .crm-form textarea {
+  display: block; width: 100%; margin-top: 4px; padding: 7px 10px;
+  border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink);
+}
+.crm-form button { margin-top: 12px; }
+.crm-inline-form { display: flex; gap: 8px; margin: 8px 0 14px; }
+.crm-inline-form input {
+  padding: 7px 10px; border: 1px solid var(--line); border-radius: 8px;
+  background: var(--surface); color: var(--ink);
+}
+.crm-kv { border-collapse: collapse; font-size: 13.5px; }
+.crm-kv th { text-align: left; color: var(--muted); font-weight: 500; padding: 4px 14px 4px 0; vertical-align: top; }
+.crm-kv td { padding: 4px 0; }
+
+/* CRM pipeline kanban (EX-707) */
+.kanban { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(200px, 1fr); gap: 12px; overflow-x: auto; padding-bottom: 8px; }
+.kanban-col { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px; min-height: 120px; }
+.kanban-head { display: flex; justify-content: space-between; font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; padding: 2px 4px 10px; }
+.kanban-card { display: block; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; text-decoration: none; color: inherit; }
+.kanban-card:hover { border-color: var(--teal); }
+.kanban-title { font-weight: 600; font-size: 13.5px; margin-bottom: 6px; }
+.kanban-meta { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; }
+.kanban-empty { color: var(--muted); text-align: center; padding: 16px 0; }
+
+/* Admin: member grants picker (EX-707) */
+.prow.grants { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+.grant { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); }
+.grant select { padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); }
+
+/* Notifications bell (EX-709) */
+.chip.bell { text-decoration: none; color: var(--ink); }
+.chip.bell.has-unread { background: var(--amber-soft); color: var(--amber-ink); border-color: var(--amber); font-weight: 700; }

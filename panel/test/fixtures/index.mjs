@@ -296,6 +296,7 @@ class Fixture {
       LOCAL_REPO_PATH: this.dir,
       CACHE_TTL_MS: "0", // deterministic: externally-seeded records visible at once
       SESSION_SECRET: this.sessionSecret,
+      CRM_AGENT_TOKEN: "e2e-agent-token", // fixed token for CRM agent-API specs
       AUTH_DEV_LOG: "1", // print magic links to the log so signIn() can read them
       PORT: String(this.port),
       NODE_ENV: "development",

@@ -26,8 +26,20 @@ SESSION_SECRET=dev-secret npm run dev
 | `PANEL_BASE_URL` | Public base URL used in magic links |
 | `SMTP_HOST/PORT/SECURE/USER/PASS`, `NOTIFY_FROM` | Magic-link email delivery (nodemailer); with `SMTP_HOST` set, links are emailed and never logged |
 | `AUTH_DEV_LOG=1` | Dev only — print magic links to the server console |
+| `DATABASE_URL` | CRM database (ADR-0008): Supabase Postgres in prod (pooled URL), any Postgres in Docker, `pglite://<dir>` for tests; **unset = zero-setup local PGlite** (`panel/.crm-data`, auto-migrated) |
+| `CRM_AGENT_TOKEN` | Bearer token AI employees use against `/api/crm` (`X-Agent-Id` names the employee) |
+| `NEXT_PUBLIC_SUPABASE_URL` + `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Optional — live notification push via Supabase Realtime |
 
 Full reference: `.env.example`.
+
+## CRM (EX-702…709, ADR-0008)
+
+Business records (all 16 Company OS entity types) live in **Postgres**, not the repo — git stays the source of truth for approvals/questions/org only. Screens: `/crm` (overview + search), `/crm/<type>` (lists + create), `/crm/<type>/<id>` (detail, stage moves, activity), `/crm/pipeline` (opportunity Kanban), `/crm/notifications`. Access is a **role × department matrix**: `crm-viewer`/`crm-editor` grants per department in `company/org/humans/<id>.md` (chain seats get implicit editor on their department, the ceo seat everywhere; no grant = hidden; grants never confer approval authority). New members are added from `/admin` through the people gate.
+
+- **Setup:** `npm run db:migrate` (against `DATABASE_URL`); optional demo data `npm run db:seed`. With no `DATABASE_URL`, a local PGlite directory is created and migrated automatically.
+- **Supabase (production):** create a project, set `DATABASE_URL` to the pooled connection string, run `db:migrate`; for live notifications add `crm_notifications` to the `supabase_realtime` publication and set the two `NEXT_PUBLIC_SUPABASE_*` vars.
+- **Gates:** money/commitment stage transitions (invoice send, PO booking, opp won, …) file a normal git-native APR and stay parked until a human decides; the record page reconciles and applies the outcome (exactly-once execution stamp on the APR).
+- **AI employees:** `node scripts/crm.mjs …` (repo root) or `/api/crm` with `Authorization: Bearer $CRM_AGENT_TOKEN` + `X-Agent-Id`.
 
 ## Deploy (EX-207)
 

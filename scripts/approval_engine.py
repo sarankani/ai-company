@@ -268,6 +268,13 @@ def resolve_assignee(humans, department, start_pos=0):
     return (ceos[0]["id"] if ceos else "UNASSIGNED"), len(CHAIN)  # ceo even if busy: terminal backstop
 
 
+# Seats that carry decision authority — the escalation chain + ceo. CRM grants
+# (crm-viewer/crm-editor, Tech Spec 002 §4.1) confer record access in the
+# panel's CRM, never the right to decide an approval. Lockstep with
+# panel/lib/org.ts authorized().
+DECIDE_SEATS = {"approver", "deputy", "head"}
+
+
 def authorized(humans, human_id, department):
     h = humans.get(human_id)
     if not h:
@@ -275,7 +282,8 @@ def authorized(humans, human_id, department):
     roles = h.get("roles", [])
     if any(r.get("seat") == "ceo" for r in roles):
         return True
-    return any(r.get("department") == department for r in roles)
+    return any(r.get("department") == department and r.get("seat") in DECIDE_SEATS
+               for r in roles)
 
 
 # ---------- records ----------

@@ -9,3 +9,6 @@ test-results/
 
 # Vitest coverage (EX-604)
 coverage/
+
+# CRM local PGlite data (zero-setup dev DB)
+.crm-data/

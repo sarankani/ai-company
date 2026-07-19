@@ -23,6 +23,12 @@ export default defineConfig({
         "lib/audit.ts",
         "lib/stats.ts",
         "lib/format.ts",
+        // CRM pure logic (EX-708). The IO surfaces (db.ts, gates.ts,
+        // api-auth.ts, session.ts) are exercised by the e2e suite.
+        "lib/crm/lifecycles.ts",
+        "lib/crm/rbac.ts",
+        "lib/crm/store.ts",
+        "lib/crm/ids.ts",
       ],
       reporter: ["text-summary", "json-summary", "html"],
       thresholds: { lines: 80, functions: 80, statements: 80, branches: 75 },
