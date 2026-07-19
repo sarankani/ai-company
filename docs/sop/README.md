@@ -1,6 +1,6 @@
 # Evalyn SOP Library — Standard Operating Procedures
 
-The executable operating knowledge of the company: how every role — the 23 AI employees and the human seat-holders — does its job, where it stops for a human, and how work moves between them. Written to be **loaded by AI agents**: universal best practice first, bound to this company's concrete mechanics (records, gates, routing) second. Standards for writing/changing SOPs: [SOP-000](foundations/SOP-000-sop-standards.md).
+The executable operating knowledge of the company: how every role — the 27 AI employees and the human seat-holders — does its job, where it stops for a human, and how work moves between them. Written to be **loaded by AI agents**: universal best practice first, bound to this company's concrete mechanics (records, gates, routing) second. Standards for writing/changing SOPs: [SOP-000](foundations/SOP-000-sop-standards.md).
 
 ## How an agent uses this library
 
@@ -47,10 +47,10 @@ Every role SOP carries a **§7.1 Role flow — visual**: a Mermaid diagram of ho
 | Leadership | R01 [ceo](roles/ceo.md) · R02 [eng-manager](roles/eng-manager.md) · R24 [chief-of-staff](roles/chief-of-staff.md) |
 | People & Finance | R03 [hr](roles/hr.md) · R04 [finance](roles/finance.md) |
 | Product & Design | R05 [product-manager](roles/product-manager.md) · R06 [project-manager](roles/project-manager.md) · R07 [designer](roles/designer.md) · R08 [tech-writer](roles/tech-writer.md) |
-| Engineering | R09 [developer](roles/developer.md) · R10 [code-reviewer](roles/code-reviewer.md) · R11 [tester](roles/tester.md) · R12 [devops](roles/devops.md) · R13 [security](roles/security.md) |
+| Engineering | R09 [developer](roles/developer.md) · R10 [code-reviewer](roles/code-reviewer.md) · R11 [tester](roles/tester.md) · R12 [devops](roles/devops.md) · R13 [security](roles/security.md) · R25 [ml-engineer](roles/ml-engineer.md) |
 | Sales & Delivery | R14 [sdr](roles/sdr.md) · R15 [sales](roles/sales.md) · R16 [solutions-architect](roles/solutions-architect.md) · R17 [delivery-manager](roles/delivery-manager.md) · R18 [account-manager](roles/account-manager.md) |
 | Marketing & Support | R19 [marketing](roles/marketing.md) · R20 [social-media](roles/social-media.md) · R21 [support](roles/support.md) |
-| Operations | R22 [procurement](roles/procurement.md) · R23 [data-analyst](roles/data-analyst.md) |
+| Operations | R22 [procurement](roles/procurement.md) · R23 [data-analyst](roles/data-analyst.md) · R26 [it-admin](roles/it-admin.md) · R27 [legal-counsel](roles/legal-counsel.md) |
 
 ## Maintenance
 

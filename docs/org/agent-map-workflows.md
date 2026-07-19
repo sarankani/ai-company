@@ -1,4 +1,4 @@
-# Agent visualization: workflows · 2026-07-15
+# Agent visualization: workflows · 2026-07-19
 
 Generated with `/visualize-agents`. Agent participation is derived from the persona lines ("As the <role>…") actually present in each `.claude/workflows/*.js` stage prompt — not from memory.
 
@@ -43,7 +43,7 @@ Purple subroutine = workflow (`.claude/workflows/*.js`) · blue rectangle = AI e
 
 ## Notes — coverage gaps
 
-- **Agents in no lifecycle workflow:** `chief-of-staff` (by design — it routes into workflows), `designer`, `developer`, `code-reviewer`, `account-manager`. The engineering build/review loop and the account-management loop run through direct invocation and skills (`/qbr`, `/ticket-triage`) rather than a workflow — candidates for future workflow coverage.
+- **Agents in no lifecycle workflow:** `chief-of-staff` (by design — it routes into workflows), `designer`, `developer`, `code-reviewer`, `account-manager`, and the three added in Plan 006 — `ml-engineer`, `it-admin`, `legal-counsel`. The engineering build/review loop and the account-management loop run through direct invocation and skills (`/qbr`, `/ticket-triage`) rather than a workflow. `ml-engineer` participates in the deliver stage via direct invocation (candidate to add to `project-kickoff`/`delivery-to-invoice` for AI projects); `legal-counsel` is a candidate for a contract-review step in `opportunity-to-proposal`/`project-kickoff`; `it-admin` is a candidate for `hiring-pipeline` (IT onboarding). All are future workflow-coverage candidates.
 - **Most load-bearing agent:** `delivery-manager` — persona in 3 of 7 workflows (project-kickoff, delivery-to-invoice, opportunity-to-proposal) and on the critical path of the value chain. `finance`, `sales`, `eng-manager` follow with 3 workflow appearances each (counting standup).
 - **Least-connected agent:** `designer` — no workflow, no gate of its own; connected only through direct invocation and handoffs. Candidate for a charter/coverage review.
 - `opportunity-to-proposal`'s adversarial deal Review stage runs without a named persona — consider assigning it (e.g. `ceo` or `delivery-manager`) so accountability is explicit.

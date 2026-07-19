@@ -1,4 +1,4 @@
-# Agent visualization: gates · 2026-07-15
+# Agent visualization: gates · 2026-07-19
 
 Generated with `/visualize-agents`, grounded in `company/org/routing.md` §1 (gate → department), `company/org/departments.md`, and CLAUDE.md §5. This map shows **where autonomy stops**: every gate, its owning department's human Approver seat, and the single escalation chain behind all of them.
 
@@ -38,13 +38,15 @@ Grounded in the agent charters' "Human-in-the-loop gates" sections:
 
 | Gate | Primary requesting agents |
 |---|---|
-| `merge-deploy` | `developer`, `devops`, `eng-manager` (verdict input: `code-reviewer`, `tester`, `security`) |
+| `merge-deploy` | `developer`, `ml-engineer` (model deploy), `devops`, `eng-manager` (verdict input: `code-reviewer`, `tester`, `security`) |
 | `external-comms` | `marketing`, `social-media`, `support`, `tech-writer` (publishing); customer-specific: `sdr`, `sales`, `account-manager`, `delivery-manager` |
-| `money` | `finance`, `marketing` (spend), `procurement` (spend approval) |
-| `commitments` | `sales`, `delivery-manager`, `account-manager`; roadmap: `product-manager` |
+| `money` | `finance`, `marketing` (spend), `procurement` (spend approval), `it-admin` (internal IT spend, via procurement) |
+| `commitments` | `sales`, `delivery-manager`, `account-manager`; roadmap: `product-manager`; legal terms/signature: `legal-counsel` (+ CEO for legally-binding) |
 | `people` (dual) | `hr` (+ CEO human stamp always required) |
-| `procurement` | `procurement` |
+| `procurement` | `procurement`; internal-IT needs specced by `it-admin` |
 | `revenue-booking` | `delivery-manager` (prep), decided by People & Finance Approver |
+
+`it-admin` also prepares **access grants / account changes** (least-privilege) that a human approves with `security`, and `legal-counsel` prepares **compliance attestations** for a human to sign — both are gated human decisions even where they don't map to a distinct `routing.md` gate id (they route through the owning department's seat; a dedicated `legal` gate is a possible future ADR — Plan 006).
 
 ## Legend
 

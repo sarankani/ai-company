@@ -36,13 +36,21 @@ Saran's decision (2026-07-19): **catalog + close the structural gaps** — map e
 ## 4. What this plan does NOT do (scope guard)
 
 - **No one-agent-per-designation** (~120 files) — rejected as breaking the minimum-resources archetype model.
-- **No role SOPs yet** for the three new agents (`docs/sop/roles/{ml-engineer,it-admin,legal-counsel}.md`) — charters reference them per convention; authoring them is the follow-up below.
-- **Dated content artifacts left as-is:** `company/marketing/social-*` still say "24" (a point-in-time campaign snapshot) and `docs/org/agent-map-org.md` is a drift-analysis snapshot — not rewritten here to avoid altering staged content; noted for a future sweep.
 - **RevOps / UX-Research / Product-Marketing** stay mapped to existing archetypes; listed in the catalog as the next candidate agents if they thin.
+
+## 4a. Full doc & diagram sweep (added 2026-07-19, per Founder — "update all necessary documents and diagrams")
+
+The initially-deferred items were pulled into this same change so the 27-agent org is consistent everywhere:
+
+- **Role SOPs authored** for all three new agents — `docs/sop/roles/ml-engineer.md` (SOP-R25), `it-admin.md` (R26), `legal-counsel.md` (R27) — full template (5 mandatory parts + §7.1 role-flow Mermaid diagram), indexed in the SOP README (count 23 → 27).
+- **All four company-wide diagrams regenerated** — `docs/org/agent-map-{org,gates,value-chain,workflows}.md`: `ml-engineer` in the engineering subgraph + deliver stage + merge-deploy gate; `it-admin`/`legal-counsel` in the operations subgraph; gate table, workflow-coverage note, and the org-map count/drift note all updated to 27.
+- **Marketing snapshots refreshed** — `company/marketing/social-*` counts 24 → 27; the founder-approved AGI posts carry a note that the figure changed after the 2026-07-16 approval, so a human re-confirms before publishing (nothing published autonomously).
+- **Memory updated** — `memory/company-context.md` (roster 27, designations pointer) + a `decisions-log.md` entry.
 
 ## 5. Follow-ups
 
-1. Author role SOPs for `ml-engineer`, `it-admin`, `legal-counsel` (+ human-seat SOPs if/when hired into those lanes).
-2. Refresh `docs/org/agent-map-org.md` and the marketing "24" snapshots in a doc-sync pass.
-3. Revisit a dedicated `legal` gate (ADR) if contract/compliance volume grows.
-4. As hiring begins (Plan 001 D1.5), the designation ladder here is what human hires fill — seat handover stays department-by-department.
+1. Human-seat SOP coverage for the new lanes (IT/Legal) if/when those seats are hired (Plan 001 D1.5).
+2. Revisit a dedicated `legal` gate (ADR) if contract/compliance volume grows.
+3. Workflow coverage: candidate steps for `ml-engineer` (project-kickoff/delivery-to-invoice for AI projects), `legal-counsel` (contract review in opportunity-to-proposal), `it-admin` (IT onboarding in hiring-pipeline) — see `agent-map-workflows.md`.
+4. Pre-existing, separate: `guides/getting-started.md` skill count reads "16 role skills" (actual 27) — a skill-count drift unrelated to the roster.
+5. As hiring begins (Plan 001 D1.5), the designation ladder here is what human hires fill — seat handover stays department-by-department.
