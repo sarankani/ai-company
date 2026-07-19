@@ -1,6 +1,6 @@
 # Evalyn — The AI Digital Company
 
-**Evalyn** is an IT services company run by AI digital employees with **minimum human resources**: 24 AI employee personas do the work — sales, engineering, delivery, finance, marketing, support, operations — and **humans approve at the gates via per-department seats** (Approver / Deputy / Head, with the CEO as terminal backstop). Today one founder-operator (Saran) holds all seats, with the first Approver seat handed to a second human — the model scales from 1 to N humans without changing. Everything between the gates runs autonomously; nothing irreversible or external-facing happens without human sign-off.
+**Evalyn** is an IT services company run by AI digital employees with **minimum human resources**: 27 AI employee personas do the work — sales, engineering, delivery, finance, marketing, support, operations — and **humans approve at the gates via per-department seats** (Approver / Deputy / Head, with the CEO as terminal backstop). Today one founder-operator (Saran) holds all seats, with the first Approver seat handed to a second human — the model scales from 1 to N humans without changing. Everything between the gates runs autonomously; nothing irreversible or external-facing happens without human sign-off.
 
 Built on [Claude Code](https://claude.com/claude-code): the personas are agents, their skills are slash commands, and cross-functional work runs as multi-agent workflows.
 
@@ -11,26 +11,26 @@ AI employees draft, build, estimate, triage, and prepare  →  a human approves 
 ```
 
 - **`CLAUDE.md`** — the company's operating brain: identity, roster, system of record, value chain, and the absolute human-in-the-loop gates. Auto-loaded into every session.
-- **`.claude/agents/`** — 24 digital employees, each with a job charter, skills, and escalation rules.
+- **`.claude/agents/`** — 27 digital employees, each with a job charter, skills, and escalation rules. Each is a **role family** covering a ladder of real-world designations — see `company/org/designations.md`.
 - **`.claude/commands/`** — 27 role skills (`/lead-gen`, `/estimate`, `/proposal`, `/invoice`, `/okrs`, `/visualize-agents`, …).
 - **`.claude/workflows/`** — 7 lifecycle workflows that coordinate several employees at once.
 - **`company/`** — the file-based system of record (accounts, leads, opportunities, quotes, POs, projects, invoices, tickets, assets…), created as the business runs. Swappable for a real CRM/ERP via MCP.
 - **`guides/`** — the operating manual: `operating-model.md`, `company-os.md`, `value-chain.md`, `getting-started.md`, `integrations.md`.
 - **`docs/sop/`** — the SOP library: foundations SOP-000…014 (binding on all employees) plus one role SOP per employee; every agent loads the foundations and its role SOP at session start.
 
-## The roster (24 AI employees)
+## The roster (27 AI employees)
 
 | Department | Employees |
 |---|---|
 | Leadership | `ceo`, `eng-manager`, `chief-of-staff` |
 | People & Finance | `hr`, `finance` |
 | Product & Design | `product-manager`, `project-manager`, `designer`, `tech-writer` |
-| Engineering | `developer`, `code-reviewer`, `tester`, `devops`, `security` |
+| Engineering | `developer`, `code-reviewer`, `tester`, `devops`, `security`, `ml-engineer` |
 | Sales & Delivery | `sdr`, `sales`, `solutions-architect`, `delivery-manager`, `account-manager` |
 | Marketing & Support | `marketing`, `social-media`, `support` |
-| Operations | `procurement`, `data-analyst` |
+| Operations | `procurement`, `data-analyst`, `it-admin`, `legal-counsel` |
 
-Invoke one with *"use the `<name>` agent to …"*, run a role skill directly (e.g. `/qualify-lead`), or launch a workflow (e.g. `opportunity-to-proposal`).
+Each agent is a **role family**, not a single title — it operates as a whole ladder of designations (VP → IC, plus specializations). The full designation → agent map is `company/org/designations.md`. Invoke one with *"use the `<name>` agent to …"*, run a role skill directly (e.g. `/qualify-lead`), or launch a workflow (e.g. `opportunity-to-proposal`).
 
 ## The value chain (lead → cash → renewal)
 

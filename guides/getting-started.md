@@ -1,6 +1,6 @@
 # Getting Started — Putting Your AI Company to Work
 
-Part of the **Claude Workflows: AI Digital Employees Pack**. This shows how to "hire" and assign the 24 AI digital employees, with worked examples. Read `operating-model.md` first for the org chart and the human-in-the-loop gates.
+Part of the **Claude Workflows: AI Digital Employees Pack**. This shows how to "hire" and assign the 27 AI digital employees, with worked examples. Read `operating-model.md` first for the org chart and the human-in-the-loop gates.
 
 ## Install
 
@@ -8,7 +8,7 @@ Copy the `.claude/` tree into your repo (team-shared) or `~/.claude/` (personal)
 
 ```
 .claude/
-├── agents/      24 digital employees (ceo, hr, developer, sales, …)
+├── agents/      27 digital employees (ceo, hr, developer, sales, …)
 ├── commands/    16 role skills (/okrs, /job-description, /sales-outreach, …)
 └── workflows/   3 cross-functional workflows (company-standup, hiring-pipeline, product-launch)
 ```

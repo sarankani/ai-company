@@ -1,12 +1,12 @@
 # Company context — snapshot
 
-*Last updated: 2026-07-16*
+*Last updated: 2026-07-19*
 
 ## Who
 
 - **Saravanan Pitchaikani** (saranpkani@gmail.com) — Founder / CEO / Human Operator. Holds all seats except three handed-over Approver seats; CEO terminal backstop.
 - **Saravanan P** (saravanan@vitetech.in) — Approver: Engineering, Product & Design, Operations (first non-founder seat-holder, 2026-07-13).
-- 24 AI employees per `CLAUDE.md` §2 (chief-of-staff dispatcher added 2026-07-15).
+- 27 AI employees per `CLAUDE.md` §2 (chief-of-staff dispatcher added 2026-07-15; `ml-engineer`/`it-admin`/`legal-counsel` added 2026-07-19 to close Data&AI / IT&Admin / Legal&Compliance gaps). Real-world designation → agent map lives in `company/org/designations.md`.
 
 ## Direction (what changed recently)
 

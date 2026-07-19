@@ -1,16 +1,16 @@
 # Departments — Evalyn org structure
 
-Authoritative list of departments, their AI employees, and the gates each department owns. Consumed by routing (`routing.md`), the SLA job, and the Control Panel. **Changes to this file are gated:** Head proposes, CEO approves (Plan 001 risk #5).
+Authoritative list of departments, their AI employees, and the gates each department owns. Consumed by routing (`routing.md`), the SLA job, and the Control Panel. The real-world designation → agent map (VP/Director/IC-ladder/specialization titles) lives in `designations.md`. **Changes to this file are gated:** Head proposes, CEO approves (Plan 001 risk #5).
 
 | id | Department | AI employees | Gates owned |
 |---|---|---|---|
 | `leadership` | Leadership | ceo, eng-manager, chief-of-staff | strategy escalations (internal — terminal backstop queue lives here) |
 | `people-finance` | People & Finance | hr, finance | money (funds, spend, invoices) · people (dual: + CEO) · revenue booking |
 | `product-design` | Product & Design | product-manager, project-manager, designer, tech-writer | roadmap commitments |
-| `engineering` | Engineering | developer, code-reviewer, tester, devops, security | merge / deploy / migrations |
+| `engineering` | Engineering | developer, code-reviewer, tester, devops, security, ml-engineer | merge / deploy / migrations |
 | `sales-delivery` | Sales & Delivery | sdr, sales, solutions-architect, delivery-manager, account-manager | price / date / SLA commitments · customer-specific external comms |
 | `marketing-support` | Marketing & Support | marketing, social-media, support | external comms / publish (non-customer-specific) |
-| `operations` | Operations | procurement, data-analyst | procurement orders · vendor signing |
+| `operations` | Operations | procurement, data-analyst, it-admin, legal-counsel | procurement orders · vendor signing |
 
 ## Seats
 
