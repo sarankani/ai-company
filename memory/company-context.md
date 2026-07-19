@@ -16,7 +16,7 @@
 
 ## Current focus
 
-- **Newest track (2026-07-16): Company CRM in the panel — Epic E7 (#78), Plan 005.** Built and verified on branch `claude/company-crm-control-panel-mfa1wz`, awaiting ADR-0008 acceptance + merge + Supabase provisioning/deploy. Business records (16 types) now live in a Postgres CRM (Supabase in prod) behind the panel at `/crm`; member access is a role × department RBAC matrix (`crm-viewer`/`crm-editor` grants — never approval authority); AI employees use `scripts/crm.mjs`/`/api/crm`; gated stage moves file ordinary APRs. `authorized()` hardened in both engines: chain/ceo seats only.
+- **Newest track (2026-07-16): Company CRM in the panel — Epic E7 (#78), Plan 005.** **Merged to main via PR #88 (2026-07-19).** Remaining: flip ADR-0008 to Accepted (#79) + Supabase provisioning/deploy authorization (#86). Business records (16 types) now live in a Postgres CRM (Supabase in prod) behind the panel at `/crm`; member access is a role × department RBAC matrix (`crm-viewer`/`crm-editor` grants — never approval authority); AI employees use `scripts/crm.mjs`/`/api/crm`; gated stage moves file ordinary APRs. `authorized()` hardened in both engines: chain/ceo seats only.
 - **Active project:** Approval Loop & Control Panel. Board: `docs/plans/002-execution-plan.md`. **Phases 0–1 DONE (PR #1/#33/#34/#35 + drills, 2026-07-14). The approval loop is proven end to end in production. Next: Phase 2 — Control Panel MVP (E2, #4); every E2 merge goes through the loop.**
 - **Done:** PR #1 (specs+ADRs) and PR #33 (E0: CLAUDE.md model, company/org/, dry-run 9/9, first seat handover to Saravanan P) both merged 2026-07-13. Issues #7–#9 closed; Epic #2 closed.
 - **Branch:** `claude/evalyn-ai-setup-oocv7m`, restarted from main after PR #33.
