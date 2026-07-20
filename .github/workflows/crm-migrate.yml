@@ -43,6 +43,9 @@ jobs:
     steps:
       - name: Skip — DATABASE_URL secret not configured
         if: env.DATABASE_URL == ''
+        # runs before checkout, so the job-level panel/ working dir doesn't
+        # exist yet — override to the (empty) workspace root
+        working-directory: .
         run: echo "::notice::DATABASE_URL repo secret is not set (issue #86) — nothing to migrate yet."
       - uses: actions/checkout@v4
         if: env.DATABASE_URL != ''
