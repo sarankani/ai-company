@@ -1,6 +1,6 @@
 # Plan 005 — Company CRM in the Control Panel
 
-- **Status:** In review — EX-701…709 built and verified on `claude/company-crm-control-panel-mfa1wz` (179 unit + 31 e2e + 32 engine tests green, prod build green). Awaiting: ADR-0008 acceptance, merge, Supabase provisioning + deploy authorization.
+- **Status:** Merged to main via [PR #88](https://github.com/sarankani/ai-company/pull/88) (2026-07-19; 179 unit + 31 e2e + 32 engine tests green, prod build green). EX-702…707 + 709 **done**. Remaining human gates: EX-701 — flip ADR-0008 to Accepted (merge signals intent, the ADR status edit makes it formal) · EX-708 — provision Supabase, set `DATABASE_URL`/`CRM_AGENT_TOKEN` on Vercel, authorize the deploy.
 - **Epic:** E7 — Company CRM in the Control Panel
 - **Owner:** developer (lead) · product-manager (scope) · Saran (gates)
 - **Related:** [Tech Spec 002](../specs/tech-spec-002-crm-module.md) · [ADR-0008](../adrs/0008-database-for-crm-business-records.md) · `guides/company-os.md` · `panel/`

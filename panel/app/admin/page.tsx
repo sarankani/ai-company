@@ -180,7 +180,7 @@ export default async function Admin({
       </form>
 
       <div className="section-label">Routing (read-only)</div>
-      <p className="asof">Gate→department map, SLA table, and escalation chain live in <code>company/org/routing.md</code> — changes are file-gated (Head proposes, CEO approves). Editing UI is out of MVP scope.</p>
+      <p className="asof">Gate→department map, SLA table, and escalation chain live in <code>company/org/routing.md</code>; the real-world designation → agent map (role families, seniority ladders) lives in <code>company/org/designations.md</code> (Plan 006). Both are file-gated (Head proposes, CEO approves). Editing UI is out of MVP scope.</p>
     </main>
   );
 }
