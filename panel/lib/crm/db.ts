@@ -41,9 +41,15 @@ async function connect(): Promise<CrmDb> {
   }
   const { Pool } = await import("pg");
   const { drizzle } = await import("drizzle-orm/node-postgres");
+  // Hosted Postgres (Supabase) requires TLS, but its chain isn't in Node's
+  // CA store — so for any non-local host default to TLS without CA
+  // verification (Supabase's own node-postgres guidance). Opt out with
+  // ?sslmode=disable (e.g. a plain Docker postgres by hostname).
+  const local = /@(localhost|127\.0\.0\.1|\[::1\])[:/]/.test(url);
+  const ssl = /sslmode=disable/.test(url) || local ? undefined : { rejectUnauthorized: false };
   // Supabase's pooled endpoint (supavisor) handles serverless connection
   // churn; keep the per-instance pool tiny.
-  return drizzle(new Pool({ connectionString: url, max: 3 }), { schema }) as unknown as CrmDb;
+  return drizzle(new Pool({ connectionString: url, max: 3, ssl }), { schema }) as unknown as CrmDb;
 }
 
 export function crmDb(): Promise<CrmDb> {

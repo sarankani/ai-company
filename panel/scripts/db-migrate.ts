@@ -11,4 +11,22 @@ async function main() {
   process.exit(0);
 }
 
-main().catch((e) => { console.error(e); process.exit(1); });
+main().catch((e) => {
+  const msg = String((e as Error)?.message ?? e);
+  console.error(`[db-migrate] FAILED: ${msg}`);
+  if (/ENETUNREACH|ETIMEDOUT|EHOSTUNREACH/.test(msg)) {
+    console.error(
+      "[db-migrate] hint: Supabase's direct host (db.<ref>.supabase.co) is IPv6-only — " +
+      "use the pooler connection string instead (Dashboard → Connect → Session pooler, " +
+      "host like aws-0-<region>.pooler.supabase.com).",
+    );
+  }
+  if (/password authentication|SASL|auth/i.test(msg)) {
+    console.error(
+      "[db-migrate] hint: check the password and URL-encode special characters in it " +
+      "(e.g. @ → %40); pooler URLs need the 'postgres.<project-ref>' username.",
+    );
+  }
+  console.error(e);
+  process.exit(1);
+});
