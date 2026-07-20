@@ -4,6 +4,13 @@ import { crmDb, crmDbUrl } from "../lib/crm/db";
 import { migrateCrmDb } from "../lib/crm/migrate";
 
 async function main() {
+  if (!process.env.DATABASE_URL) {
+    console.log(
+      "[db-migrate] NOTE: DATABASE_URL is not set — falling back to the zero-setup " +
+      "local PGlite database (dev only). To migrate a real Postgres (Supabase), set " +
+      "DATABASE_URL in this shell first (PowerShell: $env:DATABASE_URL=\"…\").",
+    );
+  }
   const db = await crmDb();
   const applied = await migrateCrmDb(db);
   console.log(`[db-migrate] ${crmDbUrl().replace(/\/\/[^@]*@/, "//***@")}`);
