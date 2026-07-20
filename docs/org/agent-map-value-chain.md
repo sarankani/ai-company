@@ -1,4 +1,4 @@
-# Agent visualization: value chain · 2026-07-15
+# Agent visualization: value chain · 2026-07-19
 
 Generated with `/visualize-agents`, grounded in CLAUDE.md §4, the lifecycle workflows in `.claude/workflows/`, and the agent charters. Lead → cash → renewal, with the owning agent(s) per stage and every human gate drawn as a distinct node.
 
@@ -21,7 +21,7 @@ flowchart LR
   hBook --> pk[[project-kickoff]]:::wf
   pk --> gDates{commitments}:::gate
   gDates --> hDates([Human: commit dates]):::human
-  hDates --> build[deliver — developer, code-reviewer, tester, devops, security]:::ai
+  hDates --> build[deliver — developer, code-reviewer, tester, devops, security, ml-engineer]:::ai
   build --> gMerge{merge-deploy}:::gate
   gMerge --> hMerge([Human: merge / deploy]):::human
   hMerge --> dti[[delivery-to-invoice]]:::wf
@@ -55,5 +55,7 @@ Purple subroutine = skill/workflow (with owning agent) · blue rectangle = agent
 ## Notes
 
 - Every money-touching or outward-facing arrow passes through a gate node — there is no path from lead to cash that bypasses a human, by design (CLAUDE.md §5).
+- `ml-engineer` joins the `deliver` stage for AI/automation projects (data pipelines, models, MLOps) — same merge/deploy gate as the rest of the pod.
+- **Cross-cutting agents not on the linear chain:** `legal-counsel` reviews the contract/SOW terms around the "price + send" and PO gates (redlines + obligations; signature stays human), and reviews data-flows for new features; `it-admin` runs internal enablement (accounts/access, onboarding) alongside the whole chain, like the procurement supply side.
 - `chief-of-staff` is not a stage: it dispatches incoming requests INTO this chain.
 - `hiring-pipeline`, `company-standup`, and `product-launch` are meta-flows (capacity, visibility, releases) that support the chain rather than sit on it — see `agent-map-workflows.md`.

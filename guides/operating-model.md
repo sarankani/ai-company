@@ -1,6 +1,6 @@
 # The AI Digital Company — Operating Model
 
-Part of the **Claude Workflows: AI Digital Employees Pack**. This is the backbone: how the 24 AI digital employees of a software company collaborate, hand off work, and — critically — where a **human approves** before anything irreversible happens.
+Part of the **Claude Workflows: AI Digital Employees Pack**. This is the backbone: how the 27 AI digital employees of a software company collaborate, hand off work, and — critically — where a **human approves** before anything irreversible happens.
 
 > **Where the binding detail lives:** this guide is the narrative overview. The authoritative, binding operating procedure now lives in the **`docs/sop/`** library — foundations SOP-000…014 (apply to every employee) plus one role SOP per employee, loaded by each agent at session start. On conflict, precedence is **ADRs > CLAUDE.md > foundations > role SOPs > guides**.
 
@@ -22,7 +22,9 @@ security            designer · tech-writer                   data-analyst
 
 Reporting lines are for escalation and decision rights, not rigid hierarchy — most work flows horizontally through handoffs.
 
-## The roster (24 employees)
+## The roster (27 employees)
+
+Each agent is a **role family** covering a ladder of real-world designations (VP → IC + specializations) — the full map is `company/org/designations.md`.
 
 | Department | Employee | Owns | Key skills |
 |---|---|---|---|
@@ -40,6 +42,7 @@ Reporting lines are for escalation and decision rights, not rigid hierarchy — 
 | Engineering | `tester` | Test strategy, generation, regression, bug triage | test-strategy, `/ticket-triage` |
 | Engineering | `devops` | CI/CD, deploys, infra, incidents | deploy-readiness, incident, postmortem |
 | Engineering | `security` | AppSec review, threat modeling, vuln triage | code-review (security lens), ml-security-audit |
+| Engineering | `ml-engineer` | AI/ML: data pipelines, model training/eval, MLOps | model-eval, `ml-security-audit`, data-validator |
 | Sales & Delivery | `sdr` | Lead generation, outreach, qualification | `/lead-gen`, `/qualify-lead` |
 | Sales & Delivery | `sales` | Discovery, proposals, pricing, pipeline | `/sales-outreach`, `/proposal`, `/valuation` |
 | Sales & Delivery | `solutions-architect` | Scoping, technical estimates, solution design | `/estimate`, `/sow` |
@@ -50,6 +53,8 @@ Reporting lines are for escalation and decision rights, not rigid hierarchy — 
 | Marketing & Support | `support` | Ticket triage, repro, customer responses | `/ticket-triage` |
 | Operations | `procurement` | Vendor sourcing, purchase orders, spend | `/procurement-request`, `/purchase-order` |
 | Operations | `data-analyst` | Metrics, dashboards, insight | metrics-review, dataviz, `/asset-register` |
+| Operations | `it-admin` | Internal IT, accounts/access, workplace & admin | `/asset-register`, onboarding/offboarding runbooks |
+| Operations | `legal-counsel` | Contract review, obligations, compliance (SOC2/ISO/DPDP-GDPR) | contract-review checklist, `deep-research` |
 
 Engineering employees reuse the **software pack** commands; support/marketing reuse the **e-commerce/PM** commands where they fit. This pack adds the personas, the leadership/people/finance/GTM skills, and the operating model that ties them together.
 

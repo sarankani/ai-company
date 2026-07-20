@@ -9,3 +9,4 @@ Numbered plans for significant changes to how Evalyn operates. Convention: `NNN-
 | 003 | [Task Document & Issue Map](003-task-breakdown.md) | Active — task register behind Plan 002 |
 | 004 | [Phase 6: Panel Test Automation & Quality](004-panel-test-automation.md) | Active — EX-601…605 merged; exit pending required-checks rule |
 | 005 | [Company CRM in the Control Panel](005-crm-module.md) | Draft — awaiting Saran (ADR-0008 acceptance gates the build) |
+| 006 | [Roles & Designations framework](006-roles-and-designations.md) | Draft — awaiting Saran (departments.md org change is gated) |

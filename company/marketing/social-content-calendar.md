@@ -9,7 +9,7 @@
 
 ## 1. Positioning / voice note
 
-**Who we are (grounding — every claim must be backable, operating principle 4):** Evalyn is an AI-run IT services company. Custom software development and delivery, operated end to end (lead → proposal → delivery → invoice → renewal) by **24 AI digital employees**, with **humans holding the approval gates** — per-department Approver/Deputy/Head seats and the CEO as terminal backstop. The design goal is maximum autonomous throughput *between* the gates and zero autonomous action *at* them.
+**Who we are (grounding — every claim must be backable, operating principle 4):** Evalyn is an AI-run IT services company. Custom software development and delivery, operated end to end (lead → proposal → delivery → invoice → renewal) by **27 AI digital employees**, with **humans holding the approval gates** — per-department Approver/Deputy/Head seats and the CEO as terminal backstop. The design goal is maximum autonomous throughput *between* the gates and zero autonomous action *at* them.
 
 **Voice:** direct, warm, technically credible, no hype.
 
@@ -28,7 +28,7 @@
 - Nothing PR-sensitive, no crisis response — those escalate to `marketing`/`ceo` + a human, never freelanced.
 
 **Content pillars**
-- **P1 — The AI-employee model:** what the 24 agents are and how work flows between them.
+- **P1 — The AI-employee model:** what the 27 agents are and how work flows between them.
 - **P2 — Human-in-the-loop transparency:** the gates, the seats, why humans hold them.
 - **P3 — Build-in-public engineering:** shipped work, bugs found and fixed, honest lessons.
 - **P4 — Honest AI (what we don't claim):** the humility angle; rejected over-claims.
@@ -43,7 +43,7 @@ All dates 2026. Each slot is a **draft** pending the external-comms gate.
 
 | # | Date-slot | Platform | Pillar | Hook | Goal (one line) |
 |---|-----------|----------|--------|------|-----------------|
-| 1 | Mon Jul 20, AM | LinkedIn | P1 — AI-employee model | "We're an IT services company staffed by 24 AI employees. Here's the actual org chart." | Introduce the model plainly; set expectations for the account. |
+| 1 | Mon Jul 20, AM | LinkedIn | P1 — AI-employee model | "We're an IT services company staffed by 27 AI employees. Here's the actual org chart." | Introduce the model plainly; set expectations for the account. |
 | 2 | Wed Jul 22, AM | X/Twitter | P2 — Human-in-the-loop | "Our AI drafts. It never sends. Here's the one rule the whole company runs on." | Land the gate concept in one scroll-stoppable thought. |
 | 3 | Fri Jul 24, AM | LinkedIn | P4 — Honest AI | "We killed a tagline this week: '100% AI, zero humans, never a single mistake.' Here's why." | Model the honesty bar; build trust through what we won't say. |
 | 4 | Mon Jul 27, AM | X/Twitter | P3 — Build-in-public | "Our tester and developer agents just shipped panel test automation. One bug taught us a rule." | Show real engineering texture, humbly. |
@@ -60,7 +60,7 @@ All dates 2026. Each slot is a **draft** pending the external-comms gate.
 
 ### Sample A — LinkedIn (long-form) · Pillar P1 (AI-employee model) · maps to slot #1
 
-> We're building an IT services company staffed by 24 AI employees. Not a chatbot bolted onto a support page — actual roles.
+> We're building an IT services company staffed by 27 AI employees. Not a chatbot bolted onto a support page — actual roles.
 >
 > There's a developer agent that writes code, a code-reviewer that reviews it, a tester that tries to break it, a devops agent that ships it. A solutions-architect scopes the work; a delivery-manager keeps it honest against the plan. Marketing, support, finance, procurement — each is its own agent with its own lane.
 >

@@ -1,4 +1,4 @@
-# Agent visualization: org chart · 2026-07-15
+# Agent visualization: org chart · 2026-07-19
 
 Generated with `/visualize-agents`, grounded in `company/org/departments.md`, `company/org/routing.md`, and `.claude/agents/`. Regenerate after any roster or seat change — humans route work by this map.
 
@@ -27,6 +27,7 @@ flowchart TD
     tester[tester]:::ai
     devops[devops]:::ai
     sec[security]:::ai
+    mle[ml-engineer]:::ai
   end
 
   subgraph productdesign [product-design — Product & Design]
@@ -76,6 +77,8 @@ flowchart TD
     opH([Approver / Deputy / Head]):::human
     proc[procurement]:::ai
     da[data-analyst]:::ai
+    ita[it-admin]:::ai
+    legal[legal-counsel]:::ai
   end
 
   sdH -. escalation .-> ceoSeat2
@@ -95,6 +98,7 @@ flowchart TD
 
 ## Notes
 
-- **24 AI employees** across 7 departments (`departments.md` lists 24 across its rows; README.md says "23 digital employees" — **drift**, see below).
+- **27 AI employees** across 7 departments (`departments.md` rows sum to 27; `.claude/agents/` contains 27 files; `CLAUDE.md` §0/§2 and `README.md` agree). `ml-engineer` (engineering), `it-admin` and `legal-counsel` (operations) were added 2026-07-19 (Plan 006) to close the Data & AI build / IT & Admin / Legal & Compliance gaps.
+- Each agent is a **role family**, not a single title — the real-world designation → agent map (VP → IC ladders + specializations) is `company/org/designations.md`.
 - The `eng-manager` sits in `leadership` per `departments.md`, though it coordinates the `engineering` pod and preps its `merge-deploy` gate.
-- Drift found: `README.md` says 23 employees while CLAUDE.md §1 says 24 and `departments.md` rows sum to 24 (`.claude/agents/` contains 24 files). `guides/getting-started.md` still says "16 role skills" (actual: 27+).
+- Count drift resolved (2026-07-19): all of `CLAUDE.md`, `README.md`, `guides/*`, and `departments.md` now agree at 27. `getting-started.md` skill count still reads "16 role skills" (actual 27) — pre-existing, tracked separately.
