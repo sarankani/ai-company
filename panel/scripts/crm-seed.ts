@@ -13,6 +13,18 @@ import {
 const seeder: CrmActor = { kind: "agent", id: "seed" };
 
 async function main() {
+  // Demo data belongs to local dev and e2e fixtures ONLY. Refuse to plant
+  // fake records in a real Postgres (e.g. production Supabase) unless a
+  // human explicitly forces it.
+  const { crmDbUrl } = await import("../lib/crm/db");
+  if (!crmDbUrl().startsWith("pglite://") && process.env.CRM_SEED_FORCE !== "1") {
+    console.error(
+      "[crm-seed] REFUSED: DATABASE_URL points at a real Postgres. " +
+      "The seed creates demo records (Acme Industries, sample invoices) — dev/e2e only. " +
+      "Set CRM_SEED_FORCE=1 if you truly want demo data in this database.",
+    );
+    process.exit(1);
+  }
   const db = await crmDb();
   await migrateCrmDb(db);
 

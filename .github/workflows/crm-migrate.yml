@@ -1,0 +1,68 @@
+name: CRM DB migrate (production)
+
+# ADR-0008: the CRM schema must move with the code. On every merge to main
+# that touches the migrations (or the migrator), apply pending migrations to
+# the production database BEFORE Vercel's auto-deploy serves the new code.
+# The migrator (panel/lib/crm/migrate.ts) is forward-only and tracked in
+# crm_migrations, so re-runs are no-ops — safe to trigger repeatedly.
+#
+# Requires the DATABASE_URL repo secret (Supabase pooled connection string —
+# issue #86). Until it is set, the job logs a notice and exits green so the
+# workflow doesn't block anything. `workflow_dispatch` lets a human run the
+# first migration manually right after provisioning Supabase.
+#
+# db:seed is deliberately NOT here: it creates demo records and is for local
+# dev / e2e fixtures only — never production (guarded in the script itself).
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "panel/drizzle/**"
+      - "panel/lib/crm/migrate.ts"
+      - "panel/lib/crm/db.ts"
+      - ".github/workflows/crm-migrate.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: crm-migrate-production
+  cancel-in-progress: false # never abort a migration mid-flight
+
+jobs:
+  migrate:
+    name: Apply pending CRM migrations
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: panel
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+    steps:
+      - name: Skip — DATABASE_URL secret not configured
+        if: env.DATABASE_URL == ''
+        run: echo "::notice::DATABASE_URL repo secret is not set (issue #86) — nothing to migrate yet."
+      - uses: actions/checkout@v4
+        if: env.DATABASE_URL != ''
+      - uses: actions/setup-node@v4
+        if: env.DATABASE_URL != ''
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: panel/package-lock.json
+      - name: Install
+        if: env.DATABASE_URL != ''
+        run: npm ci
+      - name: Migrate
+        if: env.DATABASE_URL != ''
+        run: npm run db:migrate
+      - name: Summary
+        if: env.DATABASE_URL != ''
+        run: |
+          {
+            echo "## CRM DB migrate"
+            echo "- Forward-only migrations applied (or already up to date) — see the Migrate step log."
+            echo "- Tracked in \`crm_migrations\`; re-runs are no-ops."
+          } >> "$GITHUB_STEP_SUMMARY"
