@@ -35,6 +35,11 @@ jobs:
   migrate:
     name: Apply pending CRM migrations
     runs-on: ubuntu-latest
+    # The repo keeps its secrets (DATABASE_URL, CRM_AGENT_TOKEN, SMTP…) as
+    # ENVIRONMENT secrets on the 'prod' environment — they are only visible
+    # to jobs that declare that environment. Without this line the secrets
+    # context resolves empty and the job skips.
+    environment: prod
     defaults:
       run:
         working-directory: panel
