@@ -12,3 +12,7 @@ coverage/
 
 # CRM local PGlite data (zero-setup dev DB)
 .crm-data/
+
+# env files (DATABASE_URL etc. — never commit secrets)
+.env
+.env*.local

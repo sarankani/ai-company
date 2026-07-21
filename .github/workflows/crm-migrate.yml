@@ -35,6 +35,11 @@ jobs:
   migrate:
     name: Apply pending CRM migrations
     runs-on: ubuntu-latest
+    # The repo keeps its secrets (DATABASE_URL, CRM_AGENT_TOKEN, SMTP…) as
+    # ENVIRONMENT secrets on the 'prod' environment — they are only visible
+    # to jobs that declare that environment. Without this line the secrets
+    # context resolves empty and the job skips.
+    environment: prod
     defaults:
       run:
         working-directory: panel
@@ -44,9 +49,12 @@ jobs:
       - name: Skip — DATABASE_URL secret not configured
         if: env.DATABASE_URL == ''
         # runs before checkout, so the job-level panel/ working dir doesn't
-        # exist yet — override to the (empty) workspace root
+        # exist yet — override to the (empty) workspace root. Block scalar:
+        # a plain-style `run:` would treat " #86" as a YAML comment and
+        # truncate the command mid-quote (the run-3 'unexpected EOF' crash).
         working-directory: .
-        run: echo "::notice::DATABASE_URL repo secret is not set (issue #86) — nothing to migrate yet."
+        run: |
+          echo "::notice::DATABASE_URL repo secret is not set (issue #86) — nothing to migrate yet. Add it under Settings → Secrets and variables → Actions → Repository secrets."
       - uses: actions/checkout@v4
         if: env.DATABASE_URL != ''
       - uses: actions/setup-node@v4

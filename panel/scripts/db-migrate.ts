@@ -2,8 +2,18 @@
  * or the zero-setup local PGlite directory when unset). */
 import { crmDb, crmDbUrl } from "../lib/crm/db";
 import { migrateCrmDb } from "../lib/crm/migrate";
+import { loadLocalEnv } from "./load-env";
 
 async function main() {
+  loadLocalEnv(); // panel/.env.local works on every OS/shell
+  if (!process.env.DATABASE_URL) {
+    console.log(
+      "[db-migrate] NOTE: DATABASE_URL is not set — falling back to the zero-setup " +
+      "local PGlite database (dev only). To migrate a real Postgres (Supabase), put " +
+      "DATABASE_URL=postgresql://… in panel/.env.local (any OS) or set it in this " +
+      "shell (PowerShell: $env:DATABASE_URL=\"…\" · cmd: set \"DATABASE_URL=…\").",
+    );
+  }
   const db = await crmDb();
   const applied = await migrateCrmDb(db);
   console.log(`[db-migrate] ${crmDbUrl().replace(/\/\/[^@]*@/, "//***@")}`);
