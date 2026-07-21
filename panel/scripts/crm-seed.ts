@@ -13,6 +13,8 @@ import {
 const seeder: CrmActor = { kind: "agent", id: "seed" };
 
 async function main() {
+  const { loadLocalEnv } = await import("./load-env");
+  loadLocalEnv(); // panel/.env.local works on every OS/shell
   // Demo data belongs to local dev and e2e fixtures ONLY. Refuse to plant
   // fake records in a real Postgres (e.g. production Supabase) unless a
   // human explicitly forces it.
