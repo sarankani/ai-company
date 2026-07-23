@@ -3,9 +3,6 @@ import { Inter } from "next/font/google";
 import { cookies } from "next/headers";
 import { verifySession } from "@/lib/auth";
 import { humanById } from "@/lib/org";
-import { hasAnyCrmAccess } from "@/lib/crm/rbac";
-import { unreadCrmCount } from "@/lib/crm/store";
-import NotificationsLive from "./crm/notifications-live";
 import { setAvailabilityAction } from "./org-actions";
 
 export const metadata = { title: "Evalyn Control Panel" };
@@ -19,8 +16,6 @@ const DOTS = { available: "●", busy: "◐", ooo: "○" } as const;
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const session = verifySession((await cookies()).get("evalyn_session")?.value);
   const human = session ? await humanById(session) : null;
-  const crmUser = !!human && hasAnyCrmAccess(human);
-  const unread = crmUser ? await unreadCrmCount(human!.id).catch(() => 0) : 0;
   return (
     <html lang="en" className={inter.variable}>
       <body>
@@ -30,7 +25,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <nav className="topnav">
               <a href="/inbox">Inbox</a>
               <a href="/dashboard">Dashboard</a>
-              {hasAnyCrmAccess(human) && <a href="/crm">CRM</a>}
               {human.roles.some((r) => r.seat === "head" || r.seat === "ceo") && (
                 <>
                   <a href="/audit">Ledger</a>
@@ -40,13 +34,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             </nav>
           )}
           <span className="spacer" />
-          {human && crmUser && (
-            <a href="/crm/notifications" className={`chip bell${unread ? " has-unread" : ""}`}
-               aria-label={`Notifications${unread ? ` (${unread} unread)` : ""}`}>
-              🔔{unread ? ` ${unread}` : ""}
-            </a>
-          )}
-          {human && crmUser && <NotificationsLive recipient={human.id} />}
           {human && (
             <>
               <details className="avail-menu">

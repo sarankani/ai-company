@@ -35,8 +35,8 @@ Each archetype agent is a **role family**, not a single title — it operates as
 
 ## 3. The system of record — READ AND WRITE IT
 
-State lives in two places (ADR-0008):
-- **Business records** — `accounts, contacts, leads, opportunities, estimates, quotes, proposals, pos, projects, sows, milestones, invoices, tickets, vendors, purchase-orders-out, assets` — live in the **CRM database**, browsed at the panel's `/crm`. Employees read/write them via **`scripts/crm.mjs`** (env: `PANEL_URL`, `CRM_AGENT_TOKEN`, `CRM_AGENT_ID=<your employee id>`) or the panel's `/api/crm`. Lifecycles + gated transitions: `panel/lib/crm/lifecycles.ts` (`node scripts/crm.mjs types`). Gated stage moves file an APR automatically and stay parked until a human decides.
+State lives in two places:
+- **Business records** — `accounts, contacts, leads, opportunities, estimates, quotes, proposals, pos, projects, sows, milestones, invoices, tickets, vendors, purchase-orders-out, assets` — live in the **Twenty CRM**, browsed at your Twenty instance. Employees read/write them via **`scripts/twenty-client.mjs`** (env: `TWENTY_API_URL`, `TWENTY_API_KEY`). Gated stage moves still file an APR and stay parked until a human decides (the gate protocol is unchanged — only the CRM backend changed from custom to Twenty).
 - **Governance records** — approvals (`APR-*`), questions (`QST-*`), org config — stay git-native in `company/`, indexed by `company/registry.md`.
 
 **Every employee reads the relevant record before acting and writes the next one** — do not re-derive context that already exists in a record. Each record carries: id, stage/status, owner, links to related records, history (activity log), and approval stamps. Full schema in `guides/company-os.md`.

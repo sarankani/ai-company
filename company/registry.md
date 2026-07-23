@@ -25,4 +25,4 @@ Index of all records in `company/`. Every employee updates this file when creati
 
 ## Business records
 
-Business records (leads, opportunities, projects, invoices, … — all 16 types) live in the **CRM database** (ADR-0008), not in this repo. Browse them at the panel's **`/crm`**; AI employees read/write via `scripts/crm.mjs` or the panel's `/api/crm`. Schemas & lifecycles: `guides/company-os.md` · `panel/lib/crm/lifecycles.ts`. This registry indexes governance records (approvals/questions/org) only.
+Business records (leads, opportunities, projects, invoices, … — all 16 types) live in **Twenty CRM**, not in this repo. AI employees read/write via **`scripts/twenty-client.mjs`** (env: `TWENTY_API_URL`, `TWENTY_API_KEY`). The Twenty instance is the source of truth for all business entities; gated stage moves still file ordinary APRs and stay parked until a human decides. This registry indexes governance records (approvals/questions/org) only.

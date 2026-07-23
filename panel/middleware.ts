@@ -8,9 +8,6 @@ export function middleware(req: NextRequest) {
   if (
     pathname.startsWith("/signin") ||
     pathname.startsWith("/api/auth") ||
-    // /api/crm authenticates in-route (session cookie OR agent bearer token
-    // — lib/crm/api-auth.ts), so agents without cookies aren't bounced here.
-    pathname.startsWith("/api/crm") ||
     pathname.startsWith("/_next") ||
     pathname === "/favicon.ico"
   )

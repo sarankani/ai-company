@@ -26,7 +26,7 @@ Digital employees are only as good as the tools they can reach. Each employee sh
 | `tester` | `xlsx` (test matrix) | `engineering:testing-strategy` | GitHub, the test/CI system, bug tracker |
 | `devops` | — (IaC) | `engineering:deploy-checklist`, `incident-response` | GitHub Actions, Sentry/Datadog, PagerDuty, cloud (deploy gated) |
 | `security` | `docx` (report) | `engineering:code-review` | GitHub, the SAST/dependency scanner, cloud IAM (read) |
-| `sales` | `docx`/`pptx` (proposal/deck) | — | Salesforce/HubSpot/Pipedrive, email (send gated) |
+| `sales` | `docx`/`pptx` (proposal/deck) | — | Twenty CRM (read/write), email (send gated) |
 | `marketing` | `canvas-design`, `pptx`, `docx` | `product-management:competitive-brief` | GA4, the ESP, the ad platforms, CMS (publish/spend gated) |
 | `social-media` | `canvas-design` | — | the social platforms / a scheduler (Buffer/Hootsuite) — posting gated |
 | `support` | `docx` (macros) | — | Zendesk/Intercom/Gorgias (reply/send gated), the bug tracker |
@@ -43,3 +43,24 @@ Example — `data-analyst` for a metrics review: query the **warehouse via MCP**
 ## Setup
 
 Run the connector-registry search for the systems your company uses and connect them; install the `engineering`, `design`, `product-management`, and `productivity` plugins; and put your mission, brand voice, and key people in the root `CLAUDE.md` (via the productivity memory system) so every employee acts like *your* team. If a needed system has no connector, the employee works from attached exports and says the data is a snapshot — it never invents it.
+
+### CRM: Twenty
+
+Evalyn uses **Twenty CRM** as the system of record for business records (accounts, contacts, leads, opportunities, projects, invoices, tickets, etc.). AI employees interact with Twenty via **`scripts/twenty-client.mjs`** — a zero-dependency GraphQL CLI wrapper.
+
+**Setup:**
+1. Provision a Twenty instance (self-hosted via Docker or Twenty Cloud).
+2. Generate an API key in Twenty Settings → Developers & API.
+3. Set `TWENTY_API_URL` and `TWENTY_API_KEY` in the panel's environment (and for AI employee CLI usage).
+4. Test: `node scripts/twenty-client.mjs companies`
+
+**Entity mapping (Evalyn → Twenty):**
+| Evalyn | Twenty | Notes |
+|---|---|---|
+| accounts, leads, vendors | companies | Use Twenty's company stage (prospect, customer, vendor) |
+| contacts | people | Linked to companies |
+| opportunities | opportunities | Native pipeline with stages |
+| tickets | tasks | Use custom fields for severity/reporter |
+| projects, milestones, invoices, estimates, quotes, SOWs, POs, assets | notes / custom objects | Map as needed; notes are lightweight, custom objects for structured data |
+
+**Gated transitions** still file an APR — the gate protocol is unchanged, only the backend changed from custom to Twenty.

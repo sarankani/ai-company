@@ -127,7 +127,7 @@ export default async function Admin({
         <button type="submit">Propose — creates the gated record</button>
       </form>
 
-      <div className="section-label">Members &amp; CRM grants (two-step, people-gated)</div>
+      <div className="section-label">Members &amp; access grants (two-step, people-gated)</div>
       {memberAdds.length ? (
         <div className="rows">
           {memberAdds.map(({ r, member }) => (
@@ -156,7 +156,7 @@ export default async function Admin({
         <div className="empty">No member additions proposed yet.</div>
       )}
 
-      <div className="section-label">Propose a new member (CRM access only — no approval authority)</div>
+      <div className="section-label">Propose a new member (access grants only — no approval authority)</div>
       <form action={proposeAddMemberAction} className="propose card-flat">
         <div className="prow">
           <input type="text" name="id" placeholder="id (kebab-case)" aria-label="Member id" required pattern="[a-z0-9][a-z0-9-]{1,29}" />
@@ -164,7 +164,7 @@ export default async function Admin({
           <input type="email" name="email" placeholder="Email (their login)" aria-label="Email" required />
           <input type="text" name="title" placeholder="Title (optional)" aria-label="Title" />
         </div>
-        <div className="prow grants" role="group" aria-label="CRM grants per department">
+        <div className="prow grants" role="group" aria-label="Access grants per department">
           {departments.map((d) => (
             <label key={d.id} className="grant">
               <span>{d.name}</span>

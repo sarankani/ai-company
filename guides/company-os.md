@@ -6,9 +6,9 @@ The earlier version of this pack was stateless — employees generated artifacts
 
 ## Where state lives
 
-In production, the system of record is your **CRM/ERP/PSA connected via MCP** (Salesforce/HubSpot for CRM, NetSuite/QuickBooks for finance, Jira/Linear for delivery, Zendesk for support, an asset/procurement tool). Employees read and write those systems — with every external write **human-gated**.
+In production, the system of record is **Twenty CRM** (open-source, self-hosted or cloud) for business records, connected via the GraphQL API. AI employees read/write via **`scripts/twenty-client.mjs`** (env: `TWENTY_API_URL`, `TWENTY_API_KEY`). Every external write that changes stage or creates records **stays human-gated** — the gate protocol is unchanged, only the backend changed from custom to Twenty.
 
-When those aren't connected, the pack keeps a lightweight **file-based system of record** under a `company/` directory so employees still coordinate:
+The lightweight **file-based system of record** under `company/` tracks governance records (approvals, questions, org config) — git is the audit trail for these:
 
 ```
 company/

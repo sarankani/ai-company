@@ -140,10 +140,10 @@ export async function proposeAddMemberAction(form: FormData) {
     const { id: aprId, data, body } = createRecord({
       type: "approval", gate: "people", priority: "P1", requestedBy: me.id,
       artifact: `company/org/humans/${id}.md`, artifactShaNow: "external",
-      action: `Add member ${id} (${email}) with CRM grants: ${grantText}`,
+      action: `Add member ${id} (${email}) with access grants: ${grantText}`,
       links: "member RBAC (Tech Spec 002 §4.1)",
       summary:
-        `New member proposed by **${me.id}**. CRM grants only — no approval authority ` +
+        `New member proposed by **${me.id}**. Access grants only — no approval authority ` +
         `(crm-* seats never decide gates). Dual approval required (people gate); ` +
         `on approval, the CEO applies from /admin — one commit creates the humans file.`,
       bodyExtra:
@@ -199,7 +199,7 @@ export async function applyAddMemberAction(form: FormData) {
         title: member.title || "Member", availability: "available", ooo_until: null,
         roles: member.grants.map((g) => ({ department: g.department, seat: g.seat })),
       },
-      `\nAdded via the panel add-member flow (${id}). CRM grants only — no approval seats.\n`,
+      `\nAdded via the panel add-member flow (${id}). Access grants only — no approval seats.\n`,
     );
     parseRecord(humanText); // roundtrip guard before it ever lands in org config
     completeExecution(data, `member ${member.id} created with ${member.grants.length} grant(s) via panel`);
